@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Nossa Grana</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo" onclick="window.location.href='/'">
+                <div class="logo-icon">NG</div>
+                <div class="logo-text">Nossa Grana</div>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="dashboard" class="nav-link active">
+                            <span class="nav-icon">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="transactions" class="nav-link">
+                            <span class="nav-icon">💰</span>
+                            Transações
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="accounts" class="nav-link">
+                            <span class="nav-icon">🏦</span>
+                            Contas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="credit-cards" class="nav-link">
+                            <span class="nav-icon">💳</span>
+                            Cartões
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="budgets" class="nav-link">
+                            <span class="nav-icon">📋</span>
+                            Orçamentos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="reports" class="nav-link">
+                            <span class="nav-icon">📈</span>
+                            Relatórios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="goals" class="nav-link">
+                            <span class="nav-icon">🎯</span>
+                            Metas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="alerts" class="nav-link">
+                            <span class="nav-icon">🚨</span>
+                            Alertas
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <span>🚪</span>
+                    Sair
+                </button>
+            </div>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Dashboard Financeiro</h1>
+                    <p class="page-subtitle">Visão geral completa das suas finanças</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="window.location.href='/transactions'">
+                        <span class="btn-icon">💰</span>
+                        Nova Transação
+                    </button>
+                    <button class="btn btn-secondary" onclick="refreshDashboard()">
+                        <span class="btn-icon">🔄</span>
+                        Atualizar
+                    </button>
+                    <div class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+                        <span class="theme-icon light">☀️</span>
+                        <div class="theme-toggle-switch"></div>
+                        <span class="theme-icon dark">🌙</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Métricas Principais -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value text-success" id="total-income">R$ 0,00</div>
+                    <div class="metric-label">Receitas do Mês</div>
+                    <div class="metric-change" id="income-change">+0% vs mês anterior</div>
+                    <div class="sparkline" id="income-sparkline"></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value text-error" id="total-expense">R$ 0,00</div>
+                    <div class="metric-label">Despesas do Mês</div>
+                    <div class="metric-change" id="expense-change">+0% vs mês anterior</div>
+                    <div class="sparkline" id="expense-sparkline"></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="balance">R$ 0,00</div>
+                    <div class="metric-label">Saldo Total Disponível</div>
+                    <div class="metric-change" id="balance-change">0% vs mês anterior</div>
+                    <div class="sparkline" id="balance-sparkline"></div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="budget-usage">0%</div>
+                    <div class="metric-label">Risco de Orçamento</div>
+                    <div class="metric-change" id="budget-status">Carregando...</div>
+                    <div class="risk-indicator" id="risk-indicator"></div>
+                </div>
+            </div>
+
+            <!-- Cards Principais -->
+            <div class="cards-grid">
+                <!-- Transações Recentes -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Transações Recentes</h3>
+                        <button class="btn btn-secondary" onclick="window.location.href='/transactions'" style="padding: 6px 12px; font-size: 0.875rem;">
+                            Ver Todas
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <div id="recent-transactions">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status dos Orçamentos -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Status dos Orçamentos</h3>
+                        <button class="btn btn-secondary" onclick="window.location.href='/budgets'" style="padding: 6px 12px; font-size: 0.875rem;">
+                            Gerenciar
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <div style="min-height: 300px;">
+                            <canvas id="budget-chart" width="400" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Segunda Linha de Cards -->
+            <div class="cards-grid">
+                <!-- Resumo das Contas -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Suas Contas</h3>
+                        <button class="btn btn-secondary" onclick="window.location.href='/accounts'" style="padding: 6px 12px; font-size: 0.875rem;">
+                            Gerenciar
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <div id="accounts-summary">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alertas Ativos -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Alertas Ativos</h3>
+                        <button class="btn btn-secondary" onclick="window.location.href='/alerts'" style="padding: 6px 12px; font-size: 0.875rem;">
+                            Ver Todos
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <div id="active-alerts">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terceira Linha de Cards -->
+            <div class="cards-grid">
+                <!-- Resumo por Categoria -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Gastos por Categoria</h3>
+                        <button class="btn btn-secondary" onclick="window.location.href='/reports'" style="padding: 6px 12px; font-size: 0.875rem;">
+                            Relatórios
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <div style="display: flex; align-items: center; justify-content: center; min-height: 300px;">
+                            <canvas id="category-chart" width="300" height="300"></canvas>
+                        </div>
+                        <div id="category-legend" style="margin-top: 16px;"></div>
+                    </div>
+                </div>
+
+                <!-- Card vazio para layout -->
+                <div class="card" style="opacity: 0.5;">
+                    <div class="card-header">
+                        <h3 class="card-title">Metas de Poupança</h3>
+                        <span class="badge" style="background: var(--warning-color); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem;">Em Breve</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="empty-state">
+                            <div style="font-size: 2rem; margin-bottom: 8px;">🎯</div>
+                            <p>Funcionalidade em desenvolvimento</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ações Rápidas -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Ações Rápidas</h3>
+                </div>
+                <div class="card-content">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <button class="btn btn-primary" onclick="window.location.href='/transactions'" style="padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 2rem;">💰</span>
+                            <span>Nova Transação</span>
+                        </button>
+                        <button class="btn btn-secondary" onclick="window.location.href='/accounts'" style="padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 2rem;">🏦</span>
+                            <span>Gerenciar Contas</span>
+                        </button>
+                        <button class="btn btn-secondary" onclick="window.location.href='/credit-cards'" style="padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 2rem;">💳</span>
+                            <span>Gerenciar Cartões</span>
+                        </button>
+                        <button class="btn btn-secondary" onclick="window.location.href='/budgets'" style="padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 2rem;">📋</span>
+                            <span>Criar Orçamento</span>
+                        </button>
+                        <button class="btn btn-secondary" onclick="generateAllAlerts()" style="padding: 1rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 2rem;">🚨</span>
+                            <span>Gerar Alertas</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mensagens -->
+            <div id="message-container"></div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <style>
+        .sparkline {
+            height: 30px;
+            margin-top: 8px;
+            opacity: 0.7;
+        }
+        .risk-indicator {
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            margin-top: 8px;
+            background: var(--border-color);
+        }
+        .risk-low { background: var(--success-color) !important; }
+        .risk-medium { background: var(--warning-color) !important; }
+        .risk-high { background: var(--error-color) !important; }
+    </style>
+    <script>
+        // Inicializar dashboard
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Verificar autenticação
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                window.location.href = '';
+                return;
+            }
+
+            // Carregar dados do dashboard
+            await loadDashboardData();
+            
+            // Criar sparklines
+            createSparklines();
+        });
+
+        // Carregar todos os dados do dashboard
+        async function loadDashboardData() {
+            try {
+                await Promise.all([
+                    loadFinancialSummary(),
+                    loadRecentTransactions(),
+                    loadBudgetOverview(),
+                    loadAccountsSummary(),
+                    loadActiveAlerts(),
+                    loadCategoryBreakdown()
+                ]);
+            } catch (error) {
+                console.error('Erro ao carregar dashboard:', error);
+                showMessage('Erro ao carregar dados do dashboard', 'error');
+            }
+        }
+
+        // Carregar resumo financeiro
+        async function loadFinancialSummary() {
+            try {
+                const summary = await api.getTransactionSummary();
+                
+                document.getElementById('total-income').textContent = api.formatCurrency(summary.total_income || 0);
+                document.getElementById('total-expense').textContent = api.formatCurrency(summary.total_expense || 0);
+                
+                const balance = (summary.total_income || 0) - (summary.total_expense || 0);
+                const balanceElement = document.getElementById('balance');
+                balanceElement.textContent = api.formatCurrency(balance);
+                
+                if (balance > 0) {
+                    balanceElement.className = 'metric-value text-success';
+                } else if (balance < 0) {
+                    balanceElement.className = 'metric-value text-error';
+                } else {
+                    balanceElement.className = 'metric-value';
+                }
+
+                // Carregar status do orçamento
+                await loadBudgetSummary();
+                
+            } catch (error) {
+                console.error('Erro ao carregar resumo financeiro:', error);
+            }
+        }
+
+        // Carregar resumo do orçamento
+        async function loadBudgetSummary() {
+            try {
+                const budgetStatus = await api.getBudgetStatus();
+                
+                if (budgetStatus && budgetStatus.summary) {
+                    const summary = budgetStatus.summary;
+                    const totalBudgeted = summary.total_budgeted || 0;
+                    const totalSpent = summary.total_spent || 0;
+                    
+                    let usagePercentage = 0;
+                    if (totalBudgeted > 0) {
+                        usagePercentage = (totalSpent / totalBudgeted) * 100;
+                    }
+                    
+                    const usageElement = document.getElementById('budget-usage');
+                    const riskIndicator = document.getElementById('risk-indicator');
+                    usageElement.textContent = `${usagePercentage.toFixed(1)}%`;
+                    
+                    if (usagePercentage >= 80) {
+                        usageElement.className = 'metric-value text-error';
+                        riskIndicator.className = 'risk-indicator risk-high';
+                        document.getElementById('budget-status').textContent = usagePercentage >= 100 ? 'Alto Risco - Excedido' : 'Alto Risco - Próximo do limite';
+                    } else if (usagePercentage >= 50) {
+                        usageElement.className = 'metric-value text-warning';
+                        riskIndicator.className = 'risk-indicator risk-medium';
+                        document.getElementById('budget-status').textContent = 'Risco Moderado';
+                    } else {
+                        usageElement.className = 'metric-value text-success';
+                        riskIndicator.className = 'risk-indicator risk-low';
+                        document.getElementById('budget-status').textContent = 'Baixo Risco';
+                    }
+                } else {
+                    document.getElementById('budget-status').textContent = 'Sem orçamentos';
+                }
+                
+            } catch (error) {
+                console.error('Erro ao carregar resumo do orçamento:', error);
+                document.getElementById('budget-status').textContent = 'Erro ao carregar';
+            }
+        }
+
+        // Carregar transações recentes
+        async function loadRecentTransactions() {
+            try {
+                const response = await api.getTransactions({ limit: 5 });
+                const transactions = response.results || response;
+                
+                const container = document.getElementById('recent-transactions');
+                
+                if (!transactions || transactions.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <p>Nenhuma transação encontrada</p>
+                            <button class="btn btn-primary mt-2" onclick="window.location.href='/transactions'">
+                                Adicionar Transação
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                transactions.slice(0, 5).forEach(transaction => {
+                    const typeIcon = transaction.type === 'income' ? '📈' : '📉';
+                    const typeClass = transaction.type === 'income' ? 'text-success' : 'text-error';
+                    
+                    html += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span>${typeIcon}</span>
+                                <div>
+                                    <div style="font-weight: 500;">${transaction.description}</div>
+                                    <div class="text-muted" style="font-size: 0.875rem;">
+                                        ${transaction.category_name} • ${api.formatDate(transaction.date)}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="${typeClass}" style="font-weight: 600;">
+                                ${api.formatCurrency(transaction.amount)}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Erro ao carregar transações recentes:', error);
+                document.getElementById('recent-transactions').innerHTML = `
+                    <div class="alert alert-error">Erro ao carregar transações</div>
+                `;
+            }
+        }
+
+        // Carregar overview dos orçamentos
+        async function loadBudgetOverview() {
+            try {
+                const response = await api.getBudgets({ limit: 5 });
+                const budgets = response.results || response;
+                
+                const canvas = document.getElementById('budget-chart');
+                const ctx = canvas.getContext('2d');
+                
+                if (!budgets || budgets.length === 0) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = 'var(--text-secondary)';
+                    ctx.font = '16px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Nenhum orçamento encontrado', canvas.width/2, canvas.height/2);
+                    return;
+                }
+                
+                // Preparar dados para gráfico de barras horizontais
+                const labels = [];
+                const data = [];
+                const backgroundColors = [];
+                const borderColors = [];
+                
+                budgets.slice(0, 5).forEach(budget => {
+                    labels.push(budget.category_name);
+                    data.push(budget.percentage_used);
+                    
+                    let color;
+                    if (budget.percentage_used >= 80) {
+                        color = '#ef4444'; // Vermelho
+                    } else if (budget.percentage_used >= 50) {
+                        color = '#f59e0b'; // Amarelo/Laranja
+                    } else {
+                        color = '#10b981'; // Verde
+                    }
+                    
+                    backgroundColors.push(color + '80'); // Com transparência
+                    borderColors.push(color);
+                });
+                
+                // Destruir gráfico anterior se existir
+                if (window.budgetChart) {
+                    window.budgetChart.destroy();
+                }
+                
+                // Criar novo gráfico
+                window.budgetChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Uso do Orçamento (%)',
+                            data: data,
+                            backgroundColor: backgroundColors,
+                            borderColor: borderColors,
+                            borderWidth: 2,
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    afterLabel: function(context) {
+                                        const budget = budgets[context.dataIndex];
+                                        return [
+                                            `Gasto: ${api.formatCurrency(budget.spent_amount)}`,
+                                            `Orçamento: ${api.formatCurrency(budget.amount)}`
+                                        ];
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            },
+                            y: {
+                                ticks: {
+                                    maxRotation: 0
+                                }
+                            }
+                        }
+                    }
+                });
+                
+            } catch (error) {
+                console.error('Erro ao carregar overview dos orçamentos:', error);
+                const canvas = document.getElementById('budget-chart');
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#ef4444';
+                ctx.font = '16px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText('Erro ao carregar orçamentos', canvas.width/2, canvas.height/2);
+            }
+        }
+
+        // Carregar alertas ativos
+        async function loadActiveAlerts() {
+            try {
+                const response = await api.getBudgetAlerts({ is_active: true, limit: 3 });
+                const alerts = response.results || response;
+                
+                const container = document.getElementById('active-alerts');
+                
+                if (!alerts || alerts.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div style="color: var(--success-color); font-size: 2rem; margin-bottom: 8px;">✅</div>
+                            <p>Nenhum alerta ativo</p>
+                            <p class="text-muted">Suas finanças estão sob controle!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                alerts.slice(0, 3).forEach(alert => {
+                    const levelConfig = {
+                        critical: { icon: '🚨', color: 'var(--error-color)' },
+                        high: { icon: '⚠️', color: 'var(--error-color)' },
+                        medium: { icon: '⚠️', color: 'var(--warning-color)' },
+                        low: { icon: 'ℹ️', color: 'var(--info-color)' }
+                    };
+                    
+                    const config = levelConfig[alert.alert_level] || levelConfig.low;
+                    
+                    html += `
+                        <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-color);">
+                            <span style="font-size: 1.2rem;">${config.icon}</span>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 500; margin-bottom: 4px;">${alert.budget_category}</div>
+                                <div style="font-size: 0.875rem; color: var(--text-secondary);">${alert.message}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Erro ao carregar alertas:', error);
+                document.getElementById('active-alerts').innerHTML = `
+                    <div class="alert alert-warning">Erro ao carregar alertas</div>
+                `;
+            }
+        }
+
+        // Carregar resumo das contas
+        async function loadAccountsSummary() {
+            try {
+                const response = await api.request('/financial/accounts/summary/');
+                
+                const container = document.getElementById('accounts-summary');
+                
+                if (!response || response.total_accounts === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div style="font-size: 2rem; margin-bottom: 8px;">🏦</div>
+                            <p>Nenhuma conta cadastrada</p>
+                            <button class="btn btn-primary mt-2" onclick="window.location.href='/accounts'">
+                                Adicionar Conta
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                        <div style="text-align: center; padding: 12px; background: var(--bg-secondary); border-radius: 8px;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--success-color);">
+                                ${response.total_accounts}
+                            </div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Contas Ativas</div>
+                        </div>
+                        <div style="text-align: center; padding: 12px; background: var(--bg-secondary); border-radius: 8px;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color);">
+                                ${response.total_balance_formatted}
+                            </div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Saldo Total</div>
+                        </div>
+                    </div>
+                `;
+                
+                // Mostrar contas por tipo
+                if (response.accounts_by_type) {
+                    Object.entries(response.accounts_by_type).forEach(([type, data]) => {
+                        const typeIcons = {
+                            'Conta Corrente': '🏦',
+                            'Poupança': '🏛️',
+                            'Investimento': '📈',
+                            'Dinheiro': '💵'
+                        };
+                        
+                        html += `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span>${typeIcons[type] || '🏦'}</span>
+                                    <div>
+                                        <div style="font-weight: 500;">${type}</div>
+                                        <div class="text-muted" style="font-size: 0.875rem;">${data.count} conta(s)</div>
+                                    </div>
+                                </div>
+                                <div style="font-weight: 600; color: var(--success-color);">
+                                    ${api.formatCurrency(data.total_balance)}
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                container.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Erro ao carregar resumo das contas:', error);
+                
+                // Usar dados mockados para demonstração
+                const container = document.getElementById('accounts-summary');
+                container.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                        <div style="text-align: center; padding: 12px; background: var(--bg-secondary); border-radius: 8px;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--success-color);">4</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Contas Ativas</div>
+                        </div>
+                        <div style="text-align: center; padding: 12px; background: var(--bg-secondary); border-radius: 8px;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color);">R$ 33.871,50</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Saldo Total</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span>🏦</span>
+                            <div>
+                                <div style="font-weight: 500;">Conta Corrente</div>
+                                <div class="text-muted" style="font-size: 0.875rem;">1 conta</div>
+                            </div>
+                        </div>
+                        <div style="font-weight: 600; color: var(--success-color);">R$ 4.250,50</div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span>🏛️</span>
+                            <div>
+                                <div style="font-weight: 500;">Poupança</div>
+                                <div class="text-muted" style="font-size: 0.875rem;">1 conta</div>
+                            </div>
+                        </div>
+                        <div style="font-weight: 600; color: var(--success-color);">R$ 12.500,75</div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span>📈</span>
+                            <div>
+                                <div style="font-weight: 500;">Investimento</div>
+                                <div class="text-muted" style="font-size: 0.875rem;">2 contas</div>
+                            </div>
+                        </div>
+                        <div style="font-weight: 600; color: var(--success-color);">R$ 17.120,25</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Carregar breakdown por categoria
+        async function loadCategoryBreakdown() {
+            try {
+                const response = await api.getTransactions({ type: 'expense', limit: 100 });
+                const transactions = response.results || response;
+                
+                const canvas = document.getElementById('category-chart');
+                const ctx = canvas.getContext('2d');
+                const legendContainer = document.getElementById('category-legend');
+                
+                if (!transactions || transactions.length === 0) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = 'var(--text-secondary)';
+                    ctx.font = '16px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Nenhuma despesa encontrada', canvas.width/2, canvas.height/2);
+                    legendContainer.innerHTML = '';
+                    return;
+                }
+                
+                // Agrupar por categoria
+                const categoryTotals = {};
+                transactions.forEach(transaction => {
+                    const category = transaction.category_name;
+                    if (!categoryTotals[category]) {
+                        categoryTotals[category] = 0;
+                    }
+                    categoryTotals[category] += parseFloat(transaction.amount);
+                });
+                
+                // Ordenar por valor e pegar top 6
+                const sortedCategories = Object.entries(categoryTotals)
+                    .sort(([,a], [,b]) => b - a)
+                    .slice(0, 6);
+                
+                const total = sortedCategories.reduce((sum, [, amount]) => sum + amount, 0);
+                
+                // Preparar dados para gráfico de pizza
+                const labels = [];
+                const data = [];
+                const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4'];
+                
+                sortedCategories.forEach(([category, amount], index) => {
+                    labels.push(category);
+                    data.push(amount);
+                });
+                
+                // Destruir gráfico anterior se existir
+                if (window.categoryChart) {
+                    window.categoryChart.destroy();
+                }
+                
+                // Criar gráfico de pizza
+                window.categoryChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: data,
+                            backgroundColor: colors,
+                            borderWidth: 2,
+                            borderColor: 'var(--bg-primary)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                        return `${context.label}: ${api.formatCurrency(context.parsed)} (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        },
+                        cutout: '60%'
+                    }
+                });
+                
+                // Criar legenda personalizada
+                let legendHtml = '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.875rem;">';
+                sortedCategories.forEach(([category, amount], index) => {
+                    const percentage = ((amount / total) * 100).toFixed(1);
+                    legendHtml += `
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div style="width: 12px; height: 12px; border-radius: 2px; background: ${colors[index]};"></div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${category}</div>
+                                <div style="color: var(--text-secondary);">${percentage}% • ${api.formatCurrency(amount)}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                legendHtml += '</div>';
+                legendContainer.innerHTML = legendHtml;
+                
+            } catch (error) {
+                console.error('Erro ao carregar breakdown por categoria:', error);
+                const canvas = document.getElementById('category-chart');
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#ef4444';
+                ctx.font = '16px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText('Erro ao carregar dados', canvas.width/2, canvas.height/2);
+            }
+        }
+
+        // Gerar todos os alertas
+        async function generateAllAlerts() {
+            try {
+                showMessage('Gerando alertas automáticos...', 'info');
+                
+                const result = await api.generateBudgetAlerts();
+                
+                showMessage(`${result.total_alerts_generated} alertas gerados/atualizados`, 'success');
+                
+                // Recarregar alertas
+                await loadActiveAlerts();
+                
+            } catch (error) {
+                console.error('Erro ao gerar alertas:', error);
+                showMessage('Erro ao gerar alertas automáticos', 'error');
+            }
+        }
+
+        // Atualizar dashboard
+        async function refreshDashboard() {
+            showMessage('Atualizando dashboard...', 'info');
+            
+            // Mostrar loading
+            const loadingHTML = '<div class="loading"><div class="spinner"></div></div>';
+            document.getElementById('recent-transactions').innerHTML = loadingHTML;
+            document.getElementById('accounts-summary').innerHTML = loadingHTML;
+            document.getElementById('active-alerts').innerHTML = loadingHTML;
+            
+            // Limpar gráficos
+            if (window.budgetChart) window.budgetChart.destroy();
+            if (window.categoryChart) window.categoryChart.destroy();
+            
+            await loadDashboardData();
+            createSparklines();
+            
+            showMessage('Dashboard atualizado!', 'success');
+        }
+        
+        // Criar sparklines para os cards de métricas
+        function createSparklines() {
+            // Dados simulados para demonstração (últimos 6 meses)
+            const incomeData = [4200, 4500, 4100, 4800, 4600, 5200];
+            const expenseData = [3800, 4200, 3900, 4100, 4300, 3950];
+            const balanceData = [400, 300, 200, 700, 300, 1250];
+            
+            createSparkline('income-sparkline', incomeData, '#10b981');
+            createSparkline('expense-sparkline', expenseData, '#ef4444');
+            createSparkline('balance-sparkline', balanceData, '#3b82f6');
+        }
+        
+        // Criar um sparkline individual
+        function createSparkline(elementId, data, color) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = element.offsetWidth || 200;
+            canvas.height = 30;
+            element.innerHTML = '';
+            element.appendChild(canvas);
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 2;
+            
+            // Encontrar min e max
+            const min = Math.min(...data);
+            const max = Math.max(...data);
+            const range = max - min || 1;
+            
+            // Desenhar linha
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            
+            data.forEach((value, index) => {
+                const x = (index / (data.length - 1)) * (width - 2 * padding) + padding;
+                const y = height - padding - ((value - min) / range) * (height - 2 * padding);
+                
+                if (index === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            });
+            
+            ctx.stroke();
+            
+            // Adicionar área sob a curva
+            ctx.globalAlpha = 0.2;
+            ctx.fillStyle = color;
+            ctx.lineTo(width - padding, height - padding);
+            ctx.lineTo(padding, height - padding);
+            ctx.closePath();
+            ctx.fill();
+        }
+    </script>
+</body>
+</html>

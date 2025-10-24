@@ -1,0 +1,300 @@
+<% 
+const currentPage = 'dashboard';
+const title = 'Dashboard';
+%>
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-0">
+            <i class="bi bi-speedometer2 text-primary me-2"></i>
+            Dashboard
+        </h1>
+        <p class="text-muted mb-0">Visão geral das suas finanças</p>
+    </div>
+    <div>
+        <span class="badge bg-primary fs-6">
+            <i class="bi bi-calendar3 me-1"></i>
+            <%= new Date().toLocaleDateString('pt-BR', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            }) %>
+        </span>
+    </div>
+</div>
+
+<!-- Financial Summary Cards -->
+<div class="row mb-4">
+    <% if (summary) { %>
+        <div class="col-md-3 mb-3">
+            <div class="card stats-card income h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-arrow-up-circle display-4 mb-3"></i>
+                    <h5 class="card-title">Receitas</h5>
+                    <h2 class="mb-0">
+                        <%= new Intl.NumberFormat('pt-BR', { 
+                            style: 'currency', 
+                            currency: 'BRL' 
+                        }).format(summary.total_income || 0) %>
+                    </h2>
+                    <small class="opacity-75">Total do período</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card stats-card expense h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-arrow-down-circle display-4 mb-3"></i>
+                    <h5 class="card-title">Despesas</h5>
+                    <h2 class="mb-0">
+                        <%= new Intl.NumberFormat('pt-BR', { 
+                            style: 'currency', 
+                            currency: 'BRL' 
+                        }).format(summary.total_expense || 0) %>
+                    </h2>
+                    <small class="opacity-75">Total do período</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card stats-card balance h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-wallet2 display-4 mb-3"></i>
+                    <h5 class="card-title">Saldo</h5>
+                    <h2 class="mb-0 <%= (summary.balance || 0) >= 0 ? 'text-white' : 'text-warning' %>">
+                        <%= new Intl.NumberFormat('pt-BR', { 
+                            style: 'currency', 
+                            currency: 'BRL' 
+                        }).format(summary.balance || 0) %>
+                    </h2>
+                    <small class="opacity-75">Receitas - Despesas</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card stats-card h-100">
+                <div class="card-body text-center">
+                    <i class="bi bi-graph-up display-4 mb-3"></i>
+                    <h5 class="card-title">Transações</h5>
+                    <h2 class="mb-0"><%= summary.transaction_count || 0 %></h2>
+                    <small class="opacity-75">Total registradas</small>
+                </div>
+            </div>
+        </div>
+    <% } else { %>
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                Carregando dados financeiros...
+            </div>
+        </div>
+    <% } %>
+</div>
+
+<!-- Budget Status and Recent Transactions -->
+<div class="row">
+    <!-- Budget Status -->
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-pie-chart text-primary me-2"></i>
+                    Status dos Orçamentos
+                </h5>
+                <a href="/budgets" class="btn btn-sm btn-outline-primary">
+                    Ver todos
+                </a>
+            </div>
+            <div class="card-body">
+                <% if (budgetStatus && budgetStatus.budgets && budgetStatus.budgets.length > 0) { %>
+                    <div class="mb-3">
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="text-success">
+                                    <strong><%= budgetStatus.summary.budgets_ok || 0 %></strong>
+                                    <br><small>OK</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="text-warning">
+                                    <strong><%= budgetStatus.summary.budgets_warning || 0 %></strong>
+                                    <br><small>Atenção</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="text-danger">
+                                    <strong><%= budgetStatus.summary.budgets_exceeded || 0 %></strong>
+                                    <br><small>Excedidos</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="budget-list">
+                        <% budgetStatus.budgets.slice(0, 3).forEach(budget => { %>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="me-3">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                                         style="width: 40px; height: 40px; background-color: <%= budget.category_color %>20;">
+                                        <i class="bi bi-tag-fill" style="color: <%= budget.category_color %>;"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <strong><%= budget.category_name %></strong>
+                                        <span class="badge bg-<%= budget.is_over_budget ? 'danger' : budget.is_near_limit ? 'warning' : 'success' %>">
+                                            <%= budget.percentage_used.toFixed(1) %>%
+                                        </span>
+                                    </div>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar bg-<%= budget.is_over_budget ? 'danger' : budget.is_near_limit ? 'warning' : 'success' %>" 
+                                             style="width: <%= Math.min(budget.percentage_used, 100) %>%"></div>
+                                    </div>
+                                    <small class="text-muted">
+                                        <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(budget.spent_amount) %> 
+                                        de 
+                                        <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(budget.amount) %>
+                                    </small>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } else { %>
+                    <div class="text-center py-4">
+                        <i class="bi bi-pie-chart text-muted" style="font-size: 3rem;"></i>
+                        <p class="text-muted mt-2">Nenhum orçamento configurado</p>
+                        <a href="/budgets/new" class="btn btn-primary btn-sm">
+                            <i class="bi bi-plus me-1"></i>
+                            Criar primeiro orçamento
+                        </a>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="col-lg-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-clock-history text-primary me-2"></i>
+                    Transações Recentes
+                </h5>
+                <a href="/transactions" class="btn btn-sm btn-outline-primary">
+                    Ver todas
+                </a>
+            </div>
+            <div class="card-body">
+                <% if (recentTransactions && recentTransactions.length > 0) { %>
+                    <div class="transaction-list">
+                        <% recentTransactions.forEach(transaction => { %>
+                            <div class="d-flex align-items-center mb-3 transaction-item <%= transaction.type %> p-2 rounded">
+                                <div class="me-3">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                                         style="width: 40px; height: 40px; background-color: <%= transaction.type === 'income' ? '#27ae60' : '#e74c3c' %>20;">
+                                        <i class="bi bi-<%= transaction.type === 'income' ? 'arrow-up' : 'arrow-down' %>-circle-fill" 
+                                           style="color: <%= transaction.type === 'income' ? '#27ae60' : '#e74c3c' %>;"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong><%= transaction.description %></strong>
+                                            <br>
+                                            <small class="text-muted">
+                                                <%= transaction.category_name %> • 
+                                                <%= new Date(transaction.date).toLocaleDateString('pt-BR') %>
+                                            </small>
+                                        </div>
+                                        <div class="text-end">
+                                            <strong class="<%= transaction.type === 'income' ? 'text-success' : 'text-danger' %>">
+                                                <%= transaction.type === 'income' ? '+' : '-' %>
+                                                <%= new Intl.NumberFormat('pt-BR', { 
+                                                    style: 'currency', 
+                                                    currency: 'BRL' 
+                                                }).format(transaction.amount) %>
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } else { %>
+                    <div class="text-center py-4">
+                        <i class="bi bi-receipt text-muted" style="font-size: 3rem;"></i>
+                        <p class="text-muted mt-2">Nenhuma transação registrada</p>
+                        <a href="/transactions/new" class="btn btn-primary btn-sm">
+                            <i class="bi bi-plus me-1"></i>
+                            Adicionar primeira transação
+                        </a>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-lightning text-primary me-2"></i>
+                    Ações Rápidas
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="/transactions/new" class="btn btn-outline-success w-100">
+                            <i class="bi bi-plus-circle me-2"></i>
+                            Nova Transação
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="/budgets/new" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-pie-chart me-2"></i>
+                            Novo Orçamento
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="/goals/new" class="btn btn-outline-info w-100">
+                            <i class="bi bi-target me-2"></i>
+                            Nova Meta
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="/reports" class="btn btn-outline-warning w-100">
+                            <i class="bi bi-graph-up me-2"></i>
+                            Ver Relatórios
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<% 
+// Incluir o layout
+const body = `
+${arguments[0]}
+`;
+%>
+
+<%- include('../layout', { 
+    title, 
+    currentPage, 
+    user, 
+    body: body,
+    success: typeof success !== 'undefined' ? success : null,
+    error: typeof error !== 'undefined' ? error : null
+}) %>

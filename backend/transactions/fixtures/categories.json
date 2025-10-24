@@ -1,0 +1,101 @@
+[
+  {
+    "model": "transactions.category",
+    "pk": 1,
+    "fields": {
+      "name": "Alimentação",
+      "color": "#FF6B6B",
+      "icon": "restaurant",
+      "is_default": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 2,
+    "fields": {
+      "name": "Transporte",
+      "color": "#4ECDC4",
+      "icon": "directions_car",
+      "is_default": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 3,
+    "fields": {
+      "name": "Lazer",
+      "color": "#45B7D1",
+      "icon": "sports_esports",
+      "is_default": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 4,
+    "fields": {
+      "name": "Saúde",
+      "color": "#96CEB4",
+      "icon": "local_hospital",
+      "is_default": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 5,
+    "fields": {
+      "name": "Educação",
+      "color": "#FFEAA7",
+      "icon": "school",
+      "is_default": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 6,
+    "fields": {
+      "name": "Casa",
+      "color": "#DDA0DD",
+      "icon": "home",
+      "is_default": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 7,
+    "fields": {
+      "name": "Trabalho",
+      "color": "#98D8C8",
+      "icon": "work",
+      "is_default": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 8,
+    "fields": {
+      "name": "Investimentos",
+      "color": "#F7DC6F",
+      "icon": "trending_up",
+      "is_default": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  },
+  {
+    "model": "transactions.category",
+    "pk": 9,
+    "fields": {
+      "name": "Outros",
+      "color": "#BDC3C7",
+      "icon": "category",
+      "is_default": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  }
+]

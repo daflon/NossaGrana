@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contas Bancárias - Demo</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">NG</div>
+                <div class="logo-text">Nossa Grana</div>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <span class="nav-icon">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="accounts.html" class="nav-link active">
+                            <span class="nav-icon">🏦</span>
+                            Contas
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Contas Bancárias</h1>
+                    <p class="page-subtitle">Demonstração do sistema de contas</p>
+                </div>
+            </div>
+
+            <!-- Resumo -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Resumo Geral</h3>
+                </div>
+                <div class="card-content">
+                    <div class="summary-cards">
+                        <div class="summary-card">
+                            <div class="summary-icon">🏦</div>
+                            <div class="summary-content">
+                                <div class="summary-label">Total de Contas</div>
+                                <div class="summary-value">4</div>
+                            </div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-icon">💰</div>
+                            <div class="summary-content">
+                                <div class="summary-label">Saldo Total</div>
+                                <div class="summary-value">R$ 33.871,50</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Contas -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Suas Contas</h3>
+                </div>
+                <div class="card-content">
+                    <div class="accounts-grid" id="accounts-container">
+                        <!-- Contas serão inseridas aqui -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script>
+        // Dados de demonstração
+        const demoAccounts = [
+            {
+                id: 1,
+                name: 'Conta Corrente Principal',
+                type: 'checking',
+                bank: 'Banco do Brasil',
+                current_balance: 4250.50,
+                is_active: true
+            },
+            {
+                id: 2,
+                name: 'Poupança',
+                type: 'savings',
+                bank: 'Caixa Econômica',
+                current_balance: 12500.75,
+                is_active: true
+            }
+        ];
+
+        // Renderizar contas
+        function renderAccounts() {
+            const container = document.getElementById('accounts-container');
+            const typeIcons = {
+                checking: '🏦',
+                savings: '🏛️'
+            };
+            
+            container.innerHTML = demoAccounts.map(account => `
+                <div class="account-card">
+                    <div class="account-header">
+                        <div class="account-icon">${typeIcons[account.type]}</div>
+                        <div class="account-info">
+                            <h4 class="account-name">${account.name}</h4>
+                            <p class="account-type">${account.type === 'checking' ? 'Conta Corrente' : 'Poupança'}</p>
+                            <p class="account-bank">${account.bank}</p>
+                        </div>
+                    </div>
+                    <div class="account-balance">
+                        <div class="balance-label">Saldo Atual</div>
+                        <div class="balance-value positive">
+                            R$ ${account.current_balance.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
+                        </div>
+                    </div>
+                    <div class="account-footer">
+                        <div class="account-status">
+                            <span class="status-indicator active">🟢 Ativa</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', renderAccounts);
+    </script>
+</body>
+</html>

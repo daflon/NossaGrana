@@ -1,0 +1,352 @@
+<% 
+const currentPage = 'budgets';
+const title = 'Orçamentos';
+%>
+
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-0">
+            <i class="bi bi-pie-chart text-primary me-2"></i>
+            Orçamentos
+        </h1>
+        <p class="text-muted mb-0">Controle seus gastos por categoria</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="/budgets/analysis?month=<%= selectedMonth %>" class="btn btn-outline-info">
+            <i class="bi bi-graph-up me-2"></i>
+            Análise Detalhada
+        </a>
+        <% if (availableCategories && availableCategories.length > 0) { %>
+            <a href="/budgets/new?month=<%= selectedMonth %>" class="btn btn-primary">
+                <i class="bi bi-plus me-2"></i>
+                Novo Orçamento
+            </a>
+        <% } %>
+    </div>
+</div>
+
+<!-- Month Selector and Summary -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title">
+                    <i class="bi bi-calendar3 me-2"></i>
+                    Selecionar Mês
+                </h6>
+                <form method="GET" action="/budgets" class="d-flex">
+                    <input type="month" class="form-control me-2" name="month" 
+                           value="<%= selectedMonth %>" onchange="this.form.submit()">
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <% if (budgetStatus && budgetStatus.summary) { %>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="bi bi-bar-chart me-2"></i>
+                        Resumo do Mês
+                    </h6>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="text-primary">
+                                <strong><%= budgetStatus.summary.total_budgets || 0 %></strong>
+                                <br><small>Orçamentos</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-success">
+                                <strong><%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(budgetStatus.summary.total_budgeted || 0) %></strong>
+                                <br><small>Orçado</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-danger">
+                                <strong><%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(budgetStatus.summary.total_spent || 0) %></strong>
+                                <br><small>Gasto</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } %>
+</div>
+
+<!-- Budget Status Overview -->
+<% if (budgetStatus && budgetStatus.summary) { %>
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center border-success">
+                <div class="card-body">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 2rem;"></i>
+                    <h4 class="text-success mt-2"><%= budgetStatus.summary.budgets_ok || 0 %></h4>
+                    <p class="text-muted mb-0">Orçamentos OK</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-warning">
+                <div class="card-body">
+                    <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size: 2rem;"></i>
+                    <h4 class="text-warning mt-2"><%= budgetStatus.summary.budgets_warning || 0 %></h4>
+                    <p class="text-muted mb-0">Em Atenção</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-danger">
+                <div class="card-body">
+                    <i class="bi bi-x-circle-fill text-danger" style="font-size: 2rem;"></i>
+                    <h4 class="text-danger mt-2"><%= budgetStatus.summary.budgets_exceeded || 0 %></h4>
+                    <p class="text-muted mb-0">Excedidos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-info">
+                <div class="card-body">
+                    <i class="bi bi-wallet2 text-info" style="font-size: 2rem;"></i>
+                    <h4 class="<%= (budgetStatus.summary.total_remaining || 0) >= 0 ? 'text-success' : 'text-danger' %> mt-2">
+                        <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(budgetStatus.summary.total_remaining || 0) %>
+                    </h4>
+                    <p class="text-muted mb-0">Restante</p>
+                </div>
+            </div>
+        </div>
+    </div>
+<% } %>
+
+<!-- Budgets List -->
+<div class="row">
+    <% if (budgets && budgets.length > 0) { %>
+        <% budgets.forEach(budget => { %>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card budget-card h-100">
+                    <div class="card-body">
+                        <!-- Category Header -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle me-3 d-flex align-items-center justify-content-center" 
+                                     style="width: 40px; height: 40px; background-color: <%= budget.category_color %>20;">
+                                    <i class="bi bi-tag-fill" style="color: <%= budget.category_color %>;"></i>
+                                </div>
+                                <div>
+                                    <h6 class="mb-0"><%= budget.category_name %></h6>
+                                    <small class="text-muted"><%= budget.month_display %></small>
+                                </div>
+                            </div>
+                            
+                            <!-- Status Badge -->
+                            <span class="badge bg-<%= budget.is_over_budget ? 'danger' : budget.is_near_limit ? 'warning' : 'success' %> position-relative">
+                                <%= budget.percentage_used.toFixed(1) %>%
+                                <% if (budget.is_over_budget || budget.is_near_limit) { %>
+                                    <span class="alert-badge bg-danger text-white">!</span>
+                                <% } %>
+                            </span>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <small class="text-muted">Progresso</small>
+                                <small class="fw-bold">
+                                    <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(budget.spent_amount) %>
+                                    /
+                                    <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(budget.amount) %>
+                                </small>
+                            </div>
+                            <div class="progress budget-progress">
+                                <div class="progress-bar bg-<%= budget.is_over_budget ? 'danger' : budget.is_near_limit ? 'warning' : 'success' %>" 
+                                     style="width: <%= Math.min(budget.percentage_used, 100) %>%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Budget Details -->
+                        <div class="row text-center mb-3">
+                            <div class="col-4">
+                                <div class="text-danger">
+                                    <strong><%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(budget.spent_amount) %></strong>
+                                    <br><small>Gasto</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="text-primary">
+                                    <strong><%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(budget.amount) %></strong>
+                                    <br><small>Orçado</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="<%= budget.remaining_amount >= 0 ? 'text-success' : 'text-danger' %>">
+                                    <strong><%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(budget.remaining_amount) %></strong>
+                                    <br><small>Restante</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Alert Messages -->
+                        <% if (budget.is_over_budget) { %>
+                            <div class="alert alert-danger py-2 mb-3">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                <small>Orçamento excedido em <%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Math.abs(budget.remaining_amount)) %></small>
+                            </div>
+                        <% } else if (budget.is_near_limit) { %>
+                            <div class="alert alert-warning py-2 mb-3">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                <small>Atenção! <%= budget.percentage_used.toFixed(1) %>% do orçamento usado</small>
+                            </div>
+                        <% } %>
+
+                        <!-- Advanced Info (if available) -->
+                        <% if (budget.daily_average_spent !== undefined) { %>
+                            <div class="border-top pt-3">
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <small class="text-muted">Média Diária</small>
+                                        <br>
+                                        <strong><%= new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(budget.daily_average_spent) %></strong>
+                                    </div>
+                                    <% if (budget.days_until_limit > 0) { %>
+                                        <div class="col-6">
+                                            <small class="text-muted">Dias até Limite</small>
+                                            <br>
+                                            <strong class="<%= budget.days_until_limit <= 5 ? 'text-danger' : 'text-success' %>">
+                                                <%= budget.days_until_limit %>
+                                            </strong>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                    
+                    <!-- Card Footer with Actions -->
+                    <div class="card-footer bg-transparent">
+                        <div class="btn-group w-100">
+                            <button class="btn btn-outline-primary btn-sm" onclick="editBudget(<%= budget.id %>)">
+                                <i class="bi bi-pencil me-1"></i>
+                                Editar
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm" onclick="deleteBudget(<%= budget.id %>, '<%= budget.category_name %>')">
+                                <i class="bi bi-trash me-1"></i>
+                                Excluir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% }); %>
+    <% } else { %>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-pie-chart text-muted" style="font-size: 4rem;"></i>
+                    <h4 class="text-muted mt-3">Nenhum orçamento encontrado</h4>
+                    <p class="text-muted">
+                        <%= availableCategories && availableCategories.length > 0 
+                            ? 'Comece criando seu primeiro orçamento para este mês' 
+                            : 'Todas as categorias já possuem orçamento para este mês' %>
+                    </p>
+                    <% if (availableCategories && availableCategories.length > 0) { %>
+                        <a href="/budgets/new?month=<%= selectedMonth %>" class="btn btn-primary">
+                            <i class="bi bi-plus me-2"></i>
+                            Criar Primeiro Orçamento
+                        </a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    <% } %>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir o orçamento da categoria <strong id="budgetCategory"></strong>?</p>
+                <p class="text-muted">Esta ação não pode ser desfeita.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Excluir</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let budgetToDelete = null;
+
+function editBudget(id) {
+    // Implementar edição de orçamento
+    window.location.href = `/budgets/${id}/edit`;
+}
+
+function deleteBudget(id, categoryName) {
+    budgetToDelete = id;
+    document.getElementById('budgetCategory').textContent = categoryName;
+    new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+
+document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+    if (budgetToDelete) {
+        // Implementar exclusão via AJAX
+        fetch(`/budgets/${budgetToDelete}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Erro ao excluir orçamento');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao excluir orçamento');
+        });
+        
+        bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+    }
+});
+
+// Auto-refresh a cada 5 minutos para atualizar dados em tempo real
+setInterval(() => {
+    if (document.visibilityState === 'visible') {
+        location.reload();
+    }
+}, 5 * 60 * 1000);
+</script>
+
+<% 
+// Incluir o layout
+const body = `
+<div class="container-fluid">
+    ${arguments[0]}
+</div>
+`;
+%>
+
+<%- include('../layout', { 
+    title, 
+    currentPage, 
+    user, 
+    body: body,
+    success: typeof success !== 'undefined' ? success : null,
+    error: typeof error !== 'undefined' ? error : null
+}) %>

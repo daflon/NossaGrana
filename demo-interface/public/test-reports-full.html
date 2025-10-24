@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste - Relatórios Completos</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">NG</div>
+                <div class="logo-text">Nossa Grana</div>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="dashboard" class="nav-link">
+                            <span class="nav-icon">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="reports" class="nav-link active">
+                            <span class="nav-icon">📈</span>
+                            Relatórios
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <!-- Header da Página -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Teste - Relatórios Completos</h1>
+                    <p class="page-subtitle">Testando a interface completa de relatórios</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" id="refresh-btn">
+                        <span class="btn-icon">🔄</span>
+                        Atualizar
+                    </button>
+                    <button class="btn btn-primary" id="export-btn">
+                        <span class="btn-icon">📄</span>
+                        Exportar PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Filtros de Análise</h3>
+                </div>
+                <div class="card-content">
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label for="period-select">Período:</label>
+                            <select id="period-select" class="form-select">
+                                <option value="current_month">Mês Atual</option>
+                                <option value="last_month">Mês Passado</option>
+                                <option value="current_quarter">Trimestre Atual</option>
+                                <option value="custom">Personalizado</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="type-select">Tipo de Transação:</label>
+                            <select id="type-select" class="form-select">
+                                <option value="expense">Despesas</option>
+                                <option value="income">Receitas</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumo Financeiro -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Resumo Financeiro</h3>
+                </div>
+                <div class="card-content">
+                    <div class="summary-cards">
+                        <div class="summary-card income">
+                            <div class="summary-icon">💰</div>
+                            <div class="summary-content">
+                                <div class="summary-label">Total de Receitas</div>
+                                <div class="summary-value" id="total-income">R$ 15.750,00</div>
+                                <div class="summary-change">
+                                    <span class="text-success">📈 12.5%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="summary-card expense">
+                            <div class="summary-icon">💸</div>
+                            <div class="summary-content">
+                                <div class="summary-label">Total de Despesas</div>
+                                <div class="summary-value" id="total-expense">R$ 12.340,00</div>
+                                <div class="summary-change">
+                                    <span class="text-error">📉 5.2%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="summary-card balance">
+                            <div class="summary-icon">📊</div>
+                            <div class="summary-content">
+                                <div class="summary-label">Saldo Líquido</div>
+                                <div class="summary-value" id="net-balance">R$ 3.410,00</div>
+                                <div class="summary-change">
+                                    <span class="text-success">📈 45.8%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="summary-card savings">
+                            <div class="summary-icon">🎯</div>
+                            <div class="summary-content">
+                                <div class="summary-label">Taxa de Poupança</div>
+                                <div class="summary-value" id="savings-rate">21.6%</div>
+                                <div class="summary-info">
+                                    <span class="text-success">Excelente!</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="additional-metrics">
+                        <div class="metric-item">
+                            <span class="metric-label">Total de Transações:</span>
+                            <span class="metric-value">127</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Transação Média:</span>
+                            <span class="metric-value">R$ 97,20</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos -->
+            <div class="charts-grid">
+                <!-- Gráfico de Categorias -->
+                <div class="card chart-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Distribuição por Categoria</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="chart-container">
+                            <canvas id="category-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráfico de Tendências -->
+                <div class="card chart-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Tendência Mensal</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="chart-container">
+                            <canvas id="trend-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráfico de Saldo -->
+                <div class="card chart-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Evolução do Saldo</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="chart-container">
+                            <canvas id="balance-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabela de Dados Detalhados -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Detalhamento por Categoria</h3>
+                </div>
+                <div class="card-content">
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Categoria</th>
+                                    <th>Total</th>
+                                    <th>Percentual</th>
+                                    <th>Transações</th>
+                                    <th>Média</th>
+                                    <th>Tendência</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="category-cell">
+                                            <div class="category-color" style="background-color: #FF6B6B"></div>
+                                            <span>Alimentação</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-right">R$ 4.250,00</td>
+                                    <td class="text-right">34.4%</td>
+                                    <td class="text-right">42</td>
+                                    <td class="text-right">R$ 101,19</td>
+                                    <td class="text-center">
+                                        <span class="text-error">📉 8.2%</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="category-cell">
+                                            <div class="category-color" style="background-color: #4ECDC4"></div>
+                                            <span>Transporte</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-right">R$ 2.890,00</td>
+                                    <td class="text-right">23.4%</td>
+                                    <td class="text-right">28</td>
+                                    <td class="text-right">R$ 103,21</td>
+                                    <td class="text-center">
+                                        <span class="text-success">📈 15.7%</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="category-cell">
+                                            <div class="category-color" style="background-color: #45B7D1"></div>
+                                            <span>Lazer</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-right">R$ 1.850,00</td>
+                                    <td class="text-right">15.0%</td>
+                                    <td class="text-right">18</td>
+                                    <td class="text-right">R$ 102,78</td>
+                                    <td class="text-center">
+                                        <span class="text-muted">➡️ 2.1%</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script>
+        // Dados de teste para os gráficos
+        const testData = {
+            categories: [
+                { name: 'Alimentação', value: 4250, color: '#FF6B6B' },
+                { name: 'Transporte', value: 2890, color: '#4ECDC4' },
+                { name: 'Lazer', value: 1850, color: '#45B7D1' },
+                { name: 'Saúde', value: 1200, color: '#96CEB4' },
+                { name: 'Educação', value: 950, color: '#FFEAA7' },
+                { name: 'Outros', value: 1200, color: '#DDA0DD' }
+            ],
+            monthlyTrend: [
+                { month: 'Jan', income: 15000, expense: 12000 },
+                { month: 'Fev', income: 15500, expense: 11800 },
+                { month: 'Mar', income: 14800, expense: 13200 },
+                { month: 'Abr', income: 16200, expense: 12500 },
+                { month: 'Mai', income: 15750, expense: 12340 }
+            ]
+        };
+
+        // Inicializar gráficos de teste
+        document.addEventListener('DOMContentLoaded', function() {
+            createTestCharts();
+            
+            // Event listeners para botões
+            document.getElementById('refresh-btn').addEventListener('click', function() {
+                alert('Funcionalidade de atualização implementada!');
+            });
+            
+            document.getElementById('export-btn').addEventListener('click', function() {
+                alert('Funcionalidade de exportação será implementada em breve!');
+            });
+        });
+
+        function createTestCharts() {
+            // Gráfico de categorias
+            const categoryCanvas = document.getElementById('category-chart');
+            if (categoryCanvas) {
+                new Chart(categoryCanvas, {
+                    type: 'doughnut',
+                    data: {
+                        labels: testData.categories.map(c => c.name),
+                        datasets: [{
+                            data: testData.categories.map(c => c.value),
+                            backgroundColor: testData.categories.map(c => c.color),
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Despesas por Categoria',
+                                font: { size: 16, weight: 'bold' }
+                            },
+                            legend: {
+                                position: 'bottom',
+                                labels: { padding: 20, usePointStyle: true }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Gráfico de tendências
+            const trendCanvas = document.getElementById('trend-chart');
+            if (trendCanvas) {
+                new Chart(trendCanvas, {
+                    type: 'line',
+                    data: {
+                        labels: testData.monthlyTrend.map(m => m.month),
+                        datasets: [
+                            {
+                                label: 'Receitas',
+                                data: testData.monthlyTrend.map(m => m.income),
+                                borderColor: '#4ECDC4',
+                                backgroundColor: 'rgba(78, 205, 196, 0.1)',
+                                fill: true,
+                                tension: 0.4
+                            },
+                            {
+                                label: 'Despesas',
+                                data: testData.monthlyTrend.map(m => m.expense),
+                                borderColor: '#FF6B6B',
+                                backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                                fill: true,
+                                tension: 0.4
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Tendência Mensal - Receitas vs Despesas',
+                                font: { size: 16, weight: 'bold' }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return 'R$ ' + value.toLocaleString('pt-BR');
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Gráfico de saldo
+            const balanceCanvas = document.getElementById('balance-chart');
+            if (balanceCanvas) {
+                const balanceData = testData.monthlyTrend.map(m => m.income - m.expense);
+                
+                new Chart(balanceCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: testData.monthlyTrend.map(m => m.month),
+                        datasets: [{
+                            label: 'Saldo Mensal',
+                            data: balanceData,
+                            backgroundColor: balanceData.map(value => 
+                                value >= 0 ? 'rgba(69, 183, 209, 0.7)' : 'rgba(255, 107, 107, 0.7)'
+                            ),
+                            borderColor: balanceData.map(value => 
+                                value >= 0 ? '#45B7D1' : '#FF6B6B'
+                            ),
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Evolução do Saldo Mensal',
+                                font: { size: 16, weight: 'bold' }
+                            },
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                ticks: {
+                                    callback: function(value) {
+                                        return 'R$ ' + value.toLocaleString('pt-BR');
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

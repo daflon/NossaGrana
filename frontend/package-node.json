@@ -1,0 +1,24 @@
+{
+  "name": "nossa-grana-node-interface",
+  "version": "1.0.0",
+  "description": "Interface Node.js para o sistema Nossa Grana",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "axios": "^1.6.2",
+    "ejs": "^3.1.9",
+    "body-parser": "^1.20.2",
+    "cookie-parser": "^1.4.6",
+    "express-session": "^1.17.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": ["finance", "budget", "nodejs", "express"],
+  "author": "Nossa Grana Team",
+  "license": "MIT"
+}

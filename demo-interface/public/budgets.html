@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orçamentos - Nossa Grana</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">NG</div>
+                <div class="logo-text">Nossa Grana</div>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="dashboard" class="nav-link">
+                            <span class="nav-icon">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="transactions" class="nav-link">
+                            <span class="nav-icon">💰</span>
+                            Transações
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="accounts" class="nav-link">
+                            <span class="nav-icon">🏦</span>
+                            Contas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="credit-cards" class="nav-link">
+                            <span class="nav-icon">💳</span>
+                            Cartões
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="budgets" class="nav-link active">
+                            <span class="nav-icon">📋</span>
+                            Orçamentos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="reports" class="nav-link">
+                            <span class="nav-icon">📈</span>
+                            Relatórios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="goals" class="nav-link">
+                            <span class="nav-icon">🎯</span>
+                            Metas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="alerts" class="nav-link">
+                            <span class="nav-icon">🚨</span>
+                            Alertas
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <span>🚪</span>
+                    Sair
+                </button>
+            </div>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Orçamentos</h1>
+                    <p class="page-subtitle">Controle seus gastos mensais por categoria</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="generateAlerts()">
+                        <span class="btn-icon">🚨</span>
+                        Gerar Alertas
+                    </button>
+                    <button class="btn btn-secondary" onclick="loadBudgets()">
+                        <span class="btn-icon">🔄</span>
+                        Atualizar
+                    </button>
+                    <button class="btn btn-primary" onclick="showBudgetForm()">
+                        <span class="btn-icon">➕</span>
+                        Novo Orçamento
+                    </button>
+                    <div class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+                        <span class="theme-icon light">☀️</span>
+                        <div class="theme-toggle-switch"></div>
+                        <span class="theme-icon dark">🌙</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seletor de Mês -->
+            <div class="card mb-4">
+                <div class="card-content">
+                    <div class="flex items-center gap-3">
+                        <label class="form-label" for="month-selector">Mês:</label>
+                        <select id="month-selector" class="form-select" style="width: auto;" onchange="changeMonth()">
+                        </select>
+                        <div class="flex gap-2 ml-auto">
+                            <button class="btn btn-secondary" onclick="previousMonth()">← Anterior</button>
+                            <button class="btn btn-secondary" onclick="nextMonth()">Próximo →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumo do Mês -->
+            <div id="month-summary" class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value text-primary" id="total-budgeted">R$ 0,00</div>
+                    <div class="metric-label">Total Orçado</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value text-error" id="total-spent">R$ 0,00</div>
+                    <div class="metric-label">Total Gasto</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="total-remaining">R$ 0,00</div>
+                    <div class="metric-label">Restante</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="budget-count">0</div>
+                    <div class="metric-label">Orçamentos Ativos</div>
+                </div>
+            </div>
+
+            <!-- Abas -->
+            <div class="card mb-4">
+                <div class="card-content">
+                    <div class="tabs">
+                        <button class="tab-button active" onclick="showTab('list')" id="tab-list">
+                            📋 Lista de Orçamentos
+                        </button>
+                        <button class="tab-button" onclick="showTab('progress')" id="tab-progress">
+                            📊 Progresso Visual
+                        </button>
+                        <button class="tab-button" onclick="showTab('analysis')" id="tab-analysis">
+                            🔍 Análise Avançada
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conteúdo das Abas -->
+            <div id="tab-content-list" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Lista de Orçamentos</h3>
+                    </div>
+                    <div class="card-content">
+                        <div id="budgets-list">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-content-progress" class="tab-content" style="display: none;">
+                <div class="cards-grid" id="budgets-progress">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-content-analysis" class="tab-content" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Análise Avançada de Orçamentos</h3>
+                    </div>
+                    <div class="card-content">
+                        <div id="budgets-analysis">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal de Orçamento -->
+            <div id="budget-modal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title" id="budget-modal-title">Novo Orçamento</h3>
+                        </div>
+                        <div class="card-content">
+                            <form id="budget-form">
+                                <div class="form-group">
+                                    <label class="form-label" for="budget-category">Categoria *</label>
+                                    <select id="budget-category" class="form-select" required>
+                                        <option value="">Selecione uma categoria</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="budget-amount">Valor do Orçamento *</label>
+                                    <input type="number" id="budget-amount" class="form-input" 
+                                           step="0.01" min="0.01" placeholder="0,00" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="budget-month">Mês *</label>
+                                    <input type="month" id="budget-month" class="form-input" required>
+                                </div>
+                                
+                                <div class="flex gap-2 mt-4">
+                                    <button type="submit" class="btn btn-primary">
+                                        <span id="budget-submit-text">Salvar</span>
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="hideBudgetForm()">
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mensagens -->
+            <div id="message-container"></div>
+        </main>
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        let currentMonth = api.getCurrentMonth();
+        let currentEditingId = null;
+        let availableCategories = [];
+
+        // Inicializar página
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Verificar autenticação
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                window.location.href = '';
+                return;
+            }
+
+            // Configurar seletor de mês
+            setupMonthSelector();
+            
+            // Carregar dados
+            await loadAvailableCategories();
+            await loadBudgets();
+            await loadBudgetStatus();
+        });
+
+        // Configurar seletor de mês
+        function setupMonthSelector() {
+            const selector = document.getElementById('month-selector');
+            const currentDate = new Date();
+            
+            // Gerar opções para 12 meses (atual + 11 futuros)
+            for (let i = 0; i < 12; i++) {
+                const date = new Date(currentDate.getFullYear(), currentDate.getMonth() + i, 1);
+                const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                const label = date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+                
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = label.charAt(0).toUpperCase() + label.slice(1);
+                
+                if (value === currentMonth) {
+                    option.selected = true;
+                }
+                
+                selector.appendChild(option);
+            }
+
+            // Configurar mês no formulário
+            document.getElementById('budget-month').value = currentMonth;
+        }
+
+        // Mudar mês
+        function changeMonth() {
+            currentMonth = document.getElementById('month-selector').value;
+            document.getElementById('budget-month').value = currentMonth;
+            loadBudgets();
+            loadBudgetStatus();
+        }
+
+        // Mês anterior
+        function previousMonth() {
+            const selector = document.getElementById('month-selector');
+            const currentIndex = selector.selectedIndex;
+            if (currentIndex > 0) {
+                selector.selectedIndex = currentIndex - 1;
+                changeMonth();
+            }
+        }
+
+        // Próximo mês
+        function nextMonth() {
+            const selector = document.getElementById('month-selector');
+            const currentIndex = selector.selectedIndex;
+            if (currentIndex < selector.options.length - 1) {
+                selector.selectedIndex = currentIndex + 1;
+                changeMonth();
+            }
+        }
+
+        // Carregar categorias disponíveis
+        async function loadAvailableCategories() {
+            try {
+                availableCategories = await api.getCategoriesWithoutBudget(currentMonth);
+                
+                const select = document.getElementById('budget-category');
+                
+                // Limpar opções existentes (exceto a primeira)
+                while (select.children.length > 1) {
+                    select.removeChild(select.lastChild);
+                }
+
+                availableCategories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.id;
+                    option.textContent = category.name;
+                    select.appendChild(option);
+                });
+
+            } catch (error) {
+                console.error('Erro ao carregar categorias:', error);
+            }
+        }
+
+        // Carregar orçamentos
+        async function loadBudgets() {
+            try {
+                const response = await api.getBudgets({ month: currentMonth });
+                const budgets = response.results || response;
+
+                // Atualizar lista
+                updateBudgetsList(budgets);
+                
+                // Atualizar progresso visual
+                updateBudgetsProgress(budgets);
+                
+                // Carregar análise avançada se a aba estiver ativa
+                if (document.getElementById('tab-analysis').classList.contains('active')) {
+                    await loadBudgetAnalysis();
+                }
+
+            } catch (error) {
+                console.error('Erro ao carregar orçamentos:', error);
+                showMessage('Erro ao carregar orçamentos', 'error');
+            }
+        }
+
+        // Atualizar lista de orçamentos
+        function updateBudgetsList(budgets) {
+            const container = document.getElementById('budgets-list');
+
+            if (!budgets || budgets.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <p>Nenhum orçamento encontrado para este mês</p>
+                        <button class="btn btn-primary mt-3" onclick="showBudgetForm()">
+                            Criar Primeiro Orçamento
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            budgets.forEach(budget => {
+                const statusClass = budget.is_over_budget ? 'error' : 
+                                  budget.is_near_limit ? 'warning' : 'success';
+                const statusIcon = budget.is_over_budget ? '🚨' : 
+                                 budget.is_near_limit ? '⚠️' : '✅';
+                const statusText = budget.is_over_budget ? 'Excedido' : 
+                                 budget.is_near_limit ? 'Atenção' : 'Normal';
+
+                html += `
+                    <div class="budget-item" style="display: flex; justify-content: space-between; align-items: center; padding: 20px; margin-bottom: 16px; background: var(--bg-secondary); border-radius: var(--border-radius-lg); border: 1px solid var(--border-color);">
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                                <div style="width: 16px; height: 16px; border-radius: 50%; background: ${budget.category_color};"></div>
+                                <h4 style="margin: 0; font-size: 1.2rem;">${budget.category_name}</h4>
+                                <span class="badge badge-${statusClass}">${statusIcon} ${statusText}</span>
+                            </div>
+                            
+                            <div style="margin-bottom: 12px;">
+                                <div class="progress-bar progress-${statusClass}">
+                                    <div class="progress-fill" style="width: ${Math.min(budget.percentage_used, 100)}%;"></div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-top: 4px; font-size: 0.875rem; color: var(--text-secondary);">
+                                    <span>${budget.percentage_used.toFixed(1)}% usado</span>
+                                    <span>${api.formatCurrency(budget.spent_amount)} / ${api.formatCurrency(budget.amount)}</span>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; gap: 24px; font-size: 0.875rem;">
+                                <div>
+                                    <span class="text-muted">Restante:</span>
+                                    <span class="${budget.remaining_amount >= 0 ? 'text-success' : 'text-error'}" style="font-weight: 600;">
+                                        ${api.formatCurrency(budget.remaining_amount)}
+                                    </span>
+                                </div>
+                                ${budget.daily_average_spent ? `
+                                <div>
+                                    <span class="text-muted">Média diária:</span>
+                                    <span>${api.formatCurrency(budget.daily_average_spent)}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-secondary" onclick="editBudget(${budget.id})" style="padding: 8px 16px;">
+                                ✏️ Editar
+                            </button>
+                            <button class="btn btn-error" onclick="deleteBudget(${budget.id})" style="padding: 8px 16px;">
+                                🗑️ Excluir
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Atualizar progresso visual
+        function updateBudgetsProgress(budgets) {
+            const container = document.getElementById('budgets-progress');
+
+            if (!budgets || budgets.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <p>Nenhum orçamento para visualizar</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            budgets.forEach(budget => {
+                const statusClass = budget.is_over_budget ? 'error' : 
+                                  budget.is_near_limit ? 'warning' : 'success';
+
+                html += `
+                    <div class="card">
+                        <div class="card-content">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                                <div style="width: 20px; height: 20px; border-radius: 50%; background: ${budget.category_color};"></div>
+                                <h4 style="margin: 0;">${budget.category_name}</h4>
+                            </div>
+                            
+                            <div style="text-align: center; margin-bottom: 16px;">
+                                <div style="font-size: 2.5rem; font-weight: 700; color: var(--${statusClass}-color);">
+                                    ${budget.percentage_used.toFixed(1)}%
+                                </div>
+                                <div class="text-muted">do orçamento usado</div>
+                            </div>
+                            
+                            <div class="progress-bar progress-${statusClass}" style="height: 12px; margin-bottom: 16px;">
+                                <div class="progress-fill" style="width: ${Math.min(budget.percentage_used, 100)}%;"></div>
+                            </div>
+                            
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.875rem;">
+                                <div>
+                                    <div class="text-muted">Gasto</div>
+                                    <div style="font-weight: 600; color: var(--error-color);">
+                                        ${api.formatCurrency(budget.spent_amount)}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="text-muted">Orçado</div>
+                                    <div style="font-weight: 600;">
+                                        ${api.formatCurrency(budget.amount)}
+                                    </div>
+                                </div>
+                                <div style="grid-column: 1 / -1;">
+                                    <div class="text-muted">Restante</div>
+                                    <div style="font-weight: 600; color: ${budget.remaining_amount >= 0 ? 'var(--success-color)' : 'var(--error-color)'};">
+                                        ${api.formatCurrency(budget.remaining_amount)}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Carregar análise avançada
+        async function loadBudgetAnalysis() {
+            try {
+                const response = await api.getBudgetProgressAnalysis(currentMonth);
+                const budgets = response.budgets || [];
+
+                const container = document.getElementById('budgets-analysis');
+
+                if (!budgets || budgets.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🔍</div>
+                            <p>Nenhuma análise disponível</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                budgets.forEach(budget => {
+                    html += `
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h4 class="card-title" style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="width: 16px; height: 16px; border-radius: 50%; background: ${budget.category_color};"></div>
+                                    ${budget.category_name}
+                                    <span class="badge badge-${budget.alert_level}">${budget.alert_level.toUpperCase()}</span>
+                                </h4>
+                            </div>
+                            <div class="card-content">
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                                    <div>
+                                        <div class="text-muted">Média Diária</div>
+                                        <div style="font-weight: 600;">${api.formatCurrency(budget.daily_average_spent)}</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-muted">Projeção Mensal</div>
+                                        <div style="font-weight: 600;">${api.formatCurrency(budget.projected_monthly_spending)}</div>
+                                    </div>
+                                    <div>
+                                        <div class="text-muted">Possível Excesso</div>
+                                        <div style="font-weight: 600; color: ${budget.projected_overspend > 0 ? 'var(--error-color)' : 'var(--success-color)'};">
+                                            ${api.formatCurrency(budget.projected_overspend)}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="text-muted">Dias até Limite</div>
+                                        <div style="font-weight: 600;">${budget.days_until_limit} dias</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="alert alert-info mb-3">
+                                    <strong>Análise:</strong> ${budget.alert_message}
+                                </div>
+                                
+                                <div>
+                                    <strong>Tendência:</strong> 
+                                    <span class="badge badge-info">${budget.trend_analysis}</span>
+                                </div>
+                                
+                                ${budget.recommendations && budget.recommendations.length > 0 ? `
+                                <div style="margin-top: 16px;">
+                                    <strong>Recomendações:</strong>
+                                    <ul style="margin-top: 8px;">
+                                        ${budget.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                                    </ul>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Erro ao carregar análise:', error);
+                document.getElementById('budgets-analysis').innerHTML = `
+                    <div class="alert alert-error">
+                        Erro ao carregar análise avançada
+                    </div>
+                `;
+            }
+        }
+
+        // Carregar status do orçamento
+        async function loadBudgetStatus() {
+            try {
+                const status = await api.getBudgetStatus(currentMonth);
+
+                if (status && status.summary) {
+                    const summary = status.summary;
+                    
+                    document.getElementById('total-budgeted').textContent = api.formatCurrency(summary.total_budgeted);
+                    document.getElementById('total-spent').textContent = api.formatCurrency(summary.total_spent);
+                    document.getElementById('budget-count').textContent = summary.total_budgets;
+
+                    const remaining = summary.total_remaining;
+                    const remainingElement = document.getElementById('total-remaining');
+                    remainingElement.textContent = api.formatCurrency(remaining);
+
+                    if (remaining >= 0) {
+                        remainingElement.className = 'metric-value text-success';
+                    } else {
+                        remainingElement.className = 'metric-value text-error';
+                    }
+                }
+
+            } catch (error) {
+                console.error('Erro ao carregar status:', error);
+            }
+        }
+
+        // Mostrar/ocultar abas
+        function showTab(tabName) {
+            // Atualizar botões
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+
+            // Mostrar conteúdo
+            document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+            document.getElementById(`tab-content-${tabName}`).style.display = 'block';
+
+            // Carregar dados específicos se necessário
+            if (tabName === 'analysis') {
+                loadBudgetAnalysis();
+            }
+        }
+
+        // Mostrar formulário de orçamento
+        function showBudgetForm(budget = null) {
+            currentEditingId = budget ? budget.id : null;
+            
+            document.getElementById('budget-modal-title').textContent = budget ? 'Editar Orçamento' : 'Novo Orçamento';
+            document.getElementById('budget-submit-text').textContent = budget ? 'Atualizar' : 'Salvar';
+
+            if (budget) {
+                document.getElementById('budget-category').value = budget.category;
+                document.getElementById('budget-amount').value = budget.amount;
+                document.getElementById('budget-month').value = budget.month;
+            } else {
+                document.getElementById('budget-form').reset();
+                document.getElementById('budget-month').value = currentMonth;
+                loadAvailableCategories();
+            }
+
+            document.getElementById('budget-modal').style.display = 'flex';
+        }
+
+        // Ocultar formulário
+        function hideBudgetForm() {
+            document.getElementById('budget-modal').style.display = 'none';
+            currentEditingId = null;
+        }
+
+        // Editar orçamento
+        async function editBudget(id) {
+            try {
+                const response = await api.getBudgets({ month: currentMonth });
+                const budgets = response.results || response;
+                const budget = budgets.find(b => b.id === id);
+                
+                if (budget) {
+                    showBudgetForm(budget);
+                }
+            } catch (error) {
+                showMessage('Erro ao carregar orçamento para edição', 'error');
+            }
+        }
+
+        // Excluir orçamento
+        async function deleteBudget(id) {
+            if (!confirm('Tem certeza que deseja excluir este orçamento?')) {
+                return;
+            }
+
+            try {
+                await api.deleteBudget(id);
+                showMessage('Orçamento excluído com sucesso!', 'success');
+                await loadBudgets();
+                await loadBudgetStatus();
+                await loadAvailableCategories();
+            } catch (error) {
+                showMessage(`Erro ao excluir orçamento: ${error.message}`, 'error');
+            }
+        }
+
+        // Gerar alertas
+        async function generateAlerts() {
+            try {
+                showMessage('Gerando alertas automáticos...', 'info');
+                
+                const result = await api.generateBudgetAlerts();
+                
+                showMessage(`${result.total_alerts_generated} alertas gerados/atualizados`, 'success');
+                
+                // Recarregar dados
+                await loadBudgets();
+                
+            } catch (error) {
+                console.error('Erro ao gerar alertas:', error);
+                showMessage('Erro ao gerar alertas automáticos', 'error');
+            }
+        }
+
+        // Submeter formulário
+        document.getElementById('budget-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = {
+                category: parseInt(document.getElementById('budget-category').value),
+                amount: parseFloat(document.getElementById('budget-amount').value),
+                month: document.getElementById('budget-month').value + '-01'
+            };
+
+            try {
+                if (currentEditingId) {
+                    await api.updateBudget(currentEditingId, formData);
+                    showMessage('Orçamento atualizado com sucesso!', 'success');
+                } else {
+                    await api.createBudget(formData);
+                    showMessage('Orçamento criado com sucesso!', 'success');
+                }
+
+                hideBudgetForm();
+                await loadBudgets();
+                await loadBudgetStatus();
+                await loadAvailableCategories();
+
+            } catch (error) {
+                showMessage(`Erro ao salvar orçamento: ${error.message}`, 'error');
+            }
+        });
+
+        // Estilos adicionais
+        const additionalStyles = `
+            .tabs {
+                display: flex;
+                gap: 8px;
+                border-bottom: 1px solid var(--border-color);
+                margin-bottom: 0;
+            }
+            .tab-button {
+                padding: 12px 20px;
+                border: none;
+                background: none;
+                color: var(--text-secondary);
+                cursor: pointer;
+                border-bottom: 2px solid transparent;
+                transition: all 0.2s ease;
+            }
+            .tab-button:hover {
+                color: var(--primary-color);
+            }
+            .tab-button.active {
+                color: var(--primary-color);
+                border-bottom-color: var(--primary-color);
+            }
+            .modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            }
+            .modal-content {
+                max-width: 500px;
+                width: 90%;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+        `;
+        
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = additionalStyles;
+        document.head.appendChild(styleSheet);
+    </script>
+</body>
+</html>

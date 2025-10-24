@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Relatórios - Nossa Grana</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <main class="main-content" style="margin-left: 0; padding: 20px;">
+            <h1>Teste de APIs de Relatórios</h1>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3>Teste Manual das APIs</h3>
+                </div>
+                <div class="card-content">
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                        <button class="btn btn-primary" onclick="testSummaryAPI()">Testar Summary</button>
+                        <button class="btn btn-primary" onclick="testCategoryAPI()">Testar Category Breakdown</button>
+                        <button class="btn btn-primary" onclick="testTrendAPI()">Testar Monthly Trend</button>
+                        <button class="btn btn-primary" onclick="testPatternsAPI()">Testar Spending Patterns</button>
+                    </div>
+                    
+                    <div id="results" style="background: #f5f5f5; padding: 15px; border-radius: 5px; min-height: 200px;">
+                        <p>Clique nos botões acima para testar as APIs...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        function showResult(title, data, error = null) {
+            const resultsDiv = document.getElementById('results');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            let html = `<div style="margin-bottom: 15px; padding: 10px; border-left: 3px solid ${error ? '#f44336' : '#4caf50'};">`;
+            html += `<h4>${title} - ${timestamp}</h4>`;
+            
+            if (error) {
+                html += `<p style="color: #f44336;"><strong>Erro:</strong> ${error}</p>`;
+            } else {
+                html += `<pre style="background: white; padding: 10px; border-radius: 3px; overflow-x: auto;">${JSON.stringify(data, null, 2)}</pre>`;
+            }
+            
+            html += `</div>`;
+            resultsDiv.innerHTML = html + resultsDiv.innerHTML;
+        }
+
+        async function testSummaryAPI() {
+            try {
+                console.log('Testando Summary API...');
+                const response = await fetch('/api/reports/summary/?period=current_month', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                showResult('Summary API', data);
+            } catch (error) {
+                console.error('Erro na Summary API:', error);
+                showResult('Summary API', null, error.message);
+            }
+        }
+
+        async function testCategoryAPI() {
+            try {
+                console.log('Testando Category Breakdown API...');
+                const response = await fetch('/api/reports/category-breakdown/?period=current_month&type=expense', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                showResult('Category Breakdown API', data);
+            } catch (error) {
+                console.error('Erro na Category API:', error);
+                showResult('Category Breakdown API', null, error.message);
+            }
+        }
+
+        async function testTrendAPI() {
+            try {
+                console.log('Testando Monthly Trend API...');
+                const response = await fetch('/api/reports/monthly-trend/?months=6', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                showResult('Monthly Trend API', data);
+            } catch (error) {
+                console.error('Erro na Trend API:', error);
+                showResult('Monthly Trend API', null, error.message);
+            }
+        }
+
+        async function testPatternsAPI() {
+            try {
+                console.log('Testando Spending Patterns API...');
+                const response = await fetch('/api/reports/spending-patterns/?type=weekly&period=last_90_days', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                showResult('Spending Patterns API', data);
+            } catch (error) {
+                console.error('Erro na Patterns API:', error);
+                showResult('Spending Patterns API', null, error.message);
+            }
+        }
+
+        // Verificar se está logado
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                document.getElementById('results').innerHTML = `
+                    <div style="color: #f44336; text-align: center; padding: 20px;">
+                        <h3>⚠️ Não autenticado</h3>
+                        <p>Você precisa fazer login primeiro.</p>
+                        <a href="index.html" class="btn btn-primary">Ir para Login</a>
+                    </div>
+                `;
+            } else {
+                document.getElementById('results').innerHTML = `
+                    <div style="color: #4caf50; text-align: center; padding: 20px;">
+                        <h3>✅ Autenticado</h3>
+                        <p>Token encontrado. Clique nos botões acima para testar as APIs.</p>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

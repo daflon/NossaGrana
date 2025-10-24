@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartões de Crédito Melhorados - Nossa Grana</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/credit-cards-enhanced.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos específicos para demonstração */
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: var(--bg-secondary);
+            min-height: 100vh;
+        }
+        
+        .demo-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--bg-primary);
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .demo-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .demo-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Modal com fundo opaco */
+        .modal {
+            background-color: #2d3748 !important;
+        }
+        
+        /* Melhor contraste para valores */
+        .limit-value, .usage-percentage, .cycle-value {
+            font-weight: 700 !important;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+        }
+        
+        .limit-label, .usage-label, .cycle-label {
+            font-weight: 600 !important;
+            color: var(--text-primary) !important;
+        }
+        
+        /* Cards grid para demonstração */
+        .demo-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1 class="demo-title">Cartões de Crédito Melhorados</h1>
+            <p class="demo-subtitle">Demonstração das melhorias implementadas: contraste aprimorado, datas calculadas e modal com fundo opaco</p>
+        </div>
+
+        <!-- Cards de demonstração -->
+        <div class="demo-cards-grid" id="demo-cards">
+            <!-- Cards serão inseridos aqui via JavaScript -->
+        </div>
+
+        <!-- Botão para testar modal -->
+        <div style="text-align: center; margin-top: 3rem;">
+            <button class="btn btn-primary" onclick="showTestModal()">
+                <span class="btn-icon">➕</span>
+                Testar Modal com Fundo Opaco
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de teste -->
+    <div class="modal" id="test-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Novo Cartão - Fundo Opaco</h3>
+                <button class="modal-close" onclick="closeTestModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="test-card-name">Nome do Cartão *</label>
+                        <input type="text" id="test-card-name" class="form-input" value="Cartão Teste" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="test-card-bank">Banco *</label>
+                        <input type="text" id="test-card-bank" class="form-input" value="Banco Exemplo" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="test-credit-limit">Limite de Crédito *</label>
+                        <input type="number" id="test-credit-limit" class="form-input" value="5000" step="0.01" min="0.01" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="test-closing-day">Dia de Fechamento da Fatura *</label>
+                        <select id="test-closing-day" class="form-select" required>
+                            <option value="">Selecione o dia</option>
+                            <option value="29" selected>29</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="test-due-day">Dia de Vencimento da Fatura *</label>
+                        <select id="test-due-day" class="form-select" required>
+                            <option value="">Selecione o dia</option>
+                            <option value="5" selected>5</option>
+                        </select>
+                        <small style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.5rem; display: block;">
+                            ✅ Agora permite ciclos que cruzam meses (Ex: Fecha dia 29, Vence dia 5)
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" checked>
+                            <span class="checkmark"></span>
+                            Cartão ativo
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeTestModal()">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-primary">
+                    Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados de demonstração
+        const demoCards = [
+            {
+                id: 1,
+                name: 'Cartão Visa Gold',
+                bank: 'Banco do Brasil',
+                credit_limit: 3000.00,
+                available_limit: 2866.10,
+                usage_percentage: 4.46,
+                closing_day: 29,
+                due_day: 5,
+                is_active: true
+            },
+            {
+                id: 2,
+                name: 'Mastercard Platinum',
+                bank: 'Itaú',
+                credit_limit: 8000.00,
+                available_limit: 1500.00,
+                usage_percentage: 81.25,
+                closing_day: 15,
+                due_day: 25,
+                is_active: true
+            },
+            {
+                id: 3,
+                name: 'Cartão Elo',
+                bank: 'Caixa Econômica',
+                credit_limit: 2500.00,
+                available_limit: 2300.00,
+                usage_percentage: 8.0,
+                closing_day: 10,
+                due_day: 20,
+                is_active: true
+            }
+        ];
+
+        // Calcular próximas datas do ciclo
+        function calculateCycleDates(closingDay, dueDay) {
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            
+            // Próximo fechamento
+            let nextClosing = new Date(currentYear, currentMonth, closingDay);
+            if (nextClosing <= today) {
+                nextClosing = new Date(currentYear, currentMonth + 1, closingDay);
+            }
+            
+            // Próximo vencimento (pode ser no mês seguinte ao fechamento)
+            let nextDue = new Date(nextClosing.getFullYear(), nextClosing.getMonth(), dueDay);
+            if (dueDay <= closingDay) {
+                // Vencimento no mês seguinte ao fechamento
+                nextDue = new Date(nextClosing.getFullYear(), nextClosing.getMonth() + 1, dueDay);
+            }
+            
+            // Melhor dia para compra (dia seguinte ao fechamento)
+            const bestPurchase = new Date(nextClosing);
+            bestPurchase.setDate(bestPurchase.getDate() + 1);
+            
+            return {
+                nextClosing,
+                nextDue,
+                bestPurchase
+            };
+        }
+
+        // Formatar data para DD/MMM
+        function formatDateShort(date) {
+            const months = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 
+                           'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = months[date.getMonth()];
+            return `${day}/${month}`;
+        }
+
+        // Formatar moeda
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(amount || 0);
+        }
+
+        // Criar card de cartão de crédito
+        function createCreditCardCard(card) {
+            const usagePercentage = card.usage_percentage || 0;
+            const usageClass = usagePercentage >= 80 ? 'danger' : usagePercentage >= 60 ? 'warning' : 'success';
+            
+            // Calcular datas do ciclo
+            const cycleDates = calculateCycleDates(card.closing_day, card.due_day);
+            
+            return `
+                <div class="credit-card-item ${card.is_active ? '' : 'inactive'}">
+                    <div class="card-header">
+                        <div class="card-icon">💳</div>
+                        <div class="card-info">
+                            <h4 class="card-name">${card.name}</h4>
+                            <p class="card-bank">${card.bank}</p>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn-icon" title="Ver Relatório">
+                                📊
+                            </button>
+                            <button class="btn-icon" title="Editar">
+                                ✏️
+                            </button>
+                            <button class="btn-icon" title="Excluir">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="card-limits">
+                        <div class="limit-info">
+                            <div class="limit-label">Limite Total</div>
+                            <div class="limit-value">${formatCurrency(card.credit_limit)}</div>
+                        </div>
+                        <div class="limit-info">
+                            <div class="limit-label">Disponível</div>
+                            <div class="limit-value available">${formatCurrency(card.available_limit)}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="usage-section">
+                        <div class="usage-header">
+                            <span class="usage-label">Uso do Limite</span>
+                            <span class="usage-percentage ${usageClass}">${usagePercentage.toFixed(1)}%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill ${usageClass}" style="width: ${Math.min(usagePercentage, 100)}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-cycle">
+                        <div class="cycle-row">
+                            <div class="cycle-info">
+                                <span class="cycle-label">Próximo Fechamento:</span>
+                                <span class="cycle-value">${formatDateShort(cycleDates.nextClosing)}</span>
+                            </div>
+                        </div>
+                        <div class="cycle-row">
+                            <div class="cycle-info">
+                                <span class="cycle-label">Próximo Vencimento:</span>
+                                <span class="cycle-value">${formatDateShort(cycleDates.nextDue)}</span>
+                            </div>
+                        </div>
+                        <div class="cycle-row">
+                            <div class="cycle-info best-purchase">
+                                <span class="cycle-label">Melhor Compra:</span>
+                                <span class="cycle-value best">${formatDateShort(cycleDates.bestPurchase)}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <div class="card-status">
+                            <span class="status-indicator ${card.is_active ? 'active' : 'inactive'}">
+                                ${card.is_active ? '🟢 Ativo' : '🔴 Inativo'}
+                            </span>
+                        </div>
+                        <button class="btn btn-sm btn-secondary">
+                            Ver Detalhes
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Renderizar cards de demonstração
+        function renderDemoCards() {
+            const container = document.getElementById('demo-cards');
+            container.innerHTML = demoCards.map(card => createCreditCardCard(card)).join('');
+        }
+
+        // Mostrar modal de teste
+        function showTestModal() {
+            const modal = document.getElementById('test-modal');
+            modal.style.display = 'flex';
+        }
+
+        // Fechar modal de teste
+        function closeTestModal() {
+            const modal = document.getElementById('test-modal');
+            modal.style.display = 'none';
+        }
+
+        // Fechar modal ao clicar fora
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('test-modal');
+            if (event.target === modal) {
+                closeTestModal();
+            }
+        });
+
+        // Inicializar demonstração
+        document.addEventListener('DOMContentLoaded', function() {
+            renderDemoCards();
+        });
+    </script>
+</body>
+</html>

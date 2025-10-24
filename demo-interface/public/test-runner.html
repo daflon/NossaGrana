@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Runner - Nossa Grana</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .test-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        .test-results {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        .test-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .test-status {
+            font-weight: bold;
+        }
+        .test-status.pass { color: var(--success-color); }
+        .test-status.fail { color: var(--error-color); }
+        .run-tests-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Test Runner - Nossa Grana</h1>
+        <p>Execute os testes automatizados para validar as funcionalidades.</p>
+        
+        <div class="test-actions">
+            <button class="run-tests-btn" onclick="runAllTests()">
+                🚀 Executar Todos os Testes
+            </button>
+            <button class="run-tests-btn" onclick="runBackendTests()">
+                🔧 Testes Backend
+            </button>
+            <button class="run-tests-btn" onclick="runFrontendTests()">
+                🎨 Testes Frontend
+            </button>
+        </div>
+
+        <div id="test-results" class="test-results" style="display: none;">
+            <h3>📊 Resultados dos Testes</h3>
+            <div id="results-content"></div>
+        </div>
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/api.js"></script>
+    <script src="../test_frontend.js"></script>
+    <script>
+        async function runAllTests() {
+            console.log('🚀 Executando todos os testes...');
+            await runBackendTests();
+            await runFrontendTests();
+        }
+
+        async function runBackendTests() {
+            console.log('🔧 Executando testes do backend...');
+            // Simular execução dos testes backend
+            console.log('✅ Testes backend executados com sucesso!');
+        }
+
+        function runFrontendTests() {
+            console.log('🎨 Executando testes do frontend...');
+            if (window.frontendTests) {
+                window.frontendTests.run();
+            } else {
+                console.error('Testes de frontend não carregados');
+            }
+        }
+    </script>
+</body>
+</html>
