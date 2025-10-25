@@ -68,11 +68,19 @@ class AccountViewSet(viewsets.ModelViewSet):
         """
         accounts = self.get_queryset().filter(is_active=True)
         
+        # Calcular patrimônio líquido disponível (contas positivas)
+        net_worth = sum(account.current_balance for account in accounts if account.current_balance > 0)
+        
+        # Calcular passivo total (contas negativas)
+        total_debt = sum(abs(account.current_balance) for account in accounts if account.current_balance < 0)
+        
         total_balance = sum(account.current_balance for account in accounts)
         
         summary_data = {
             'total_accounts': accounts.count(),
             'total_balance': total_balance,
+            'net_worth': net_worth,
+            'total_debt': total_debt,
             'total_balance_formatted': f'R$ {total_balance:,.2f}'.replace(',', 'X').replace('.', ',').replace('X', '.'),
             'accounts_by_type': {}
         }

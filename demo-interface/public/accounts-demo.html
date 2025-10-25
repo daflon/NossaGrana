@@ -3,138 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contas Bancárias - Demo</title>
+    <title>Demonstração - Página de Contas Refatorada - Nossa Grana</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos específicos para demonstração */
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: var(--bg-secondary);
+            min-height: 100vh;
+        }
+        
+        .demo-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--bg-primary);
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .demo-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .demo-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        
+        .demo-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .demo-feature {
+            background: var(--success-color);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 3rem 0 1.5rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+    </style>
 </head>
 <body>
-    <div class="app-container">
-        <aside class="sidebar">
-            <div class="logo">
-                <div class="logo-icon">NG</div>
-                <div class="logo-text">Nossa Grana</div>
+    <div class="demo-container">
+        <!-- Header da Demonstração -->
+        <div class="demo-header">
+            <h1 class="demo-title">📊 Página de Contas Refatorada</h1>
+            <p class="demo-subtitle">Demonstração das melhorias implementadas na hierarquia do patrimônio e ações rápidas</p>
+            
+            <div class="demo-features">
+                <div class="demo-feature">✅ Patrimônio Líquido Disponível</div>
+                <div class="demo-feature">⚠️ Passivo Total (Dívidas)</div>
+                <div class="demo-feature">🏦 Agregação por Tipo</div>
+                <div class="demo-feature">⚡ Ações Rápidas</div>
+                <div class="demo-feature">🚨 Alertas Visuais</div>
             </div>
-            <nav>
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="dashboard.html" class="nav-link">
-                            <span class="nav-icon">📊</span>
-                            Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="accounts.html" class="nav-link active">
-                            <span class="nav-icon">🏦</span>
-                            Contas
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </aside>
+        </div>
 
-        <main class="main-content">
-            <div class="page-header">
-                <div>
-                    <h1 class="page-title">Contas Bancárias</h1>
-                    <p class="page-subtitle">Demonstração do sistema de contas</p>
-                </div>
+        <!-- Seção 1: Hierarquia do Patrimônio -->
+        <h2 class="section-title">1. Hierarquia do Patrimônio (Top Cards Refatorados)</h2>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Hierarquia do Patrimônio</h3>
             </div>
-
-            <!-- Resumo -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Resumo Geral</h3>
-                </div>
-                <div class="card-content">
-                    <div class="summary-cards">
-                        <div class="summary-card">
-                            <div class="summary-icon">🏦</div>
-                            <div class="summary-content">
-                                <div class="summary-label">Total de Contas</div>
-                                <div class="summary-value">4</div>
-                            </div>
+            <div class="card-content">
+                <div class="summary-cards">
+                    <div class="summary-card primary">
+                        <div class="summary-icon">💎</div>
+                        <div class="summary-content">
+                            <div class="summary-label">Patrimônio Líquido Disponível</div>
+                            <div class="summary-value positive">R$ 33.871,50</div>
+                            <div class="summary-subtitle">Soma das contas positivas</div>
                         </div>
-                        <div class="summary-card">
-                            <div class="summary-icon">💰</div>
-                            <div class="summary-content">
-                                <div class="summary-label">Saldo Total</div>
-                                <div class="summary-value">R$ 33.871,50</div>
-                            </div>
+                    </div>
+
+                    <div class="summary-card danger alert">
+                        <div class="summary-icon">⚠️</div>
+                        <div class="summary-content">
+                            <div class="summary-label">Passivo Total (Dívidas)</div>
+                            <div class="summary-value negative">R$ 450,75</div>
+                            <div class="summary-subtitle">Contas negativas/cheque especial</div>
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-icon">🏦</div>
+                        <div class="summary-content">
+                            <div class="summary-label">Total Contas Correntes</div>
+                            <div class="summary-value">R$ 3.799,75</div>
+                            <div class="summary-subtitle">Agregado por tipo</div>
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="summary-icon">🏛️</div>
+                        <div class="summary-content">
+                            <div class="summary-label">Total Poupança/Investimento</div>
+                            <div class="summary-value">R$ 29.301,00</div>
+                            <div class="summary-subtitle">Poupança + Investimentos</div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Lista de Contas -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Suas Contas</h3>
+        <!-- Seção 2: Cards Individuais com Ações Rápidas -->
+        <h2 class="section-title">2. Cards Individuais com Ações Rápidas e Alertas</h2>
+        
+        <div class="accounts-grid">
+            <!-- Card Normal -->
+            <div class="account-card">
+                <div class="account-header">
+                    <div class="account-icon">🏦</div>
+                    <div class="account-info">
+                        <h4 class="account-name">Conta Corrente Principal</h4>
+                        <p class="account-type">Conta Corrente</p>
+                        <p class="account-bank">Banco do Brasil</p>
+                    </div>
+                    <div class="account-actions">
+                        <button class="btn-icon" title="Ver Relatório">📊</button>
+                        <button class="btn-icon" title="Editar">✏️</button>
+                        <button class="btn-icon" title="Excluir">🗑️</button>
+                    </div>
                 </div>
-                <div class="card-content">
-                    <div class="accounts-grid" id="accounts-container">
-                        <!-- Contas serão inseridas aqui -->
+                
+                <div class="account-balance">
+                    <div class="balance-label">Saldo Atual</div>
+                    <div class="balance-value positive">R$ 4.250,50</div>
+                </div>
+                
+                <div class="quick-actions">
+                    <div class="quick-actions-label">Ações Rápidas:</div>
+                    <div class="quick-actions-buttons">
+                        <button class="btn btn-sm btn-success" title="Adicionar Receita">
+                            <span class="btn-icon">+</span>
+                            Receita
+                        </button>
+                        <button class="btn btn-sm btn-danger" title="Adicionar Despesa">
+                            <span class="btn-icon">-</span>
+                            Despesa
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="account-footer">
+                    <div class="account-status">
+                        <span class="status-indicator active">🟢 Ativa</span>
+                    </div>
+                    <button class="btn btn-sm btn-secondary">Ver Detalhes</button>
+                </div>
+            </div>
+
+            <!-- Card com Alerta (Saldo Negativo) -->
+            <div class="account-card alert-card">
+                <div class="account-header">
+                    <div class="account-icon">🏦</div>
+                    <div class="account-info">
+                        <h4 class="account-name">Conta Corrente Itaú</h4>
+                        <p class="account-type">Conta Corrente</p>
+                        <p class="account-bank">Itaú</p>
+                    </div>
+                    <div class="account-actions">
+                        <button class="btn-icon" title="Ver Relatório">📊</button>
+                        <button class="btn-icon" title="Editar">✏️</button>
+                        <button class="btn-icon" title="Excluir">🗑️</button>
+                    </div>
+                </div>
+                
+                <div class="account-balance">
+                    <div class="balance-label">Saldo Atual</div>
+                    <div class="balance-value negative">R$ -450,75</div>
+                    <div class="alert-badge">⚠️ Alerta: Cheque Especial</div>
+                </div>
+                
+                <div class="quick-actions">
+                    <div class="quick-actions-label">Ações Rápidas:</div>
+                    <div class="quick-actions-buttons">
+                        <button class="btn btn-sm btn-success" title="Adicionar Receita">
+                            <span class="btn-icon">+</span>
+                            Receita
+                        </button>
+                        <button class="btn btn-sm btn-danger" title="Adicionar Despesa">
+                            <span class="btn-icon">-</span>
+                            Despesa
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="account-footer">
+                    <div class="account-status">
+                        <span class="status-indicator active">🟢 Ativa</span>
+                    </div>
+                    <button class="btn btn-sm btn-secondary">Ver Detalhes</button>
+                </div>
+            </div>
+
+            <!-- Card de Poupança -->
+            <div class="account-card">
+                <div class="account-header">
+                    <div class="account-icon">🏛️</div>
+                    <div class="account-info">
+                        <h4 class="account-name">Poupança</h4>
+                        <p class="account-type">Poupança</p>
+                        <p class="account-bank">Caixa Econômica</p>
+                    </div>
+                    <div class="account-actions">
+                        <button class="btn-icon" title="Ver Relatório">📊</button>
+                        <button class="btn-icon" title="Editar">✏️</button>
+                        <button class="btn-icon" title="Excluir">🗑️</button>
+                    </div>
+                </div>
+                
+                <div class="account-balance">
+                    <div class="balance-label">Saldo Atual</div>
+                    <div class="balance-value positive">R$ 12.500,75</div>
+                </div>
+                
+                <div class="quick-actions">
+                    <div class="quick-actions-label">Ações Rápidas:</div>
+                    <div class="quick-actions-buttons">
+                        <button class="btn btn-sm btn-success" title="Adicionar Receita">
+                            <span class="btn-icon">+</span>
+                            Receita
+                        </button>
+                        <button class="btn btn-sm btn-danger" title="Adicionar Despesa">
+                            <span class="btn-icon">-</span>
+                            Despesa
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="account-footer">
+                    <div class="account-status">
+                        <span class="status-indicator active">🟢 Ativa</span>
+                    </div>
+                    <button class="btn btn-sm btn-secondary">Ver Detalhes</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção 3: Botão de Nova Conta -->
+        <h2 class="section-title">3. Botão de Ação Principal</h2>
+        
+        <div class="card">
+            <div class="card-content" style="text-align: center; padding: 2rem;">
+                <button class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 2rem;">
+                    <span class="btn-icon">➕</span>
+                    Adicionar Nova Conta
+                </button>
+                <p style="margin-top: 1rem; color: var(--text-secondary);">
+                    Botão claramente visível no topo da lista para facilitar a criação de novas contas
+                </p>
+            </div>
+        </div>
+
+        <!-- Seção 4: Resumo das Melhorias -->
+        <h2 class="section-title">4. Resumo das Melhorias Implementadas</h2>
+        
+        <div class="card">
+            <div class="card-content">
+                <div class="summary-cards">
+                    <div class="summary-card" style="border-left: 4px solid var(--success-color);">
+                        <div class="summary-icon">✅</div>
+                        <div class="summary-content">
+                            <div class="summary-label">Hierarquia Clara</div>
+                            <div class="summary-value" style="color: var(--success-color);">Implementada</div>
+                            <div class="summary-subtitle">Patrimônio líquido vs passivo total</div>
+                        </div>
+                    </div>
+
+                    <div class="summary-card" style="border-left: 4px solid var(--success-color);">
+                        <div class="summary-icon">⚡</div>
+                        <div class="summary-content">
+                            <div class="summary-label">Ações Rápidas</div>
+                            <div class="summary-value" style="color: var(--success-color);">Implementada</div>
+                            <div class="summary-subtitle">Botões + e - em cada conta</div>
+                        </div>
+                    </div>
+
+                    <div class="summary-card" style="border-left: 4px solid var(--success-color);">
+                        <div class="summary-icon">🚨</div>
+                        <div class="summary-content">
+                            <div class="summary-label">Alertas Visuais</div>
+                            <div class="summary-value" style="color: var(--success-color);">Implementada</div>
+                            <div class="summary-subtitle">Saldos negativos em destaque</div>
+                        </div>
+                    </div>
+
+                    <div class="summary-card" style="border-left: 4px solid var(--success-color);">
+                        <div class="summary-icon">📊</div>
+                        <div class="summary-content">
+                            <div class="summary-label">Agregação</div>
+                            <div class="summary-value" style="color: var(--success-color);">Implementada</div>
+                            <div class="summary-subtitle">Valores por tipo de conta</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
+
+        <!-- Footer da Demonstração -->
+        <div style="text-align: center; margin-top: 3rem; padding: 2rem; background: var(--bg-primary); border-radius: 12px;">
+            <h3 style="color: var(--primary-color); margin-bottom: 1rem;">🎉 Página de Contas Refatorada com Sucesso!</h3>
+            <p style="color: var(--text-secondary); font-size: 1.1rem;">
+                Todas as especificações foram implementadas: hierarquia do patrimônio, ações rápidas, alertas visuais e melhor organização.
+            </p>
+        </div>
     </div>
 
     <script src="js/theme.js"></script>
-    <script>
-        // Dados de demonstração
-        const demoAccounts = [
-            {
-                id: 1,
-                name: 'Conta Corrente Principal',
-                type: 'checking',
-                bank: 'Banco do Brasil',
-                current_balance: 4250.50,
-                is_active: true
-            },
-            {
-                id: 2,
-                name: 'Poupança',
-                type: 'savings',
-                bank: 'Caixa Econômica',
-                current_balance: 12500.75,
-                is_active: true
-            }
-        ];
-
-        // Renderizar contas
-        function renderAccounts() {
-            const container = document.getElementById('accounts-container');
-            const typeIcons = {
-                checking: '🏦',
-                savings: '🏛️'
-            };
-            
-            container.innerHTML = demoAccounts.map(account => `
-                <div class="account-card">
-                    <div class="account-header">
-                        <div class="account-icon">${typeIcons[account.type]}</div>
-                        <div class="account-info">
-                            <h4 class="account-name">${account.name}</h4>
-                            <p class="account-type">${account.type === 'checking' ? 'Conta Corrente' : 'Poupança'}</p>
-                            <p class="account-bank">${account.bank}</p>
-                        </div>
-                    </div>
-                    <div class="account-balance">
-                        <div class="balance-label">Saldo Atual</div>
-                        <div class="balance-value positive">
-                            R$ ${account.current_balance.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
-                        </div>
-                    </div>
-                    <div class="account-footer">
-                        <div class="account-status">
-                            <span class="status-indicator active">🟢 Ativa</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Inicializar
-        document.addEventListener('DOMContentLoaded', renderAccounts);
-    </script>
 </body>
 </html>

@@ -84,14 +84,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
         'OPTIONS': {
             'timeout': 30,
-            'init_command': (
-                "PRAGMA encoding='UTF-8';"
-                "PRAGMA journal_mode=WAL;"
-                "PRAGMA synchronous=NORMAL;"
-                "PRAGMA cache_size=10000;"
-                "PRAGMA temp_store=MEMORY;"
-                "PRAGMA mmap_size=268435456;"
-            ),
         },
         'CONN_MAX_AGE': 600,
     }

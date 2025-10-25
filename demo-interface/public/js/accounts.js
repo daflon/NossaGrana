@@ -70,8 +70,10 @@ async function loadAccounts() {
         showLoading(true);
         
         // Carregar contas da API
-        const response = await api.request('/financial/accounts/');
+        const response = await api.getAccounts();
         accountsState.accounts = response.results || response;
+        
+        console.log('Contas carregadas:', accountsState.accounts);
         
         // Carregar resumo
         await loadAccountsSummary();
@@ -85,6 +87,7 @@ async function loadAccounts() {
         
         // Usar dados mockados para demonstração
         loadMockAccounts();
+        calculateLocalSummary();
     } finally {
         showLoading(false);
     }
@@ -93,7 +96,7 @@ async function loadAccounts() {
 // Carregar resumo das contas
 async function loadAccountsSummary() {
     try {
-        const response = await api.request('/financial/accounts/summary/');
+        const response = await api.getAccountsSummary();
         updateSummaryCards(response);
     } catch (error) {
         console.error('Erro ao carregar resumo:', error);
@@ -104,13 +107,35 @@ async function loadAccountsSummary() {
 
 // Atualizar cards de resumo
 function updateSummaryCards(summary) {
-    const totalAccountsEl = document.getElementById('total-accounts');
-    const totalBalanceEl = document.getElementById('total-balance');
+    const netWorthEl = document.getElementById('net-worth');
+    const totalDebtEl = document.getElementById('total-debt');
     const checkingBalanceEl = document.getElementById('checking-balance');
-    const savingsBalanceEl = document.getElementById('savings-balance');
+    const savingsInvestmentBalanceEl = document.getElementById('savings-investment-balance');
+    const debtCard = document.getElementById('debt-card');
     
-    if (totalAccountsEl) totalAccountsEl.textContent = summary.total_accounts || 0;
-    if (totalBalanceEl) totalBalanceEl.textContent = summary.total_balance_formatted || 'R$ 0,00';
+    // Calcular patrimônio líquido disponível (contas positivas)
+    const netWorth = summary.net_worth || 0;
+    if (netWorthEl) {
+        netWorthEl.textContent = formatCurrency(netWorth);
+        netWorthEl.className = `summary-value ${netWorth >= 0 ? 'positive' : 'negative'}`;
+    }
+    
+    // Calcular passivo total (contas negativas)
+    const totalDebt = summary.total_debt || 0;
+    if (totalDebtEl) {
+        totalDebtEl.textContent = formatCurrency(Math.abs(totalDebt));
+        totalDebtEl.className = `summary-value ${totalDebt > 0 ? 'negative' : 'neutral'}`;
+    }
+    
+    // Mostrar/ocultar card de dívidas baseado na existência de passivos
+    if (debtCard) {
+        if (totalDebt > 0) {
+            debtCard.style.display = 'flex';
+            debtCard.classList.add('alert');
+        } else {
+            debtCard.style.display = 'none';
+        }
+    }
     
     // Atualizar por tipo
     const accountsByType = summary.accounts_by_type || {};
@@ -118,16 +143,30 @@ function updateSummaryCards(summary) {
         const checking = accountsByType['Conta Corrente'];
         checkingBalanceEl.textContent = checking ? formatCurrency(checking.total_balance) : 'R$ 0,00';
     }
-    if (savingsBalanceEl) {
-        const savings = accountsByType['Poupança'];
-        savingsBalanceEl.textContent = savings ? formatCurrency(savings.total_balance) : 'R$ 0,00';
+    if (savingsInvestmentBalanceEl) {
+        const savings = accountsByType['Poupança'] || { total_balance: 0 };
+        const investment = accountsByType['Investimento'] || { total_balance: 0 };
+        const total = savings.total_balance + investment.total_balance;
+        savingsInvestmentBalanceEl.textContent = formatCurrency(total);
     }
 }
 
 // Calcular resumo localmente
 function calculateLocalSummary() {
     const activeAccounts = accountsState.accounts.filter(acc => acc.is_active);
-    const totalBalance = activeAccounts.reduce((sum, acc) => sum + parseFloat(acc.current_balance || 0), 0);
+    
+    // Calcular patrimônio líquido disponível (contas positivas)
+    const netWorth = activeAccounts
+        .filter(acc => parseFloat(acc.current_balance || 0) > 0)
+        .reduce((sum, acc) => sum + parseFloat(acc.current_balance || 0), 0);
+    
+    console.log('Contas ativas:', activeAccounts);
+    console.log('Patrimônio líquido calculado:', netWorth);
+    
+    // Calcular passivo total (contas negativas)
+    const totalDebt = activeAccounts
+        .filter(acc => parseFloat(acc.current_balance || 0) < 0)
+        .reduce((sum, acc) => sum + Math.abs(parseFloat(acc.current_balance || 0)), 0);
     
     const checkingBalance = activeAccounts
         .filter(acc => acc.type === 'checking')
@@ -137,12 +176,17 @@ function calculateLocalSummary() {
         .filter(acc => acc.type === 'savings')
         .reduce((sum, acc) => sum + parseFloat(acc.current_balance || 0), 0);
     
+    const investmentBalance = activeAccounts
+        .filter(acc => acc.type === 'investment')
+        .reduce((sum, acc) => sum + parseFloat(acc.current_balance || 0), 0);
+    
     updateSummaryCards({
-        total_accounts: activeAccounts.length,
-        total_balance_formatted: formatCurrency(totalBalance),
+        net_worth: netWorth,
+        total_debt: totalDebt,
         accounts_by_type: {
             'Conta Corrente': { total_balance: checkingBalance },
-            'Poupança': { total_balance: savingsBalance }
+            'Poupança': { total_balance: savingsBalance },
+            'Investimento': { total_balance: investmentBalance }
         }
     });
 }
@@ -197,10 +241,12 @@ function createAccountCard(account) {
         cash: 'Dinheiro'
     };
     
-    const balanceClass = parseFloat(account.current_balance) >= 0 ? 'positive' : 'negative';
+    const currentBalance = parseFloat(account.current_balance || 0);
+    const balanceClass = currentBalance >= 0 ? 'positive' : 'negative';
+    const isNegative = currentBalance < 0;
     
     return `
-        <div class="account-card ${account.is_active ? '' : 'inactive'}">
+        <div class="account-card ${account.is_active ? '' : 'inactive'} ${isNegative ? 'alert-card' : ''}">
             <div class="account-header">
                 <div class="account-icon">${typeIcons[account.type] || '🏦'}</div>
                 <div class="account-info">
@@ -225,6 +271,21 @@ function createAccountCard(account) {
                 <div class="balance-label">Saldo Atual</div>
                 <div class="balance-value ${balanceClass}">
                     ${account.balance_formatted || formatCurrency(account.current_balance)}
+                </div>
+                ${isNegative ? '<div class="alert-badge">⚠️ Alerta: Cheque Especial</div>' : ''}
+            </div>
+            
+            <div class="quick-actions">
+                <div class="quick-actions-label">Ações Rápidas:</div>
+                <div class="quick-actions-buttons">
+                    <button class="btn btn-sm btn-success" onclick="showQuickTransaction(${account.id}, 'income')" title="Adicionar Receita">
+                        <span class="btn-icon">+</span>
+                        Receita
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="showQuickTransaction(${account.id}, 'expense')" title="Adicionar Despesa">
+                        <span class="btn-icon">-</span>
+                        Despesa
+                    </button>
                 </div>
             </div>
             
@@ -306,17 +367,11 @@ async function saveAccount() {
         let response;
         if (accountsState.editingId) {
             // Atualizar conta existente
-            response = await api.request(`/financial/accounts/${accountsState.editingId}/`, {
-                method: 'PUT',
-                body: JSON.stringify(accountData)
-            });
+            response = await api.updateAccount(accountsState.editingId, accountData);
             showMessage('Conta atualizada com sucesso!', 'success');
         } else {
             // Criar nova conta
-            response = await api.request('/financial/accounts/', {
-                method: 'POST',
-                body: JSON.stringify(accountData)
-            });
+            response = await api.createAccount(accountData);
             showMessage('Conta criada com sucesso!', 'success');
         }
         
@@ -395,9 +450,7 @@ async function confirmDelete() {
     if (!accountsState.currentAccount) return;
     
     try {
-        await api.request(`/financial/accounts/${accountsState.currentAccount.id}/`, {
-            method: 'DELETE'
-        });
+        await api.deleteAccount(accountsState.currentAccount.id);
         
         showMessage('Conta excluída com sucesso!', 'success');
         closeDeleteModal();
@@ -425,7 +478,7 @@ Saldo Inicial: ${formatCurrency(account.initial_balance)}
 Saldo Atual: ${formatCurrency(account.current_balance)}
 Status: ${account.is_active ? 'Ativa' : 'Inativa'}
 
-Criada em: ${new Date(account.created_at).toLocaleDateString('pt-BR')}
+Criada em: ${account.created_at ? new Date(account.created_at).toLocaleDateString('pt-BR') : 'Não informado'}
     `);
 }
 
@@ -455,7 +508,7 @@ function loadMockAccounts() {
             current_balance: 4250.50,
             balance_formatted: 'R$ 4.250,50',
             is_active: true,
-            created_at: '2024-01-15T10:00:00Z'
+            created_at: new Date().toISOString()
         },
         {
             id: 2,
@@ -467,7 +520,7 @@ function loadMockAccounts() {
             current_balance: 12500.75,
             balance_formatted: 'R$ 12.500,75',
             is_active: true,
-            created_at: '2024-01-10T14:30:00Z'
+            created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
         },
         {
             id: 3,
@@ -479,10 +532,22 @@ function loadMockAccounts() {
             current_balance: 16800.25,
             balance_formatted: 'R$ 16.800,25',
             is_active: true,
-            created_at: '2024-02-01T09:15:00Z'
+            created_at: new Date(Date.now() - 22 * 24 * 60 * 60 * 1000).toISOString()
         },
         {
             id: 4,
+            name: 'Conta Corrente Itaú',
+            type: 'checking',
+            type_display: 'Conta Corrente',
+            bank: 'Itaú',
+            initial_balance: 1000.00,
+            current_balance: -450.75,
+            balance_formatted: 'R$ -450,75',
+            is_active: true,
+            created_at: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString()
+        },
+        {
+            id: 5,
             name: 'Dinheiro',
             type: 'cash',
             type_display: 'Dinheiro',
@@ -491,7 +556,7 @@ function loadMockAccounts() {
             current_balance: 320.00,
             balance_formatted: 'R$ 320,00',
             is_active: true,
-            created_at: '2024-01-01T00:00:00Z'
+            created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
         }
     ];
     
@@ -817,9 +882,307 @@ function notifyBalanceUpdate() {
 // Fechar modal ao clicar fora
 window.addEventListener('click', function(event) {
     const transferModal = document.getElementById('transfer-modal');
+    const quickTransactionModal = document.getElementById('quick-transaction-modal');
+    
     if (event.target === transferModal) {
         closeTransferModal();
     }
+    if (event.target === quickTransactionModal) {
+        closeQuickTransactionModal();
+    }
 });
+
+// Funções de Transação Rápida
+let quickTransactionState = {
+    selectedAccountId: null,
+    selectedType: null,
+    categories: []
+};
+
+// Mostrar modal de transação rápida
+function showQuickTransaction(accountId, type) {
+    const account = accountsState.accounts.find(acc => acc.id === accountId);
+    if (!account) {
+        showMessage('Conta não encontrada', 'error');
+        return;
+    }
+    
+    quickTransactionState.selectedAccountId = accountId;
+    quickTransactionState.selectedType = type;
+    
+    const modal = document.getElementById('quick-transaction-modal');
+    const title = document.getElementById('quick-transaction-title');
+    const form = document.getElementById('quick-transaction-form');
+    const typeSelect = document.getElementById('quick-transaction-type');
+    const accountSelect = document.getElementById('quick-transaction-account');
+    
+    // Resetar formulário
+    form.reset();
+    clearQuickTransactionErrors();
+    
+    // Configurar título e tipo
+    const typeLabel = type === 'income' ? 'Receita' : 'Despesa';
+    title.textContent = `Nova ${typeLabel} - ${account.name}`;
+    typeSelect.value = type;
+    
+    // Configurar conta (pré-selecionada e desabilitada)
+    accountSelect.innerHTML = `<option value="${accountId}">${account.name}</option>`;
+    accountSelect.value = accountId;
+    
+    // Configurar data atual
+    document.getElementById('quick-transaction-date').value = new Date().toISOString().split('T')[0];
+    
+    // Carregar categorias
+    loadQuickTransactionCategories();
+    
+    modal.style.display = 'flex';
+}
+
+// Fechar modal de transação rápida
+function closeQuickTransactionModal() {
+    const modal = document.getElementById('quick-transaction-modal');
+    modal.style.display = 'none';
+    quickTransactionState.selectedAccountId = null;
+    quickTransactionState.selectedType = null;
+}
+
+// Carregar categorias para transação rápida
+async function loadQuickTransactionCategories() {
+    const categorySelect = document.getElementById('quick-transaction-category');
+    
+    try {
+        const response = await api.getCategories();
+        quickTransactionState.categories = response.results || response;
+        
+        categorySelect.innerHTML = '<option value="">Selecione uma categoria</option>';
+        quickTransactionState.categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.textContent = category.name;
+            categorySelect.appendChild(option);
+        });
+        
+    } catch (error) {
+        console.error('Erro ao carregar categorias:', error);
+        // Usar categorias mockadas
+        loadMockCategories();
+    }
+}
+
+// Carregar categorias mockadas
+function loadMockCategories() {
+    const mockCategories = [
+        { id: 1, name: 'Alimentação' },
+        { id: 2, name: 'Transporte' },
+        { id: 3, name: 'Saúde' },
+        { id: 4, name: 'Educação' },
+        { id: 5, name: 'Lazer' },
+        { id: 6, name: 'Casa' },
+        { id: 7, name: 'Salário' },
+        { id: 8, name: 'Freelance' },
+        { id: 9, name: 'Investimentos' },
+        { id: 10, name: 'Outros' }
+    ];
+    
+    const categorySelect = document.getElementById('quick-transaction-category');
+    categorySelect.innerHTML = '<option value="">Selecione uma categoria</option>';
+    
+    mockCategories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.id;
+        option.textContent = category.name;
+        categorySelect.appendChild(option);
+    });
+    
+    quickTransactionState.categories = mockCategories;
+}
+
+// Salvar transação rápida
+async function saveQuickTransaction() {
+    const saveBtn = document.getElementById('quick-save-btn-text');
+    
+    // Coletar dados do formulário
+    const transactionData = {
+        type: document.getElementById('quick-transaction-type').value,
+        amount: parseFloat(document.getElementById('quick-transaction-amount').value) || 0,
+        description: document.getElementById('quick-transaction-description').value.trim(),
+        category: parseInt(document.getElementById('quick-transaction-category').value),
+        account: parseInt(quickTransactionState.selectedAccountId),
+        date: document.getElementById('quick-transaction-date').value
+    };
+    
+    // Validar dados
+    if (!validateQuickTransactionForm(transactionData)) {
+        return;
+    }
+    
+    try {
+        saveBtn.textContent = 'Salvando...';
+        
+        console.log('Enviando dados da transação:', transactionData);
+        
+        // Verificar se temos token de autenticação
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            // Simular sucesso para demonstração
+            console.log('Sem token - simulando transação para demonstração');
+            await simulateQuickTransaction(transactionData);
+            return;
+        }
+        
+        // Fazer requisição para API
+        const response = await api.createTransaction(transactionData);
+        
+        const typeLabel = transactionData.type === 'income' ? 'Receita' : 'Despesa';
+        showMessage(`${typeLabel} adicionada com sucesso!`, 'success');
+        
+        // Fechar modal
+        closeQuickTransactionModal();
+        
+        // Recarregar dados das contas
+        await loadAccounts();
+        
+        // Notificar outras páginas sobre mudança nos saldos
+        notifyBalanceUpdate();
+        
+    } catch (error) {
+        console.error('Erro ao salvar transação:', error);
+        console.error('Dados enviados:', transactionData);
+        
+        // Tentar simular se for erro de API
+        if (error.message.includes('405') || error.message.includes('404') || error.message.includes('fetch')) {
+            console.log('Erro de API - simulando transação para demonstração');
+            await simulateQuickTransaction(transactionData);
+            return;
+        }
+        
+        if (error.message.includes('400')) {
+            try {
+                const errorData = JSON.parse(error.message.split(': ')[1]);
+                showQuickTransactionErrors(errorData);
+            } catch {
+                showMessage('Dados inválidos. Verifique os campos e tente novamente.', 'error');
+            }
+        } else {
+            showMessage('Erro ao salvar transação: ' + error.message, 'error');
+        }
+    } finally {
+        saveBtn.textContent = 'Salvar';
+    }
+}
+
+// Simular transação para demonstração
+async function simulateQuickTransaction(transactionData) {
+    // Simular delay da API
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Encontrar a conta
+    const account = accountsState.accounts.find(acc => acc.id === transactionData.account);
+    if (!account) {
+        showMessage('Conta não encontrada', 'error');
+        return;
+    }
+    
+    // Atualizar saldo localmente
+    const amount = transactionData.amount;
+    if (transactionData.type === 'income') {
+        account.current_balance = parseFloat(account.current_balance) + amount;
+    } else {
+        account.current_balance = parseFloat(account.current_balance) - amount;
+    }
+    
+    // Atualizar formato
+    account.balance_formatted = formatCurrency(account.current_balance);
+    
+    const typeLabel = transactionData.type === 'income' ? 'Receita' : 'Despesa';
+    showMessage(`${typeLabel} adicionada com sucesso! (Modo demonstração)`, 'success');
+    
+    // Fechar modal
+    closeQuickTransactionModal();
+    
+    // Recarregar dados das contas
+    renderAccountsList();
+    calculateLocalSummary();
+    
+    // Notificar outras páginas sobre mudança nos saldos
+    notifyBalanceUpdate();
+}
+
+// Validar formulário de transação rápida
+function validateQuickTransactionForm(data) {
+    clearQuickTransactionErrors();
+    let isValid = true;
+    
+    if (!data.amount || data.amount <= 0) {
+        showQuickTransactionFieldError('quick-amount-error', 'Valor deve ser maior que zero');
+        isValid = false;
+    }
+    
+    if (!data.description) {
+        showQuickTransactionFieldError('quick-description-error', 'Descrição é obrigatória');
+        isValid = false;
+    }
+    
+    if (!data.category) {
+        showQuickTransactionFieldError('quick-category-error', 'Categoria é obrigatória');
+        isValid = false;
+    }
+    
+    if (!data.date) {
+        showQuickTransactionFieldError('quick-date-error', 'Data é obrigatória');
+        isValid = false;
+    }
+    
+    return isValid;
+}
+
+// Limpar erros de transação rápida
+function clearQuickTransactionErrors() {
+    const errorElements = ['quick-amount-error', 'quick-description-error', 'quick-category-error', 'quick-account-error', 'quick-date-error'];
+    errorElements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = '';
+    });
+}
+
+// Mostrar erro em campo específico
+function showQuickTransactionFieldError(fieldId, message) {
+    const errorElement = document.getElementById(fieldId);
+    if (errorElement) {
+        errorElement.textContent = message;
+    }
+}
+
+// Mostrar erros do servidor
+function showQuickTransactionErrors(errors) {
+    Object.keys(errors).forEach(field => {
+        let errorId = '';
+        switch (field) {
+            case 'amount':
+                errorId = 'quick-amount-error';
+                break;
+            case 'description':
+                errorId = 'quick-description-error';
+                break;
+            case 'category':
+                errorId = 'quick-category-error';
+                break;
+            case 'account':
+                errorId = 'quick-account-error';
+                break;
+            case 'date':
+                errorId = 'quick-date-error';
+                break;
+            case 'non_field_errors':
+                showMessage(Array.isArray(errors[field]) ? errors[field][0] : errors[field], 'error');
+                return;
+        }
+        
+        if (errorId) {
+            const message = Array.isArray(errors[field]) ? errors[field][0] : errors[field];
+            showQuickTransactionFieldError(errorId, message);
+        }
+    });
+}
 
 console.log('Accounts.js carregado com sucesso!');

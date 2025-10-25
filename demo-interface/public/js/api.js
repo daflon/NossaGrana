@@ -60,13 +60,15 @@ class ApiClient {
             const data = await response.json();
             
             if (!response.ok) {
-                throw new Error(data.message || data.error || `HTTP ${response.status}`);
+                const errorMessage = data.message || data.error || data.detail || `HTTP ${response.status}: ${JSON.stringify(data)}`;
+                throw new Error(errorMessage);
             }
             
             return data;
         } else {
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                const errorText = await response.text();
+                throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
             }
             return response;
         }
@@ -257,6 +259,36 @@ class ApiClient {
     async getReports() {
         // Placeholder - será implementado quando a API de relatórios estiver pronta
         return { results: [] };
+    }
+
+    // === CONTAS FINANCEIRAS ===
+    
+    async getAccounts() {
+        return await this.request('/financial/accounts/');
+    }
+
+    async createAccount(accountData) {
+        return await this.request('/financial/accounts/', {
+            method: 'POST',
+            body: JSON.stringify(accountData)
+        });
+    }
+
+    async updateAccount(id, accountData) {
+        return await this.request(`/financial/accounts/${id}/`, {
+            method: 'PUT',
+            body: JSON.stringify(accountData)
+        });
+    }
+
+    async deleteAccount(id) {
+        return await this.request(`/financial/accounts/${id}/`, {
+            method: 'DELETE'
+        });
+    }
+
+    async getAccountsSummary() {
+        return await this.request('/financial/accounts/summary/');
     }
 
     // === UTILITÁRIOS ===
