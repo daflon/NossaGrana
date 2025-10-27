@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Container } from '@mui/material';
 import { AuthProvider } from './hooks/useAuth';
-import { NotificationProvider } from './components/common/NotificationSystem';
+import { NotificationProvider } from './components/common/NotificationSystemFixed';
 import Header from './components/common/Header';
 import Login from './pages/Login';
 import Register from './pages/Register';

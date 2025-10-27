@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações - Nossa Grana</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">NG</div>
+                <div class="logo-text">Nossa Grana</div>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <span class="nav-icon">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="transactions.html" class="nav-link">
+                            <span class="nav-icon">💰</span>
+                            Transações
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="accounts.html" class="nav-link">
+                            <span class="nav-icon">🏦</span>
+                            Contas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="credit-cards.html" class="nav-link">
+                            <span class="nav-icon">💳</span>
+                            Cartões
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="budgets.html" class="nav-link">
+                            <span class="nav-icon">📋</span>
+                            Orçamentos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="reports.html" class="nav-link">
+                            <span class="nav-icon">📈</span>
+                            Relatórios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="goals.html" class="nav-link">
+                            <span class="nav-icon">🎯</span>
+                            Metas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="settings.html" class="nav-link active">
+                            <span class="nav-icon">⚙️</span>
+                            Configurações
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <span>🚪</span>
+                    Sair
+                </button>
+            </div>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <!-- Header Global -->
+            <div class="global-header">
+                <div class="header-left">
+                    <h1 class="page-title">Configurações</h1>
+                    <p class="page-subtitle">Gerencie suas preferências e dados pessoais</p>
+                </div>
+                <div class="header-right">
+                    <!-- Notificações -->
+                    <div class="notification-bell" onclick="toggleNotifications()">
+                        <span class="bell-icon">🔔</span>
+                        <span class="notification-count" id="notification-count">3</span>
+                    </div>
+                    
+                    <!-- Perfil do Usuário -->
+                    <div class="user-profile" onclick="toggleUserMenu()">
+                        <div class="user-avatar">👤</div>
+                        <span class="user-name" id="user-display-name">Usuário</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    
+                    <!-- Theme Toggle -->
+                    <div class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+                        <span class="theme-icon light">☀️</span>
+                        <div class="theme-toggle-switch"></div>
+                        <span class="theme-icon dark">🌙</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dropdown de Notificações -->
+            <div class="notifications-dropdown" id="notifications-dropdown" style="display: none;">
+                <div class="dropdown-header">
+                    <h4>Notificações</h4>
+                    <button class="btn-link" onclick="markAllAsRead()">Marcar todas como lidas</button>
+                </div>
+                <div class="notifications-list" id="notifications-list">
+                    <!-- Notificações serão carregadas aqui -->
+                </div>
+            </div>
+
+            <!-- Dropdown do Usuário -->
+            <div class="user-dropdown" id="user-dropdown" style="display: none;">
+                <a href="settings.html" class="dropdown-item">
+                    <span>⚙️</span>
+                    Configurações
+                </a>
+                <a href="#" onclick="showBackupSection()" class="dropdown-item">
+                    <span>💾</span>
+                    Backup
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="#" onclick="logout()" class="dropdown-item">
+                    <span>🚪</span>
+                    Sair
+                </a>
+            </div>
+
+            <!-- Configurações do Usuário -->
+            <div class="settings-container">
+                <div class="settings-tabs">
+                    <button class="settings-tab active" onclick="switchSettingsTab('profile')">
+                        👤 Perfil Básico
+                    </button>
+                    <button class="settings-tab" onclick="switchSettingsTab('security')">
+                        🔒 Segurança
+                    </button>
+                    <button class="settings-tab" onclick="switchSettingsTab('preferences')">
+                        ⚙️ Preferências do Sistema
+                    </button>
+                </div>
+
+                <!-- Aba Perfil Básico -->
+                <div class="settings-content active" id="profile-settings">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Informações Pessoais</h3>
+                            <p class="card-subtitle">Altere seu nome e e-mail</p>
+                        </div>
+                        <div class="card-content">
+                            <form id="profile-form">
+                                <div class="form-group">
+                                    <label class="form-label" for="user-name">Nome Completo</label>
+                                    <input type="text" id="user-name" class="form-input" placeholder="Digite seu nome completo" required>
+                                    <div class="error-message" id="name-error"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="user-email">E-mail</label>
+                                    <input type="email" id="user-email" class="form-input" placeholder="Digite seu e-mail" required>
+                                    <div class="error-message" id="email-error"></div>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">
+                                        <span id="save-profile-text">💾 Salvar Alterações</span>
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="resetProfileForm()">
+                                        ❌ Cancelar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aba Segurança -->
+                <div class="settings-content" id="security-settings">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Alterar Senha</h3>
+                            <p class="card-subtitle">Mantenha sua conta segura alterando sua senha regularmente</p>
+                        </div>
+                        <div class="card-content">
+                            <form id="security-form">
+                                <div class="form-group">
+                                    <label class="form-label" for="current-password">Senha Atual</label>
+                                    <input type="password" id="current-password" class="form-input" placeholder="Digite sua senha atual">
+                                    <div class="error-message" id="current-password-error"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="new-password">Nova Senha</label>
+                                    <input type="password" id="new-password" class="form-input" placeholder="Digite a nova senha">
+                                    <div class="form-help">A senha deve ter pelo menos 8 caracteres</div>
+                                    <div class="error-message" id="new-password-error"></div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="confirm-password">Confirmar Nova Senha</label>
+                                    <input type="password" id="confirm-password" class="form-input" placeholder="Confirme a nova senha">
+                                    <div class="error-message" id="confirm-password-error"></div>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">
+                                        <span id="save-security-text">🔒 Alterar Senha</span>
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="resetSecurityForm()">
+                                        ❌ Cancelar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aba Preferências do Sistema -->
+                <div class="settings-content" id="preferences-settings">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Preferências de Interface</h3>
+                            <p class="card-subtitle">Personalize a aparência e comportamento do sistema</p>
+                        </div>
+                        <div class="card-content">
+                            <form id="preferences-form">
+                                <div class="form-group">
+                                    <label class="form-label">Tema da Interface</label>
+                                    <div class="theme-selector">
+                                        <label class="radio-option">
+                                            <input type="radio" name="theme" value="light" checked>
+                                            <span class="radio-custom"></span>
+                                            <span class="radio-label">☀️ Modo Claro</span>
+                                        </label>
+                                        <label class="radio-option">
+                                            <input type="radio" name="theme" value="dark">
+                                            <span class="radio-custom"></span>
+                                            <span class="radio-label">🌙 Modo Escuro</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label" for="default-currency">Moeda Padrão</label>
+                                    <select id="default-currency" class="form-select">
+                                        <option value="BRL" selected>💰 Real Brasileiro (R$)</option>
+                                        <option value="USD">💵 Dólar Americano ($)</option>
+                                        <option value="EUR">💶 Euro (€)</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Notificações</label>
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-option">
+                                            <input type="checkbox" id="budget-alerts" checked>
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-label">🚨 Alertas de Orçamento</span>
+                                        </label>
+                                        <label class="checkbox-option">
+                                            <input type="checkbox" id="goal-updates" checked>
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-label">🎯 Atualizações de Metas</span>
+                                        </label>
+                                        <label class="checkbox-option">
+                                            <input type="checkbox" id="transaction-alerts">
+                                            <span class="checkbox-custom"></span>
+                                            <span class="checkbox-label">💳 Alertas de Transação</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">
+                                        <span id="save-preferences-text">⚙️ Salvar Preferências</span>
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="resetPreferencesForm()">
+                                        🔄 Restaurar Padrões
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </main>
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/settings.js"></script>
+</body>
+</html>

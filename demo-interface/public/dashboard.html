@@ -79,12 +79,14 @@
 
         <!-- Conteúdo Principal -->
         <main class="main-content">
-            <div class="page-header">
-                <div>
+            <!-- Header Global -->
+            <div class="global-header">
+                <div class="header-left">
                     <h1 class="page-title">Dashboard Financeiro</h1>
                     <p class="page-subtitle">Visão geral completa das suas finanças</p>
                 </div>
-                <div class="header-actions">
+                <div class="header-right">
+                    <!-- Ações Rápidas -->
                     <button class="btn btn-primary" onclick="window.location.href='/transactions'">
                         <span class="btn-icon">💰</span>
                         Nova Transação
@@ -93,6 +95,38 @@
                         <span class="btn-icon">🔄</span>
                         Atualizar
                     </button>
+                    
+                    <!-- Perfil do Usuário -->
+                    <div class="user-profile-dropdown">
+                        <div class="user-profile-trigger" onclick="toggleUserMenu()">
+                            <div class="user-avatar">A</div>
+                            <span class="dropdown-arrow">▼</span>
+                        </div>
+                        
+                        <!-- Dropdown Menu -->
+                        <div class="user-dropdown" id="user-dropdown" style="display: none;">
+                            <div class="user-info">
+                                <div class="user-greeting">Olá, Laura Daflon</div>
+                                <div class="user-email">laura@email.com</div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="settings.html" class="dropdown-item">
+                                <span class="dropdown-icon">⚙️</span>
+                                Configurações de Usuário
+                            </a>
+                            <a href="#" onclick="performManualBackup()" class="dropdown-item">
+                                <span class="dropdown-icon">💾</span>
+                                Backup Manual
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" onclick="logout()" class="dropdown-item logout">
+                                <span class="dropdown-icon">🚪</span>
+                                Sair / Logout
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Theme Toggle -->
                     <div class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
                         <span class="theme-icon light">☀️</span>
                         <div class="theme-toggle-switch"></div>
@@ -274,6 +308,51 @@
     <script src="js/theme.js"></script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/notifications.js"></script>
+    <script>
+        // Função para toggle do menu do usuário
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('user-dropdown');
+            const isVisible = dropdown.style.display !== 'none';
+            dropdown.style.display = isVisible ? 'none' : 'block';
+        }
+        
+        // Fechar dropdown ao clicar fora
+        document.addEventListener('click', function(event) {
+            const userProfile = document.querySelector('.user-profile-dropdown');
+            const dropdown = document.getElementById('user-dropdown');
+            
+            if (!userProfile.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+        
+        // Função de backup manual
+        async function performManualBackup() {
+            try {
+                showMessage('Iniciando backup manual...', 'info');
+                
+                // Simular backup
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                const backupData = {
+                    userData: { name: 'Laura Daflon', email: 'laura@email.com' },
+                    timestamp: new Date().toISOString(),
+                    version: '1.0'
+                };
+                
+                localStorage.setItem('lastBackup', JSON.stringify(backupData));
+                localStorage.setItem('lastBackupDate', new Date().toISOString());
+                
+                showMessage('Backup realizado com sucesso!', 'success');
+                toggleUserMenu();
+                
+            } catch (error) {
+                console.error('Erro no backup:', error);
+                showMessage('Erro ao realizar backup', 'error');
+            }
+        }
+    </script>
     <style>
         .sparkline {
             height: 30px;

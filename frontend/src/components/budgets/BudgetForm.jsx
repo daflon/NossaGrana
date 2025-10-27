@@ -38,7 +38,6 @@ const BudgetForm = ({
   const [formErrors, setFormErrors] = useState({});
   
   const isEditing = Boolean(budget);
-  const currentMonth = budgetService.getCurrentMonth();
   
   // Hook para categorias disponíveis (apenas para criação)
   const { 

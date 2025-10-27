@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Debug - Nossa Grana</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .warning { background-color: #fff3cd; color: #856404; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Debug - Nossa Grana Frontend</h1>
+        
+        <div id="status"></div>
+        
+        <h2>Testes de Conectividade</h2>
+        <div id="tests"></div>
+        
+        <h2>Informações do Sistema</h2>
+        <div id="system-info"></div>
+        
+        <h2>Console Logs</h2>
+        <pre id="console-logs"></pre>
+    </div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const testsDiv = document.getElementById('tests');
+        const systemInfoDiv = document.getElementById('system-info');
+        const consoleLogsDiv = document.getElementById('console-logs');
+        
+        let logs = [];
+        
+        // Capturar logs do console
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        console.log = function(...args) {
+            logs.push(`[LOG] ${new Date().toISOString()}: ${args.join(' ')}`);
+            updateConsoleLogs();
+            originalLog.apply(console, args);
+        };
+        
+        console.error = function(...args) {
+            logs.push(`[ERROR] ${new Date().toISOString()}: ${args.join(' ')}`);
+            updateConsoleLogs();
+            originalError.apply(console, args);
+        };
+        
+        console.warn = function(...args) {
+            logs.push(`[WARN] ${new Date().toISOString()}: ${args.join(' ')}`);
+            updateConsoleLogs();
+            originalWarn.apply(console, args);
+        };
+        
+        function updateConsoleLogs() {
+            consoleLogsDiv.textContent = logs.join('\n');
+        }
+        
+        function addStatus(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            statusDiv.appendChild(div);
+        }
+        
+        function addTest(name, result, details = '') {
+            const div = document.createElement('div');
+            div.className = `status ${result ? 'success' : 'error'}`;
+            div.innerHTML = `<strong>${name}:</strong> ${result ? 'OK' : 'FALHOU'} ${details}`;
+            testsDiv.appendChild(div);
+        }
+        
+        // Informações do sistema
+        systemInfoDiv.innerHTML = `
+            <div class="status info">
+                <strong>User Agent:</strong> ${navigator.userAgent}<br>
+                <strong>URL:</strong> ${window.location.href}<br>
+                <strong>Protocolo:</strong> ${window.location.protocol}<br>
+                <strong>Host:</strong> ${window.location.host}<br>
+                <strong>Porta:</strong> ${window.location.port || 'padrão'}<br>
+                <strong>Timestamp:</strong> ${new Date().toISOString()}
+            </div>
+        `;
+        
+        // Testes básicos
+        addStatus('Iniciando testes de diagnóstico...', 'info');
+        
+        // Teste 1: JavaScript básico
+        try {
+            const test = [1, 2, 3].map(x => x * 2);
+            addTest('JavaScript básico', test.length === 3);
+        } catch (e) {
+            addTest('JavaScript básico', false, e.message);
+        }
+        
+        // Teste 2: LocalStorage
+        try {
+            localStorage.setItem('test', 'value');
+            const value = localStorage.getItem('test');
+            localStorage.removeItem('test');
+            addTest('LocalStorage', value === 'value');
+        } catch (e) {
+            addTest('LocalStorage', false, e.message);
+        }
+        
+        // Teste 3: Fetch API
+        addTest('Fetch API disponível', typeof fetch !== 'undefined');
+        
+        // Teste 4: Conectividade com backend
+        async function testBackend() {
+            try {
+                console.log('Testando conectividade com backend...');
+                const response = await fetch('http://localhost:8000/api/auth/login/', {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                addTest('Backend conectividade (OPTIONS)', response.status < 500, `Status: ${response.status}`);
+                
+                // Teste POST para login (deve falhar mas não dar erro de CORS)
+                try {
+                    const loginResponse = await fetch('http://localhost:8000/api/auth/login/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            email: 'test@test.com',
+                            password: 'test123'
+                        })
+                    });
+                    addTest('Backend POST (login)', true, `Status: ${loginResponse.status} - ${loginResponse.statusText}`);
+                } catch (e) {
+                    addTest('Backend POST (login)', false, e.message);
+                }
+                
+            } catch (e) {
+                addTest('Backend conectividade', false, e.message);
+                console.error('Erro ao testar backend:', e);
+            }
+        }
+        
+        // Teste 5: React/JSX support (simulado)
+        try {
+            const reactTest = React || 'React não carregado';
+            addTest('React disponível', typeof React !== 'undefined');
+        } catch (e) {
+            addTest('React disponível', false, 'React não está carregado nesta página');
+        }
+        
+        // Executar teste de backend
+        testBackend();
+        
+        // Teste de erro intencional para verificar captura
+        setTimeout(() => {
+            console.log('Teste de log normal');
+            console.warn('Teste de warning');
+            console.error('Teste de erro (intencional)');
+        }, 1000);
+        
+        addStatus('Diagnóstico concluído. Verifique os resultados acima.', 'success');
+    </script>
+</body>
+</html>

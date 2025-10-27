@@ -12,12 +12,12 @@ from pathlib import Path
 def print_header(title):
     """Imprimir cabeçalho formatado"""
     print("\n" + "=" * 60)
-    print(f"🧪 {title}")
+    print(f"[TESTE] {title}")
     print("=" * 60)
 
 def print_section(title):
     """Imprimir seção formatada"""
-    print(f"\n📋 {title}")
+    print(f"\n[SECAO] {title}")
     print("-" * 40)
 
 def run_command(command, cwd=None):
@@ -48,19 +48,19 @@ def test_backend():
         return False
     
     # Executar testes abrangentes
-    print("🔧 Executando testes abrangentes...")
+    print("[INFO] Executando testes abrangentes...")
     success, stdout, stderr = run_command("python test_simple.py", cwd="backend")
     
     if success:
-        print("✅ Testes do backend APROVADOS")
+        print("[OK] Testes do backend APROVADOS")
         # Mostrar apenas as linhas importantes
         lines = stdout.split('\n')
         for line in lines:
-            if any(marker in line for marker in ['✅', '❌', '🎉', '⚠️', 'PASSOU', 'FALHOU']):
+            if any(marker in line for marker in ['OK', 'ERRO', 'PASSOU', 'FALHOU']):
                 print(f"   {line}")
         return True
     else:
-        print("❌ Testes do backend FALHARAM")
+        print("[ERRO] Testes do backend FALHARAM")
         if stderr:
             print(f"Erro: {stderr}")
         return False
@@ -71,7 +71,7 @@ def test_frontend_structure():
     
     frontend_dir = Path("demo-interface/public")
     if not frontend_dir.exists():
-        print("❌ Diretório frontend não encontrado")
+        print("[ERRO] Diretório frontend não encontrado")
         return False
     
     # Arquivos essenciais que devem existir
@@ -98,13 +98,13 @@ def test_frontend_structure():
         if not full_path.exists():
             missing_files.append(file_path)
         else:
-            print(f"✅ {file_path}")
+            print(f"[OK] {file_path}")
     
     if missing_files:
-        print(f"❌ Arquivos ausentes: {', '.join(missing_files)}")
+        print(f"[ERRO] Arquivos ausentes: {', '.join(missing_files)}")
         return False
     
-    print("✅ Estrutura do frontend VÁLIDA")
+    print("[OK] Estrutura do frontend VÁLIDA")
     return True
 
 def test_server_startup():
@@ -114,25 +114,25 @@ def test_server_startup():
     # Verificar se o servidor pode ser iniciado
     server_dir = Path("demo-interface")
     if not server_dir.exists():
-        print("❌ Diretório do servidor não encontrado")
+        print("[ERRO] Diretório do servidor não encontrado")
         return False
     
     # Verificar se package.json existe
     package_json = server_dir / "package.json"
     if not package_json.exists():
-        print("❌ package.json não encontrado")
+        print("[ERRO] package.json não encontrado")
         return False
     
-    print("✅ Arquivos do servidor encontrados")
+    print("[OK] Arquivos do servidor encontrados")
     
     # Verificar se server.js existe
     server_js = server_dir / "server.js"
     if not server_js.exists():
-        print("❌ server.js não encontrado")
+        print("[ERRO] server.js não encontrado")
         return False
     
-    print("✅ server.js encontrado")
-    print("✅ Servidor pode ser iniciado com 'node server.js'")
+    print("[OK] server.js encontrado")
+    print("[OK] Servidor pode ser iniciado com 'node server.js'")
     return True
 
 def test_api_endpoints():
@@ -152,31 +152,31 @@ def test_api_endpoints():
     for url_file in url_files:
         file_path = backend_dir / url_file
         if file_path.exists():
-            print(f"✅ {url_file}")
+            print(f"[OK] {url_file}")
         else:
-            print(f"❌ {url_file} não encontrado")
+            print(f"[ERRO] {url_file} não encontrado")
             return False
     
-    print("✅ Endpoints da API definidos")
+    print("[OK] Endpoints da API definidos")
     return True
 
 def test_database_migrations():
     """Verificar se as migrações estão atualizadas"""
     print_section("VERIFICAÇÃO DAS MIGRAÇÕES DO BANCO")
     
-    print("🔧 Verificando migrações...")
+    print("[INFO] Verificando migrações...")
     success, stdout, stderr = run_command("python manage.py showmigrations", cwd="backend")
     
     if success:
         # Verificar se há migrações não aplicadas
         if "[X]" in stdout:
-            print("✅ Migrações aplicadas")
+            print("[OK] Migrações aplicadas")
             return True
         else:
-            print("⚠️ Algumas migrações podem não estar aplicadas")
+            print("[AVISO] Algumas migrações podem não estar aplicadas")
             return True
     else:
-        print("❌ Erro ao verificar migrações")
+        print("[ERRO] Erro ao verificar migrações")
         if stderr:
             print(f"Erro: {stderr}")
         return False
@@ -198,41 +198,41 @@ def generate_test_report():
     passed_tests = 0
     
     for test_name, test_function in tests:
-        print(f"\n🧪 Executando: {test_name}")
+        print(f"\n[TESTE] Executando: {test_name}")
         try:
             result = test_function()
             results.append((test_name, result))
             if result:
                 passed_tests += 1
-                print(f"✅ {test_name} - APROVADO")
+                print(f"[OK] {test_name} - APROVADO")
             else:
-                print(f"❌ {test_name} - REPROVADO")
+                print(f"[ERRO] {test_name} - REPROVADO")
         except Exception as e:
             results.append((test_name, False))
-            print(f"❌ {test_name} - ERRO: {str(e)}")
+            print(f"[ERRO] {test_name} - ERRO: {str(e)}")
     
     # Relatório final
     print_header("RESUMO DOS RESULTADOS")
     
     success_rate = (passed_tests / total_tests) * 100
     
-    print(f"📊 Total de Testes: {total_tests}")
-    print(f"✅ Aprovados: {passed_tests}")
-    print(f"❌ Reprovados: {total_tests - passed_tests}")
-    print(f"📈 Taxa de Sucesso: {success_rate:.1f}%")
+    print(f"[INFO] Total de Testes: {total_tests}")
+    print(f"[OK] Aprovados: {passed_tests}")
+    print(f"[ERRO] Reprovados: {total_tests - passed_tests}")
+    print(f"[INFO] Taxa de Sucesso: {success_rate:.1f}%")
     
-    print("\n📋 DETALHES:")
+    print("\n[DETALHES]:")
     for test_name, result in results:
-        status = "✅ PASS" if result else "❌ FAIL"
+        status = "[OK] PASS" if result else "[ERRO] FAIL"
         print(f"   {test_name}: {status}")
     
     if passed_tests == total_tests:
-        print("\n🎉 TODOS OS TESTES PASSARAM!")
-        print("✅ Sistema Nossa Grana está funcionando corretamente")
-        print("🚀 Pronto para uso em produção!")
+        print("\n[SUCESSO] TODOS OS TESTES PASSARAM!")
+        print("[OK] Sistema Nossa Grana está funcionando corretamente")
+        print("[INFO] Pronto para uso em produção!")
     else:
-        print(f"\n⚠️ {total_tests - passed_tests} teste(s) falharam")
-        print("🔧 Corrija os problemas antes de usar em produção")
+        print(f"\n[AVISO] {total_tests - passed_tests} teste(s) falharam")
+        print("[INFO] Corrija os problemas antes de usar em produção")
     
     print("=" * 60)
     
@@ -241,21 +241,21 @@ def generate_test_report():
 def main():
     """Função principal"""
     print_header("SUITE COMPLETA DE TESTES - NOSSA GRANA")
-    print("🎯 Validando todas as funcionalidades do sistema...")
+    print("[INFO] Validando todas as funcionalidades do sistema...")
     
     # Verificar se estamos no diretório correto
     if not Path("backend").exists() and not Path("demo-interface").exists():
-        print("❌ Execute este script no diretório raiz do projeto")
+        print("[ERRO] Execute este script no diretório raiz do projeto")
         sys.exit(1)
     
     # Executar todos os testes
     success = generate_test_report()
     
     if success:
-        print("\n🎊 PARABÉNS! Todos os testes passaram!")
+        print("\n[SUCESSO] PARABÉNS! Todos os testes passaram!")
         sys.exit(0)
     else:
-        print("\n🚨 Alguns testes falharam. Verifique os problemas acima.")
+        print("\n[ERRO] Alguns testes falharam. Verifique os problemas acima.")
         sys.exit(1)
 
 if __name__ == "__main__":

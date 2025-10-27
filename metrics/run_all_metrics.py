@@ -21,7 +21,7 @@ def run_metric(metric_file, metric_name):
         return module.test_main_actions()
 
 def main():
-    print("📊 MÉTRICAS DE SUCESSO - NOSSA GRANA")
+    print("[METRICAS] MÉTRICAS DE SUCESSO - NOSSA GRANA")
     print("=" * 40)
     
     metrics = [
@@ -37,24 +37,24 @@ def main():
     for file, name in metrics:
         try:
             passed, value = run_metric(file, name)
-            status = "✅ PASSOU" if passed else "❌ FALHOU"
+            status = "[OK] PASSOU" if passed else "[ERRO] FALHOU"
             results.append((name, status, value))
             print(f"{name}: {status}")
         except Exception as e:
-            results.append((name, "❌ ERRO", str(e)))
-            print(f"{name}: ❌ ERRO - {e}")
+            results.append((name, "[ERRO] ERRO", str(e)))
+            print(f"{name}: [ERRO] ERRO - {e}")
     
-    print("\n📈 RESUMO FINAL:")
+    print("\n[RESUMO] RESUMO FINAL:")
     passed_count = sum(1 for _, status, _ in results if "PASSOU" in status)
     total_count = len(results)
     
     print(f"Métricas aprovadas: {passed_count}/{total_count}")
     
     if passed_count == total_count:
-        print("🎉 TODAS AS MÉTRICAS FORAM ATENDIDAS!")
+        print("[SUCESSO] TODAS AS MÉTRICAS FORAM ATENDIDAS!")
         return 0
     else:
-        print("⚠️  Algumas métricas precisam de atenção")
+        print("[AVISO] Algumas métricas precisam de atenção")
         return 1
 
 if __name__ == "__main__":

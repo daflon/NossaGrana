@@ -82,7 +82,7 @@ class Command(BaseCommand):
                     if alerts:
                         alert_types = [alert.get_alert_type_display() for alert in alerts]
                         self.stdout.write(
-                            f"✓ {budget.user.username} - {budget.category.name}: "
+                            f"[OK] {budget.user.username} - {budget.category.name}: "
                             f"{len(alerts)} alertas ({', '.join(alert_types)})"
                         )
 

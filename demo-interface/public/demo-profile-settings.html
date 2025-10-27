@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo: Menu Dropdown + Configurações - Nossa Grana</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos específicos para demonstração */
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 2rem;
+            min-height: 100vh;
+            background: var(--bg-secondary);
+        }
+        
+        .demo-panel {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        
+        .demo-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .demo-content {
+            padding: 1.5rem;
+        }
+        
+        /* Simular header global */
+        .mock-header {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .mock-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .mock-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        /* Menu dropdown ativo */
+        .user-dropdown.demo-active {
+            display: block !important;
+            position: relative;
+            top: 0;
+            right: 0;
+            margin-top: 0;
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Configurações focadas na aba Segurança */
+        .settings-tab.security-focused {
+            background: var(--primary-color);
+            color: white;
+            border-bottom-color: var(--primary-color);
+        }
+        
+        .settings-content.security-focused {
+            display: block;
+        }
+        
+        @media (max-width: 1200px) {
+            .demo-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Painel 1: Header Global com Menu Dropdown Aberto -->
+        <div class="demo-panel">
+            <div class="demo-header">
+                📊 Header Global com Menu Dropdown de Perfil
+            </div>
+            
+            <div class="demo-content">
+                <!-- Simulação do Header Global -->
+                <div class="mock-header">
+                    <div>
+                        <div class="mock-title">Dashboard Financeiro</div>
+                        <p style="color: var(--text-secondary); margin: 0; font-size: 0.9rem;">Visão geral completa das suas finanças</p>
+                    </div>
+                    
+                    <div class="mock-actions">
+                        <button class="btn btn-primary">
+                            <span>💰</span>
+                            Nova Transação
+                        </button>
+                        
+                        <!-- Perfil do Usuário com Dropdown Aberto -->
+                        <div class="user-profile-dropdown">
+                            <div class="user-profile-trigger" style="background: var(--primary-color); color: white;">
+                                <div class="user-avatar">A</div>
+                                <span class="dropdown-arrow" style="transform: rotate(180deg); color: white;">▼</span>
+                            </div>
+                            
+                            <!-- Dropdown Menu Ativo -->
+                            <div class="user-dropdown demo-active">
+                                <div class="user-info">
+                                    <div class="user-greeting">Olá, Laura Daflon</div>
+                                    <div class="user-email">laura@email.com</div>
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <a href="#" class="dropdown-item" style="background: var(--bg-secondary); color: var(--primary-color);">
+                                    <span class="dropdown-icon">⚙️</span>
+                                    Configurações de Usuário
+                                </a>
+                                <a href="#" class="dropdown-item">
+                                    <span class="dropdown-icon">💾</span>
+                                    Backup Manual
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a href="#" class="dropdown-item logout">
+                                    <span class="dropdown-icon">🚪</span>
+                                    Sair / Logout
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="theme-toggle">
+                            <span class="theme-icon light">☀️</span>
+                            <div class="theme-toggle-switch"></div>
+                            <span class="theme-icon dark">🌙</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Informações sobre o Menu -->
+                <div style="margin-top: 2rem; padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
+                    <h4 style="margin: 0 0 1rem 0; color: var(--text-primary);">✨ Características do Menu Dropdown:</h4>
+                    <ul style="margin: 0; padding-left: 1.5rem; color: var(--text-secondary);">
+                        <li><strong>Localização:</strong> Ativado ao clicar no ícone 'A' no header</li>
+                        <li><strong>Saudação:</strong> "Olá, Laura Daflon" + e-mail</li>
+                        <li><strong>Link Proeminente:</strong> "Configurações de Usuário"</li>
+                        <li><strong>Backup Manual:</strong> Conectado à API de Backup</li>
+                        <li><strong>Logout:</strong> Link de saída destacado em vermelho</li>
+                        <li><strong>Visual:</strong> Tema escuro, posicionado abaixo do ícone</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Painel 2: Página de Configurações (Aba Segurança) -->
+        <div class="demo-panel">
+            <div class="demo-header">
+                ⚙️ Página de Configurações de Usuário
+            </div>
+            
+            <div class="demo-content">
+                <!-- Header da página -->
+                <div style="margin-bottom: 2rem;">
+                    <h1 style="font-size: 1.5rem; margin: 0 0 0.5rem 0; color: var(--text-primary);">Configurações</h1>
+                    <p style="color: var(--text-secondary); margin: 0;">Gerencie suas preferências e dados pessoais</p>
+                </div>
+                
+                <!-- Abas de Navegação -->
+                <div class="settings-tabs">
+                    <button class="settings-tab">
+                        👤 Perfil Básico
+                    </button>
+                    <button class="settings-tab security-focused">
+                        🔒 Segurança
+                    </button>
+                    <button class="settings-tab">
+                        ⚙️ Preferências do Sistema
+                    </button>
+                </div>
+                
+                <!-- Conteúdo da Aba Segurança -->
+                <div class="settings-content security-focused">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Alterar Senha</h3>
+                            <p class="card-subtitle">Mantenha sua conta segura alterando sua senha regularmente</p>
+                        </div>
+                        <div class="card-content">
+                            <form>
+                                <div class="form-group">
+                                    <label class="form-label">Senha Atual</label>
+                                    <input type="password" class="form-input" placeholder="Digite sua senha atual" value="••••••••">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Nova Senha</label>
+                                    <input type="password" class="form-input" placeholder="Digite a nova senha" value="••••••••••">
+                                    <div class="form-help">A senha deve ter pelo menos 8 caracteres</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Confirmar Nova Senha</label>
+                                    <input type="password" class="form-input" placeholder="Confirme a nova senha" value="••••••••••">
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-primary">
+                                        🔒 Alterar Senha
+                                    </button>
+                                    <button type="button" class="btn btn-secondary">
+                                        ❌ Cancelar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Informações sobre as Configurações -->
+                <div style="margin-top: 2rem; padding: 1rem; background: var(--bg-secondary); border-radius: 8px;">
+                    <h4 style="margin: 0 0 1rem 0; color: var(--text-primary);">📋 Estrutura das Configurações:</h4>
+                    <ul style="margin: 0; padding-left: 1.5rem; color: var(--text-secondary);">
+                        <li><strong>Aba 1 - Perfil Básico:</strong> Nome e E-mail</li>
+                        <li><strong>Aba 2 - Segurança:</strong> Alterar senhas (mostrada)</li>
+                        <li><strong>Aba 3 - Preferências:</strong> Tema, moeda, notificações</li>
+                        <li><strong>Layout:</strong> Navegação por abas simples</li>
+                        <li><strong>Visual:</strong> Cards organizados, formulários limpos</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toggle de Tema Global -->
+    <div style="position: fixed; top: 20px; left: 20px; z-index: 1000;">
+        <div class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+            <span class="theme-icon light">☀️</span>
+            <div class="theme-toggle-switch"></div>
+            <span class="theme-icon dark">🌙</span>
+        </div>
+    </div>
+    
+    <script src="js/theme.js"></script>
+    <script>
+        // Simular interações
+        document.addEventListener('DOMContentLoaded', function() {
+            // Adicionar efeitos hover nos elementos interativos
+            const dropdownItems = document.querySelectorAll('.dropdown-item');
+            dropdownItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.background = 'var(--bg-secondary)';
+                    if (!this.classList.contains('logout')) {
+                        this.style.color = 'var(--primary-color)';
+                    }
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    if (!this.textContent.includes('Configurações')) {
+                        this.style.background = 'transparent';
+                        this.style.color = 'var(--text-primary)';
+                    }
+                });
+            });
+            
+            // Simular clique nos botões
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Efeito visual de clique
+                    this.style.transform = 'translateY(1px)';
+                    setTimeout(() => {
+                        this.style.transform = 'translateY(0)';
+                    }, 150);
+                    
+                    // Simular ação
+                    if (this.textContent.includes('Alterar Senha')) {
+                        alert('✅ Senha alterada com sucesso!\n\nEsta é uma demonstração do sistema de configurações.');
+                    } else if (this.textContent.includes('Nova Transação')) {
+                        alert('💰 Redirecionando para Nova Transação...\n\nEsta é uma demonstração do menu dropdown.');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

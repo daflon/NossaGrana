@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Typography,
   Grid,
@@ -13,7 +13,6 @@ import {
 import { Refresh } from '@mui/icons-material';
 import { useDashboardData } from '../hooks/useReports';
 import { useTransactions } from '../hooks/useTransactions';
-import { useBudgets } from '../hooks/useBudgets';
 import FinancialSummaryCard from '../components/reports/FinancialSummaryCard';
 import CategoryChart from '../components/reports/CategoryChart';
 import TrendChart from '../components/reports/TrendChart';
@@ -30,7 +29,7 @@ const Dashboard = () => {
   
   // Transações recentes
   const { 
-    transactions: recentTransactions, 
+    transactions: recentTransactions = [], 
     loading: transactionsLoading 
   } = useTransactions({ ordering: '-created_at', page_size: 5 });
 
@@ -139,7 +138,7 @@ const Dashboard = () => {
         {/* Transações Recentes */}
         <Grid item xs={12}>
           <TransactionList
-            transactions={recentTransactions.slice(0, 5)}
+            transactions={Array.isArray(recentTransactions) ? recentTransactions.slice(0, 5) : []}
             loading={transactionsLoading}
             error={null}
             onEdit={() => {}} // Desabilitado no dashboard

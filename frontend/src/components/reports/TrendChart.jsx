@@ -13,8 +13,7 @@ import {
 } from '@mui/material';
 import {
   ShowChart,
-  BarChart as BarChartIcon,
-  Timeline
+  BarChart as BarChartIcon
 } from '@mui/icons-material';
 import { Line, Bar } from 'react-chartjs-2';
 import {

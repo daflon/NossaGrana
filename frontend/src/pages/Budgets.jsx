@@ -24,7 +24,7 @@ import {
   Refresh as RefreshIcon
 } from '@mui/icons-material';
 import { useBudgets, useBudgetStatus } from '../hooks/useBudgets';
-import { useNotifications, useBudgetAlerts } from '../components/common/NotificationSystem';
+import { useNotifications as useNotificationsHook } from '../hooks/useNotifications';
 import BudgetList from '../components/budgets/BudgetList';
 import BudgetProgress from '../components/budgets/BudgetProgress';
 import BudgetForm from '../components/budgets/BudgetForm';
@@ -41,9 +41,11 @@ const Budgets = () => {
   const [budgetToDelete, setBudgetToDelete] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
-  // Hooks para notificações e alertas
-  const { showSuccess, showError, showWarning } = useNotifications();
-  const { checkBudgetAlerts } = useBudgetAlerts();
+  // Hooks para notificações
+  const { addNotification } = useNotificationsHook();
+  
+  const showSuccess = (message) => addNotification(message, 'success');
+  const showError = (message) => addNotification(message, 'error');
 
   // Hooks para gerenciar orçamentos
   const {
@@ -60,7 +62,6 @@ const Budgets = () => {
 
   const {
     status,
-    loading: statusLoading,
     error: statusError,
     loadStatus
   } = useBudgetStatus(selectedMonth);
@@ -70,12 +71,7 @@ const Budgets = () => {
     updateFilters({ month: selectedMonth });
   }, [selectedMonth, updateFilters]);
 
-  // Verificar alertas quando orçamentos mudarem
-  useEffect(() => {
-    if (budgets && budgets.length > 0) {
-      checkBudgetAlerts(budgets);
-    }
-  }, [budgets, checkBudgetAlerts]);
+
 
   // Gerar opções de meses (atual + próximos 11 meses)
   const getMonthOptions = () => {
@@ -163,9 +159,7 @@ const Budgets = () => {
     setBudgetsError(null);
   };
 
-  const showSnackbar = (message, severity = 'success') => {
-    setSnackbar({ open: true, message, severity });
-  };
+
 
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });

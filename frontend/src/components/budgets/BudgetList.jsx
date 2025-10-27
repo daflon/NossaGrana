@@ -189,7 +189,9 @@ const BudgetList = ({ budgets, loading, onEdit, onDelete }) => {
     return <BudgetListSkeleton />;
   }
 
-  if (!budgets || budgets.length === 0) {
+  const budgetsToRender = Array.isArray(budgets) ? budgets : [];
+
+  if (budgetsToRender.length === 0) {
     return (
       <Box sx={{ textAlign: 'center', py: 4 }}>
         <Typography variant="h6" color="text.secondary">
@@ -204,7 +206,7 @@ const BudgetList = ({ budgets, loading, onEdit, onDelete }) => {
 
   return (
     <Grid container spacing={3}>
-      {budgets.map((budget) => (
+      {budgetsToRender.map((budget) => (
         <Grid item xs={12} sm={6} md={4} key={budget.id}>
           <BudgetCard
             budget={budget}

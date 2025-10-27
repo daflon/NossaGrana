@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.utils import timezone
-from django.db import transaction
+from django.db import transaction as db_transaction
 from .models import Category, Tag, Transaction
 
 
@@ -466,13 +466,13 @@ class TransferSerializer(serializers.Serializer):
         
         return data
 
-    @transaction.atomic
+    @db_transaction.atomic
     def create(self, validated_data):
         """
         Cria uma transferência entre contas com validação de saldo
         """
         from .models import Category
-        # transaction já importado no topo
+        from financial_accounts.models import Account
         
         user = self.context['request'].user
         amount = validated_data['amount']

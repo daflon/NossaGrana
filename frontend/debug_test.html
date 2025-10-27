@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Frontend</title>
+</head>
+<body>
+    <h1>Teste de Conexão</h1>
+    <div id="result"></div>
+    
+    <script>
+        // Teste de conexão com a API
+        fetch('http://localhost:8000/api/auth/login/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: 'test@test.com',
+                password: 'test123'
+            })
+        })
+        .then(response => {
+            document.getElementById('result').innerHTML = 
+                `Status: ${response.status}<br>
+                 API está respondendo: ${response.ok ? 'SIM' : 'NÃO'}`;
+        })
+        .catch(error => {
+            document.getElementById('result').innerHTML = 
+                `Erro de conexão: ${error.message}<br>
+                 Possível problema: CORS ou API não está rodando`;
+        });
+    </script>
+</body>
+</html>

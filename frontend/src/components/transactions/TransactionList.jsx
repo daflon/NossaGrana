@@ -96,7 +96,9 @@ const TransactionList = ({
     );
   }
 
-  if (!transactions || transactions.length === 0) {
+  const transactionsToRender = Array.isArray(transactions) ? transactions : [];
+
+  if (transactionsToRender.length === 0) {
     return (
       <Card>
         <CardContent>
@@ -131,7 +133,7 @@ const TransactionList = ({
       <CardContent>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
           <Typography variant="h6">
-            Lista de Transações ({transactions.length})
+            Lista de Transações ({transactionsToRender.length})
           </Typography>
           <Button
             variant="contained"
@@ -144,7 +146,7 @@ const TransactionList = ({
         </Box>
 
         <List>
-          {transactions.map((transaction, index) => (
+          {transactionsToRender.map((transaction, index) => (
             <React.Fragment key={transaction.id}>
               <ListItem
                 sx={{
@@ -232,7 +234,7 @@ const TransactionList = ({
                   </ListItemSecondaryAction>
                 </Box>
               </ListItem>
-              {index < transactions.length - 1 && <Divider sx={{ my: 1 }} />}
+              {index < transactionsToRender.length - 1 && <Divider sx={{ my: 1 }} />}
             </React.Fragment>
           ))}
         </List>

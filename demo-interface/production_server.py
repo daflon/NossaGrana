@@ -36,7 +36,10 @@ class ProductionHandler(http.server.SimpleHTTPRequestHandler):
             '/budgets': '/budgets.html',
             '/goals': '/goals.html',
             '/reports': '/reports.html',
-            '/alerts': '/alerts.html'
+            '/alerts': '/alerts.html',
+            '/settings': '/settings.html',
+            '/accounts': '/accounts.html',
+            '/credit-cards': '/credit-cards.html'
         }
         
         # Se é uma rota conhecida, redireciona para o arquivo correto
@@ -63,13 +66,15 @@ if __name__ == "__main__":
         print(f"API Backend: http://localhost:8000")
         print(f"Pressione Ctrl+C para parar")
         print()
-        print("📋 Páginas disponíveis:")
-        print("  • http://localhost:3001/          (Login)")
-        print("  • http://localhost:3001/dashboard (Dashboard)")
-        print("  • http://localhost:3001/transactions (Transações)")
-        print("  • http://localhost:3001/budgets   (Orçamentos)")
-        print("  • http://localhost:3001/goals     (Metas)")
-        print("  • http://localhost:3001/reports   (Relatórios)")
-        print("  • http://localhost:3001/alerts    (Alertas)")
+        print("Paginas disponiveis:")
+        print("  - http://localhost:3001/          (Login)")
+        print("  - http://localhost:3001/dashboard (Dashboard)")
+        print("  - http://localhost:3001/transactions (Transacoes)")
+        print("  - http://localhost:3001/budgets   (Orcamentos)")
+        print("  - http://localhost:3001/goals     (Metas)")
+        print("  - http://localhost:3001/reports   (Relatorios)")
+        print("  - http://localhost:3001/alerts    (Alertas)")
+        print("  - http://localhost:3001/settings  (Configuracoes)")
+        print("  - http://localhost:3001/demo-profile-settings.html (DEMO)")
         print()
         httpd.serve_forever()
