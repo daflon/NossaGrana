@@ -2138,3 +2138,100 @@ body {
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
     transform: translateY(-1px);
 }
+
+/* Error Boundary Styles */
+.error-boundary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    text-align: center;
+    background: var(--bg-primary);
+    border: 2px solid var(--error-color);
+    border-radius: var(--border-radius-lg);
+    margin: 2rem 0;
+}
+
+.error-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+}
+
+.error-boundary h3 {
+    color: var(--error-color);
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.error-boundary p {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    max-width: 400px;
+    line-height: 1.5;
+}
+
+.error-boundary .btn {
+    min-width: 150px;
+}
+
+/* Dark theme error boundary */
+[data-theme="dark"] .error-boundary {
+    background: var(--bg-secondary);
+    border-color: #dc2626;
+}
+
+[data-theme="dark"] .error-boundary h3 {
+    color: #fca5a5;
+}
+
+/* Skeleton Loading Styles (Global) */
+.skeleton-text,
+.skeleton-icon,
+.skeleton-button,
+.skeleton-progress-bar {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.skeleton-text {
+    height: 16px;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.skeleton-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.skeleton-button {
+    width: 80px;
+    height: 32px;
+    border-radius: 6px;
+}
+
+.skeleton-progress-bar {
+    height: 8px;
+    width: 100%;
+    border-radius: 4px;
+}
+
+/* Dark Theme Skeleton */
+[data-theme="dark"] .skeleton-text,
+[data-theme="dark"] .skeleton-icon,
+[data-theme="dark"] .skeleton-button,
+[data-theme="dark"] .skeleton-progress-bar {
+    background: linear-gradient(90deg, #4a5568 25%, #2d3748 50%, #4a5568 75%);
+    background-size: 200% 100%;
+}

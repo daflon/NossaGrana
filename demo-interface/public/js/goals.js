@@ -81,11 +81,12 @@ function setupEventListeners() {
             closeDeleteModal();
         }
     });
-}// Carre
-gar metas
+}
+
+// Carregar metas
 async function loadGoals() {
     try {
-        showLoading(true);
+        showGoalsSkeletonLoading(true);
         
         // Carregar metas da API
         const response = await api.request('/goals/goals/');
@@ -99,12 +100,12 @@ async function loadGoals() {
         
     } catch (error) {
         console.error('Erro ao carregar metas:', error);
-        showMessage('Erro ao carregar metas: ' + error.message, 'error');
+        showGoalsErrorBoundary('Erro ao carregar metas', error.message);
         
         // Usar dados mockados para demonstração
         loadMockGoals();
     } finally {
-        showLoading(false);
+        showGoalsSkeletonLoading(false);
     }
 }
 
@@ -611,6 +612,61 @@ function formatCurrency(amount) {
 
 function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString('pt-BR');
+}
+
+// Skeleton Loading Functions
+function showGoalsSkeletonLoading(show) {
+    const container = document.getElementById('goals-list');
+    if (!container) return;
+    
+    if (show) {
+        if (window.SkeletonLoader) {
+            container.innerHTML = `
+                <div class="goals-grid">
+                    ${Array(3).fill(0).map(() => window.SkeletonLoader.createCardSkeleton()).join('')}
+                </div>
+            `;
+        } else {
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Carregando metas...</p></div>';
+        }
+    }
+}
+
+function showGoalsSummarySkeletonLoading(show) {
+    if (show) {
+        const summaryElements = {
+            'total-goals': document.getElementById('total-goals'),
+            'achieved-goals': document.getElementById('achieved-goals'),
+            'total-saved': document.getElementById('total-saved'),
+            'average-progress': document.getElementById('average-progress')
+        };
+        
+        Object.values(summaryElements).forEach(el => {
+            if (el) {
+                if (window.SkeletonLoader) {
+                    el.innerHTML = window.SkeletonLoader.createSummarySkeleton();
+                } else {
+                    el.innerHTML = '<div class="skeleton-text"></div>';
+                }
+            }
+        });
+    }
+}
+
+function showGoalsErrorBoundary(title, message = '') {
+    const container = document.getElementById('goals-list');
+    if (container) {
+        container.innerHTML = `
+            <div class="error-boundary">
+                <div class="error-icon">⚠️</div>
+                <h3>${title}</h3>
+                <p>${message}</p>
+                <button class="btn btn-primary" onclick="location.reload()">
+                    Tentar Novamente
+                </button>
+            </div>
+        `;
+    }
 }
 
 function showLoading(show) {

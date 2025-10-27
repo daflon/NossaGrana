@@ -23,6 +23,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         return;
     }
 
+    // Mostrar skeleton loading imediatamente
+    showSkeletonLoading(true);
+    showSummarySkeletonLoading(true);
+
     // Configurar event listeners
     setupEventListeners();
     
@@ -35,6 +39,14 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Escutar mudanças nos saldos de outras páginas
     setupBalanceUpdateListener();
 });
+
+// Configurar listener para atualizações de saldo
+function setupBalanceUpdateListener() {
+    // Listener para eventos de atualização de saldo de outras páginas
+    window.addEventListener('balanceUpdated', function() {
+        loadCreditCards();
+    });
+}
 
 // Configurar event listeners
 function setupEventListeners() {
@@ -79,7 +91,7 @@ function populateDaySelects() {
 // Carregar cartões de crédito
 async function loadCreditCards() {
     try {
-        showLoading(true);
+        showSkeletonLoading(true);
         
         // Carregar cartões da API
         const response = await api.request('/financial/credit-cards/');
@@ -101,19 +113,22 @@ async function loadCreditCards() {
         // Usar dados mockados para demonstração
         loadMockCreditCards();
     } finally {
-        showLoading(false);
+        showSkeletonLoading(false);
     }
 }
 
 // Carregar resumo dos cartões
 async function loadCardsSummary() {
     try {
+        showSummarySkeletonLoading(true);
         const response = await api.request('/financial/credit-cards/summary/');
         updateSummaryCards(response);
     } catch (error) {
         console.error('Erro ao carregar resumo:', error);
         // Calcular resumo localmente
         calculateLocalSummary();
+    } finally {
+        showSummarySkeletonLoading(false);
     }
 }
 
@@ -654,6 +669,110 @@ function formatCurrency(amount) {
         style: 'currency',
         currency: 'BRL'
     }).format(amount || 0);
+}
+
+// Skeleton Loading Functions
+function showSkeletonLoading(show) {
+    const container = document.getElementById('cards-list');
+    if (!container) return;
+    
+    if (show) {
+        // Usar SkeletonLoader global se disponível, senão usar implementação local
+        if (window.SkeletonLoader) {
+            container.innerHTML = `
+                <div class="cards-grid">
+                    ${Array(3).fill(0).map(() => window.SkeletonLoader.createCreditCardSkeleton()).join('')}
+                </div>
+            `;
+        } else {
+            container.innerHTML = createCardsSkeletonHTML();
+        }
+    }
+}
+
+function showSummarySkeletonLoading(show) {
+    if (show) {
+        const summaryElements = {
+            'total-cards': document.getElementById('total-cards'),
+            'total-limit': document.getElementById('total-limit'),
+            'available-limit': document.getElementById('available-limit'),
+            'highest-risk': document.getElementById('highest-risk')
+        };
+        
+        Object.values(summaryElements).forEach(el => {
+            if (el) {
+                if (window.SkeletonLoader) {
+                    el.innerHTML = window.SkeletonLoader.createSummarySkeleton();
+                } else {
+                    el.innerHTML = '<div class="skeleton-text"></div>';
+                }
+            }
+        });
+    }
+}
+
+function createCardsSkeletonHTML() {
+    return `
+        <div class="cards-grid">
+            ${Array(3).fill(0).map(() => createCardSkeletonHTML()).join('')}
+        </div>
+    `;
+}
+
+function createCardSkeletonHTML() {
+    return `
+        <div class="credit-card-item skeleton-card">
+            <div class="card-header">
+                <div class="skeleton-icon"></div>
+                <div class="card-info">
+                    <div class="skeleton-text skeleton-title"></div>
+                    <div class="skeleton-text skeleton-subtitle"></div>
+                </div>
+                <div class="card-actions">
+                    <div class="skeleton-button"></div>
+                    <div class="skeleton-button"></div>
+                    <div class="skeleton-button"></div>
+                </div>
+            </div>
+            
+            <div class="card-limits">
+                <div class="limit-info">
+                    <div class="skeleton-text skeleton-small"></div>
+                    <div class="skeleton-text skeleton-value"></div>
+                </div>
+                <div class="limit-info">
+                    <div class="skeleton-text skeleton-small"></div>
+                    <div class="skeleton-text skeleton-value"></div>
+                </div>
+            </div>
+            
+            <div class="usage-section">
+                <div class="usage-header">
+                    <div class="skeleton-text skeleton-small"></div>
+                    <div class="skeleton-text skeleton-percentage"></div>
+                </div>
+                <div class="skeleton-progress-bar"></div>
+            </div>
+            
+            <div class="card-cycle">
+                <div class="cycle-row">
+                    <div class="skeleton-text skeleton-cycle"></div>
+                </div>
+                <div class="cycle-row">
+                    <div class="skeleton-text skeleton-cycle"></div>
+                </div>
+                <div class="cycle-row">
+                    <div class="skeleton-text skeleton-cycle"></div>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <div class="skeleton-text skeleton-status"></div>
+                <div class="skeleton-button skeleton-btn-detail"></div>
+                <div class="skeleton-button skeleton-btn-pay"></div>
+            </div>
+        </div>
+    `;
 }
 
 function showLoading(show) {

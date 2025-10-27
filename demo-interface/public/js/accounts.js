@@ -16,21 +16,30 @@ let accountsState = {
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('Inicializando página de contas...');
     
-    // Verificar autenticação
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-        window.location.href = 'index.html';
-        return;
-    }
+    try {
+        // Verificar autenticação
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            window.location.href = 'index.html';
+            return;
+        }
 
-    // Configurar event listeners
-    setupEventListeners();
-    
-    // Carregar dados iniciais
-    await loadAccounts();
-    
-    // Escutar mudanças nos saldos de outras páginas
-    setupBalanceUpdateListener();
+        // Mostrar skeleton loading
+        showSkeletonLoading(true);
+        showSummarySkeletonLoading(true);
+
+        // Configurar event listeners
+        setupEventListeners();
+        
+        // Carregar dados iniciais
+        await loadAccounts();
+        
+        // Escutar mudanças nos saldos de outras páginas
+        setupBalanceUpdateListener();
+    } catch (error) {
+        console.error('Erro na inicialização:', error);
+        showErrorBoundary('Erro ao inicializar página de contas');
+    }
 });
 
 // Configurar event listeners
@@ -56,7 +65,7 @@ function setupEventListeners() {
 // Carregar contas
 async function loadAccounts() {
     try {
-        showLoading(true);
+        showSkeletonLoading(true);
         
         // Carregar contas da API
         const response = await api.getAccounts();
@@ -72,25 +81,28 @@ async function loadAccounts() {
         
     } catch (error) {
         console.error('Erro ao carregar contas:', error);
-        showMessage('Erro ao carregar contas: ' + error.message, 'error');
+        showErrorBoundary('Erro ao carregar contas', error.message);
         
         // Usar dados mockados para demonstração
         loadMockAccounts();
         calculateLocalSummary();
     } finally {
-        showLoading(false);
+        showSkeletonLoading(false);
     }
 }
 
 // Carregar resumo das contas
 async function loadAccountsSummary() {
     try {
+        showSummarySkeletonLoading(true);
         const response = await api.getAccountsSummary();
         updateSummaryCards(response);
     } catch (error) {
         console.error('Erro ao carregar resumo:', error);
         // Calcular resumo localmente
         calculateLocalSummary();
+    } finally {
+        showSummarySkeletonLoading(false);
     }
 }
 
@@ -556,6 +568,61 @@ function formatCurrency(amount) {
         style: 'currency',
         currency: 'BRL'
     }).format(amount || 0);
+}
+
+// Skeleton Loading Functions
+function showSkeletonLoading(show) {
+    const container = document.getElementById('accounts-list');
+    if (!container) return;
+    
+    if (show) {
+        if (window.SkeletonLoader) {
+            container.innerHTML = `
+                <div class="accounts-grid">
+                    ${Array(3).fill(0).map(() => window.SkeletonLoader.createAccountSkeleton()).join('')}
+                </div>
+            `;
+        } else {
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Carregando contas...</p></div>';
+        }
+    }
+}
+
+function showSummarySkeletonLoading(show) {
+    if (show) {
+        const summaryElements = {
+            'net-worth': document.getElementById('net-worth'),
+            'total-debt': document.getElementById('total-debt'),
+            'checking-balance': document.getElementById('checking-balance'),
+            'savings-investment-balance': document.getElementById('savings-investment-balance')
+        };
+        
+        Object.values(summaryElements).forEach(el => {
+            if (el) {
+                if (window.SkeletonLoader) {
+                    el.innerHTML = window.SkeletonLoader.createSummarySkeleton();
+                } else {
+                    el.innerHTML = '<div class="skeleton-text"></div>';
+                }
+            }
+        });
+    }
+}
+
+function showErrorBoundary(title, message = '') {
+    const container = document.getElementById('accounts-list');
+    if (container) {
+        container.innerHTML = `
+            <div class="error-boundary">
+                <div class="error-icon">⚠️</div>
+                <h3>${title}</h3>
+                <p>${message}</p>
+                <button class="btn btn-primary" onclick="location.reload()">
+                    Tentar Novamente
+                </button>
+            </div>
+        `;
+    }
 }
 
 function showLoading(show) {

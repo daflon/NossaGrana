@@ -1,5 +1,26 @@
 // Nossa Grana - Dashboard
 
+// Inicializar dashboard
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        // Verificar autenticação
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            window.location.href = 'index.html';
+            return;
+        }
+
+        // Mostrar skeleton loading
+        showDashboardSkeletonLoading(true);
+        
+        // Carregar dados
+        await loadDashboardData();
+    } catch (error) {
+        console.error('Erro na inicialização:', error);
+        showDashboardErrorBoundary('Erro ao inicializar dashboard');
+    }
+});
+
 // Carregar dados do dashboard
 async function loadDashboardData() {
     try {
@@ -12,7 +33,9 @@ async function loadDashboardData() {
         
     } catch (error) {
         console.error('Erro ao carregar dashboard:', error);
-        showMessage('Erro ao carregar dados do dashboard', 'error');
+        showDashboardErrorBoundary('Erro ao carregar dados do dashboard', error.message);
+    } finally {
+        showDashboardSkeletonLoading(false);
     }
 }
 
@@ -248,15 +271,73 @@ async function generateAlerts() {
     }
 }
 
+// Skeleton Loading Functions
+function showDashboardSkeletonLoading(show) {
+    if (show) {
+        // Skeleton para métricas
+        const metricElements = {
+            'total-income': document.getElementById('total-income'),
+            'total-expense': document.getElementById('total-expense'),
+            'balance': document.getElementById('balance'),
+            'budget-usage': document.getElementById('budget-usage')
+        };
+        
+        Object.values(metricElements).forEach(el => {
+            if (el) {
+                if (window.SkeletonLoader) {
+                    el.innerHTML = window.SkeletonLoader.createSummarySkeleton();
+                } else {
+                    el.innerHTML = '<div class="skeleton-text"></div>';
+                }
+            }
+        });
+        
+        // Skeleton para transações
+        const transactionsContainer = document.getElementById('recent-transactions');
+        if (transactionsContainer) {
+            if (window.SkeletonLoader) {
+                transactionsContainer.innerHTML = Array(3).fill(0).map(() => 
+                    window.SkeletonLoader.createCardSkeleton()
+                ).join('');
+            } else {
+                transactionsContainer.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+            }
+        }
+        
+        // Skeleton para alertas
+        const alertsContainer = document.getElementById('budget-alerts');
+        if (alertsContainer) {
+            if (window.SkeletonLoader) {
+                alertsContainer.innerHTML = Array(2).fill(0).map(() => 
+                    window.SkeletonLoader.createCardSkeleton()
+                ).join('');
+            } else {
+                alertsContainer.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+            }
+        }
+    }
+}
+
+function showDashboardErrorBoundary(title, message = '') {
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent) {
+        mainContent.innerHTML = `
+            <div class="error-boundary">
+                <div class="error-icon">⚠️</div>
+                <h3>${title}</h3>
+                <p>${message}</p>
+                <button class="btn btn-primary" onclick="location.reload()">
+                    Tentar Novamente
+                </button>
+            </div>
+        `;
+    }
+}
+
 // Atualizar dashboard
 async function refreshDashboard() {
     showMessage('Atualizando dashboard...', 'info');
-    
-    // Mostrar loading
-    document.getElementById('recent-transactions').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-    document.getElementById('budget-alerts').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-    
+    showDashboardSkeletonLoading(true);
     await loadDashboardData();
-    
     showMessage('Dashboard atualizado!', 'success');
 }

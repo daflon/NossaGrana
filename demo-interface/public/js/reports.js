@@ -27,24 +27,32 @@ const CHART_COLORS = [
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('Inicializando página de relatórios...');
     
-    // Verificar autenticação
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-        window.location.href = '/index.html';
-        return;
+    try {
+        // Verificar autenticação
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            window.location.href = '/index.html';
+            return;
+        }
+
+        // Mostrar skeleton loading
+        showReportsSkeletonLoading(true);
+
+        // Processar parâmetros da URL
+        processUrlParameters();
+
+        // Configurar event listeners
+        setupEventListeners();
+        
+        // Carregar contas e cartões para filtros
+        await loadAccountsAndCards();
+        
+        // Carregar dados iniciais
+        await loadAllReports();
+    } catch (error) {
+        console.error('Erro na inicialização:', error);
+        showReportsErrorBoundary('Erro ao inicializar relatórios');
     }
-
-    // Processar parâmetros da URL
-    processUrlParameters();
-
-    // Configurar event listeners
-    setupEventListeners();
-    
-    // Carregar contas e cartões para filtros
-    await loadAccountsAndCards();
-    
-    // Carregar dados iniciais
-    await loadAllReports();
 });
 
 // Processar parâmetros da URL
@@ -274,7 +282,7 @@ async function handleCustomDateRange() {
 // Carregar todos os relatórios
 async function loadAllReports() {
     try {
-        showLoading(true);
+        showReportsSkeletonLoading(true);
         
         // Carregar dados em paralelo
         const promises = [
@@ -291,9 +299,9 @@ async function loadAllReports() {
         
     } catch (error) {
         console.error('Erro ao carregar relatórios:', error);
-        showMessage('Erro ao carregar relatórios: ' + error.message, 'error');
+        showReportsErrorBoundary('Erro ao carregar relatórios', error.message);
     } finally {
-        showLoading(false);
+        showReportsSkeletonLoading(false);
     }
 }
 
@@ -864,6 +872,58 @@ function showMessage(message, type = 'info') {
             }
         }, 300);
     }, 3000);
+}
+
+// Skeleton Loading Functions
+function showReportsSkeletonLoading(show) {
+    if (show) {
+        // Skeleton para resumo
+        const summaryElements = {
+            'total-income': document.getElementById('total-income'),
+            'total-expense': document.getElementById('total-expense'),
+            'net-balance': document.getElementById('net-balance'),
+            'savings-rate': document.getElementById('savings-rate')
+        };
+        
+        Object.values(summaryElements).forEach(el => {
+            if (el) {
+                if (window.SkeletonLoader) {
+                    el.innerHTML = window.SkeletonLoader.createSummarySkeleton();
+                } else {
+                    el.innerHTML = '<div class="skeleton-text"></div>';
+                }
+            }
+        });
+        
+        // Skeleton para gráficos
+        const chartContainers = document.querySelectorAll('.chart-container');
+        chartContainers.forEach(container => {
+            if (window.SkeletonLoader) {
+                container.innerHTML = window.SkeletonLoader.createReportSkeleton();
+            } else {
+                container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+            }
+        });
+    }
+}
+
+function showReportsErrorBoundary(title, message = '') {
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent) {
+        const errorHtml = `
+            <div class="error-boundary">
+                <div class="error-icon">⚠️</div>
+                <h3>${title}</h3>
+                <p>${message}</p>
+                <button class="btn btn-primary" onclick="location.reload()">
+                    Tentar Novamente
+                </button>
+            </div>
+        `;
+        
+        const contentArea = mainContent.querySelector('.card-content') || mainContent;
+        contentArea.innerHTML = errorHtml;
+    }
 }
 
 function showLoading(show) {

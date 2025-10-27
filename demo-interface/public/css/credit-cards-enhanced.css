@@ -281,6 +281,17 @@
         flex-direction: column;
         text-align: center;
     }
+    
+    /* Skeleton responsivo */
+    .skeleton-card .card-footer {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .skeleton-btn-detail,
+    .skeleton-btn-pay {
+        width: 100%;
+    }
 }
 
 /* Dark Theme Support */
@@ -314,4 +325,110 @@
 
 [data-theme="dark"] .btn-icon:hover {
     background: #4a5568;
+}
+
+/* Skeleton Loading Styles */
+.skeleton-card {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.skeleton-text,
+.skeleton-icon,
+.skeleton-button,
+.skeleton-progress-bar {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: 4px;
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.skeleton-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.skeleton-title {
+    height: 20px;
+    width: 70%;
+    margin-bottom: 8px;
+}
+
+.skeleton-subtitle {
+    height: 16px;
+    width: 50%;
+}
+
+.skeleton-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+}
+
+.skeleton-small {
+    height: 14px;
+    width: 60%;
+    margin-bottom: 4px;
+}
+
+.skeleton-value {
+    height: 18px;
+    width: 80%;
+}
+
+.skeleton-percentage {
+    height: 18px;
+    width: 40px;
+}
+
+.skeleton-progress-bar {
+    height: 12px;
+    width: 100%;
+    border-radius: 6px;
+}
+
+.skeleton-cycle {
+    height: 16px;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.skeleton-status {
+    height: 16px;
+    width: 60px;
+}
+
+.skeleton-btn-detail {
+    height: 32px;
+    width: 80px;
+    border-radius: 4px;
+}
+
+.skeleton-btn-pay {
+    height: 32px;
+    width: 100px;
+    border-radius: 4px;
+}
+
+/* Dark Theme Skeleton */
+[data-theme="dark"] .skeleton-text,
+[data-theme="dark"] .skeleton-icon,
+[data-theme="dark"] .skeleton-button,
+[data-theme="dark"] .skeleton-progress-bar {
+    background: linear-gradient(90deg, #4a5568 25%, #2d3748 50%, #4a5568 75%);
+    background-size: 200% 100%;
+}
+
+/* Skeleton Card Footer */
+.skeleton-card .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
 }
