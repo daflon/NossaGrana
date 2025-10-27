@@ -242,6 +242,7 @@
         </main>
     </div>
 
+    <script src="js/modal-manager.js"></script>
     <script src="js/theme.js"></script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
@@ -657,12 +658,12 @@
                 loadAvailableCategories();
             }
 
-            document.getElementById('budget-modal').style.display = 'flex';
+            modalManager.openModal('budget-modal');
         }
 
         // Ocultar formulário
         function hideBudgetForm() {
-            document.getElementById('budget-modal').style.display = 'none';
+            modalManager.closeModal('budget-modal');
             currentEditingId = null;
         }
 

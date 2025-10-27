@@ -262,6 +262,7 @@
     <script src="js/theme.js"></script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/modal-manager.js"></script>
     <script>
         let currentEditingId = null;
         let categories = [];
@@ -566,12 +567,12 @@
                 switchPaymentMethod('account');
             }
 
-            document.getElementById('transaction-modal').style.display = 'flex';
+            modalManager.openModal('transaction-modal');
         }
 
         // Ocultar formulário
         function hideTransactionForm() {
-            document.getElementById('transaction-modal').style.display = 'none';
+            modalManager.closeModal('transaction-modal');
             currentEditingId = null;
         }
 

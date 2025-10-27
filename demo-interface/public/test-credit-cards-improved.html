@@ -343,6 +343,16 @@
             }
         });
 
+        // Fechar modal com tecla ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('test-modal');
+                if (modal.style.display === 'flex') {
+                    closeTestModal();
+                }
+            }
+        });
+
         // Inicializar demonstração
         document.addEventListener('DOMContentLoaded', function() {
             renderDemoCards();

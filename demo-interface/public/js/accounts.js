@@ -50,18 +50,7 @@ function setupEventListeners() {
         });
     }
 
-    // Fechar modais ao clicar fora
-    window.addEventListener('click', function(event) {
-        const accountModal = document.getElementById('account-modal');
-        const deleteModal = document.getElementById('delete-modal');
-        
-        if (event.target === accountModal) {
-            closeAccountModal();
-        }
-        if (event.target === deleteModal) {
-            closeDeleteModal();
-        }
-    });
+    // O modal-manager já cuida dos cliques fora e tecla ESC
 }
 
 // Carregar contas
@@ -332,13 +321,12 @@ function showAccountForm(accountId = null) {
         accountsState.editingId = null;
     }
     
-    modal.style.display = 'flex';
+    modalManager.openModal('account-modal');
 }
 
 // Fechar modal de conta
 function closeAccountModal() {
-    const modal = document.getElementById('account-modal');
-    modal.style.display = 'none';
+    modalManager.closeModal('account-modal');
     accountsState.editingId = null;
 }
 
@@ -434,14 +422,12 @@ function showDeleteModal(accountId) {
     document.getElementById('delete-account-name').textContent = account.name;
     accountsState.currentAccount = account;
     
-    const modal = document.getElementById('delete-modal');
-    modal.style.display = 'flex';
+    modalManager.openModal('delete-modal');
 }
 
 // Fechar modal de exclusão
 function closeDeleteModal() {
-    const modal = document.getElementById('delete-modal');
-    modal.style.display = 'none';
+    modalManager.closeModal('delete-modal');
     accountsState.currentAccount = null;
 }
 
@@ -686,12 +672,11 @@ function showTransferModal() {
     // Preencher selects de contas
     populateTransferAccounts();
     
-    modal.style.display = 'flex';
+    modalManager.openModal('transfer-modal');
 }
 
 function closeTransferModal() {
-    const modal = document.getElementById('transfer-modal');
-    modal.style.display = 'none';
+    modalManager.closeModal('transfer-modal');
 }
 
 function populateTransferAccounts() {
@@ -879,18 +864,7 @@ function notifyBalanceUpdate() {
     }));
 }
 
-// Fechar modal ao clicar fora
-window.addEventListener('click', function(event) {
-    const transferModal = document.getElementById('transfer-modal');
-    const quickTransactionModal = document.getElementById('quick-transaction-modal');
-    
-    if (event.target === transferModal) {
-        closeTransferModal();
-    }
-    if (event.target === quickTransactionModal) {
-        closeQuickTransactionModal();
-    }
-});
+// O modal-manager já cuida dos cliques fora e tecla ESC
 
 // Funções de Transação Rápida
 let quickTransactionState = {
@@ -935,13 +909,12 @@ function showQuickTransaction(accountId, type) {
     // Carregar categorias
     loadQuickTransactionCategories();
     
-    modal.style.display = 'flex';
+    modalManager.openModal('quick-transaction-modal');
 }
 
 // Fechar modal de transação rápida
 function closeQuickTransactionModal() {
-    const modal = document.getElementById('quick-transaction-modal');
-    modal.style.display = 'none';
+    modalManager.closeModal('quick-transaction-modal');
     quickTransactionState.selectedAccountId = null;
     quickTransactionState.selectedType = null;
 }

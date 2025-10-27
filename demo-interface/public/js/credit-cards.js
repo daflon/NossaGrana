@@ -53,33 +53,7 @@ function setupEventListeners() {
         });
     }
 
-    // Fechar modais ao clicar fora
-    window.addEventListener('click', function(event) {
-        const cardModal = document.getElementById('card-modal');
-        const deleteModal = document.getElementById('delete-modal');
-        
-        if (event.target === cardModal) {
-            closeCreditCardModal();
-        }
-        if (event.target === deleteModal) {
-            closeDeleteModal();
-        }
-    });
-    
-    // Fechar modais com tecla ESC
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            const cardModal = document.getElementById('card-modal');
-            const deleteModal = document.getElementById('delete-modal');
-            
-            if (cardModal.style.display === 'flex') {
-                closeCreditCardModal();
-            }
-            if (deleteModal.style.display === 'flex') {
-                closeDeleteModal();
-            }
-        }
-    });
+    // O modal-manager já cuida dos cliques fora e tecla ESC
 }
 
 // Preencher selects de dias (1-31)
@@ -403,13 +377,12 @@ function showCreditCardForm(cardId = null) {
         creditCardsState.editingId = null;
     }
     
-    modal.style.display = 'flex';
+    modalManager.openModal('card-modal');
 }
 
 // Fechar modal de cartão
 function closeCreditCardModal() {
-    const modal = document.getElementById('card-modal');
-    modal.style.display = 'none';
+    modalManager.closeModal('card-modal');
     creditCardsState.editingId = null;
 }
 
@@ -535,14 +508,12 @@ function showDeleteModal(cardId) {
     document.getElementById('delete-card-name').textContent = card.name;
     creditCardsState.currentCard = card;
     
-    const modal = document.getElementById('delete-modal');
-    modal.style.display = 'flex';
+    modalManager.openModal('delete-modal');
 }
 
 // Fechar modal de exclusão
 function closeDeleteModal() {
-    const modal = document.getElementById('delete-modal');
-    modal.style.display = 'none';
+    modalManager.closeModal('delete-modal');
     creditCardsState.currentCard = null;
 }
 
