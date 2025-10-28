@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartões de Crédito - Nossa Grana</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/credit-cards-enhanced.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">NG</div>
+                <div class="logo-text">Nossa Grana</div>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <span class="nav-icon">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="transactions.html" class="nav-link">
+                            <span class="nav-icon">💰</span>
+                            Transações
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="accounts.html" class="nav-link">
+                            <span class="nav-icon">🏦</span>
+                            Contas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="credit-cards.html" class="nav-link active">
+                            <span class="nav-icon">💳</span>
+                            Cartões
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="budgets.html" class="nav-link">
+                            <span class="nav-icon">📋</span>
+                            Orçamentos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="reports.html" class="nav-link">
+                            <span class="nav-icon">📈</span>
+                            Relatórios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="goals.html" class="nav-link">
+                            <span class="nav-icon">🎯</span>
+                            Metas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="alerts.html" class="nav-link">
+                            <span class="nav-icon">🚨</span>
+                            Alertas
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <span>🚪</span>
+                    Sair
+                </button>
+            </div>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <!-- Header da Página -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Cartões de Crédito</h1>
+                    <p class="page-subtitle">Gerencie seus cartões e acompanhe os limites</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="refreshCreditCards()">
+                        <span class="btn-icon">🔄</span>
+                        Atualizar
+                    </button>
+                    <button class="btn btn-primary" onclick="showCreditCardForm()">
+                        <span class="btn-icon">➕</span>
+                        Novo Cartão
+                    </button>
+                    <div class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+                        <span class="theme-icon light">☀️</span>
+                        <div class="theme-toggle-switch"></div>
+                        <span class="theme-icon dark">🌙</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Card de Próximo Fechamento -->
+            <div class="card next-closing-card" id="next-closing-card" style="display: none;">
+                <div class="card-content">
+                    <div class="alert-content">
+                        <div class="alert-icon">📅</div>
+                        <div class="alert-info">
+                            <h3 class="alert-title">Próximo Fechamento</h3>
+                            <p class="alert-message" id="next-closing-message"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumo dos Cartões -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value" id="total-cards">0</div>
+                    <div class="metric-label">Total de Cartões</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value text-success" id="total-limit">R$ 0,00</div>
+                    <div class="metric-label">Limite Total</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="available-limit">R$ 0,00</div>
+                    <div class="metric-label">Limite Disponível</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value text-error" id="highest-risk">0%</div>
+                    <div class="metric-label">Maior Risco</div>
+                </div>
+            </div>
+
+            <!-- Lista de Cartões -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Seus Cartões</h3>
+                    <div class="card-actions">
+                        <select id="card-status-filter" class="form-select">
+                            <option value="">Todos os status</option>
+                            <option value="active">Ativos</option>
+                            <option value="inactive">Inativos</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="loading" id="cards-loading" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>Carregando cartões...</p>
+                    </div>
+                    
+                    <div id="cards-list">
+                        <!-- Cartões serão inseridos aqui via JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de Cartão -->
+    <div id="card-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title" id="modal-title">Novo Cartão</h3>
+                </div>
+                <div class="card-content">
+                    <form id="card-form">
+                        <div class="form-group">
+                            <label class="form-label" for="card-name">Nome do Cartão *</label>
+                            <input type="text" id="card-name" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="card-bank">Banco *</label>
+                            <input type="text" id="card-bank" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="credit-limit">Limite de Crédito *</label>
+                            <input type="number" id="credit-limit" class="form-input" step="0.01" min="0.01" placeholder="0,00" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="closing-day">Dia de Fechamento da Fatura *</label>
+                            <select id="closing-day" class="form-select" required>
+                                <option value="">Selecione o dia</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="due-day">Dia de Vencimento da Fatura *</label>
+                            <select id="due-day" class="form-select" required>
+                                <option value="">Selecione o dia</option>
+                            </select>
+                            <small style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.5rem; display: block;">
+                                ✅ Permite ciclos que cruzam meses (Ex: Fecha dia 29, Vence dia 5)
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="is-active" checked>
+                                <span class="checkmark"></span>
+                                Cartão ativo
+                            </label>
+                        </div>
+                        
+                        <div class="flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <span id="save-btn-text">Salvar</span>
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="closeCreditCardModal()">
+                                Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div id="delete-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Confirmar Exclusão</h3>
+                </div>
+                <div class="card-content">
+                    <p>Tem certeza que deseja excluir este cartão?</p>
+                    <p><strong id="delete-card-name"></strong></p>
+                    <p class="text-warning">⚠️ Esta ação não pode ser desfeita!</p>
+                    
+                    <div class="flex gap-2 mt-4">
+                        <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+                            Excluir
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/modal-manager.js"></script>
+    <script src="js/loading-manager.js"></script>
+    <script src="js/skeleton-loader.js"></script>
+    <script src="js/error-boundary.js"></script>
+    <script src="js/credit-cards.js"></script>
+    
+    <script>
+        // Estilos do modal idênticos ao de transações
+        const modalStyles = `
+            .modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            }
+            .modal-content {
+                max-width: 500px;
+                width: 90%;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            .next-closing-card {
+                background: linear-gradient(135deg, #ff9500, #ffb84d) !important;
+                border: none !important;
+                color: white !important;
+                margin-bottom: 20px !important;
+            }
+            .next-closing-card.urgent {
+                background: linear-gradient(135deg, #ff6b35, #ff8c42) !important;
+                animation: pulse 2s infinite !important;
+            }
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.02); }
+                100% { transform: scale(1); }
+            }
+            .btn-pay {
+                background: #28a745 !important;
+                color: white !important;
+                border: none !important;
+                padding: 8px 16px !important;
+                border-radius: 6px !important;
+                font-weight: 600 !important;
+            }
+            .btn-pay:hover {
+                background: #218838 !important;
+            }
+            .limit-value, .usage-percentage, .cycle-value {
+                font-weight: 700 !important;
+                color: #212529 !important;
+                text-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+            }
+            .limit-label, .usage-label, .cycle-label {
+                font-weight: 600 !important;
+                color: #495057 !important;
+            }
+            .card-limits {
+                background: #f8f9fa !important;
+                padding: 15px !important;
+                border-radius: 8px !important;
+                margin: 15px 0 !important;
+            }
+            .usage-section {
+                background: #f8f9fa !important;
+                padding: 15px !important;
+                border-radius: 8px !important;
+                margin: 15px 0 !important;
+            }
+            .card-cycle {
+                background: #f8f9fa !important;
+                padding: 15px !important;
+                border-radius: 8px !important;
+                margin: 15px 0 !important;
+            }
+            .cycle-info.best-purchase {
+                background: linear-gradient(135deg, #28a745, #20c997) !important;
+                color: white !important;
+                padding: 12px !important;
+                border-radius: 8px !important;
+                margin-top: 8px !important;
+                border: none !important;
+            }
+            .cycle-info.best-purchase .cycle-label,
+            .cycle-info.best-purchase .cycle-value.best {
+                color: white !important;
+                font-weight: 700 !important;
+            }
+        `;
+        
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = modalStyles;
+        document.head.appendChild(styleSheet);
+    </script>
+</body>
+</html>

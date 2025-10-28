@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - Nossa Grana</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">NG</div>
+                <div class="logo-text">Nossa Grana</div>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="dashboard" class="nav-link">
+                            <span class="nav-icon">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="transactions" class="nav-link">
+                            <span class="nav-icon">💰</span>
+                            Transações
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="accounts" class="nav-link">
+                            <span class="nav-icon">🏦</span>
+                            Contas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="credit-cards" class="nav-link">
+                            <span class="nav-icon">💳</span>
+                            Cartões
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="budgets" class="nav-link">
+                            <span class="nav-icon">📋</span>
+                            Orçamentos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="reports" class="nav-link active">
+                            <span class="nav-icon">📈</span>
+                            Relatórios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="goals" class="nav-link">
+                            <span class="nav-icon">🎯</span>
+                            Metas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="alerts" class="nav-link">
+                            <span class="nav-icon">🚨</span>
+                            Alertas
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <span>🚪</span>
+                    Sair
+                </button>
+            </div>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <!-- Header da Página -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Relatórios Financeiros</h1>
+                    <p class="page-subtitle">Análises detalhadas e insights dos seus dados</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" id="refresh-btn">
+                        <span class="btn-icon">🔄</span>
+                        Atualizar
+                    </button>
+                    <button class="btn btn-primary" id="export-btn">
+                        <span class="btn-icon">📄</span>
+                        Exportar PDF
+                    </button>
+                    <div class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+                        <span class="theme-icon light">☀️</span>
+                        <div class="theme-toggle-switch"></div>
+                        <span class="theme-icon dark">🌙</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Filtros de Análise</h3>
+                </div>
+                <div class="card-content">
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label for="period-select">Período:</label>
+                            <select id="period-select" class="form-select">
+                                <option value="current_month">Mês Atual</option>
+                                <option value="last_month">Mês Passado</option>
+                                <option value="current_quarter">Trimestre Atual</option>
+                                <option value="last_quarter">Trimestre Passado</option>
+                                <option value="current_year">Ano Atual</option>
+                                <option value="last_year">Ano Passado</option>
+                                <option value="last_30_days">Últimos 30 dias</option>
+                                <option value="last_90_days">Últimos 90 dias</option>
+                                <option value="custom">Personalizado</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="type-select">Tipo de Transação:</label>
+                            <select id="type-select" class="form-select">
+                                <option value="expense">Despesas</option>
+                                <option value="income">Receitas</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="account-select">Conta Específica:</label>
+                            <select id="account-select" class="form-select">
+                                <option value="">Todas as contas</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="card-select">Cartão Específico:</label>
+                            <select id="card-select" class="form-select">
+                                <option value="">Todos os cartões</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group custom-dates" style="display: none;">
+                            <label for="date-from">Data Inicial:</label>
+                            <input type="date" id="date-from" class="form-input">
+                        </div>
+
+                        <div class="filter-group custom-dates" style="display: none;">
+                            <label for="date-to">Data Final:</label>
+                            <input type="date" id="date-to" class="form-input">
+                        </div>
+
+                        <div class="filter-group custom-dates" style="display: none;">
+                            <button class="btn btn-primary" id="apply-dates-btn">
+                                Aplicar Datas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Overlay -->
+            <div class="loading" id="loading-overlay" style="display: none;">
+                <div class="spinner"></div>
+                <p>Carregando relatórios...</p>
+            </div>
+
+            <!-- Sistema de Abas -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="tabs-container">
+                        <div class="tabs-nav">
+                            <button class="tab-button active" data-tab="summary" onclick="switchTab('summary')">
+                                📊 Resumo Geral
+                            </button>
+                            <button class="tab-button" data-tab="categories" onclick="switchTab('categories')">
+                                🏷️ Por Categoria
+                            </button>
+                            <button class="tab-button" data-tab="trends" onclick="switchTab('trends')">
+                                📈 Tendências
+                            </button>
+                            <button class="tab-button" data-tab="patterns" onclick="switchTab('patterns')">
+                                🔍 Padrões
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aba: Resumo Financeiro -->
+            <div class="tab-content active" id="summary-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Resumo Financeiro</h3>
+                    </div>
+                <div class="card-content">
+                    <div class="summary-cards">
+                        <div class="summary-card income">
+                            <div class="summary-icon">💰</div>
+                            <div class="summary-content">
+                                <div class="summary-label">Total de Receitas</div>
+                                <div class="summary-value" id="total-income">R$ 0,00</div>
+                                <div class="summary-change" id="income-change">
+                                    <span class="text-muted">➡️ 0.0%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="summary-card expense">
+                            <div class="summary-icon">💸</div>
+                            <div class="summary-content">
+                                <div class="summary-label">Total de Despesas</div>
+                                <div class="summary-value" id="total-expense">R$ 0,00</div>
+                                <div class="summary-change" id="expense-change">
+                                    <span class="text-muted">➡️ 0.0%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="summary-card balance">
+                            <div class="summary-icon">📊</div>
+                            <div class="summary-content">
+                                <div class="summary-label">Saldo Líquido</div>
+                                <div class="summary-value" id="net-balance">R$ 0,00</div>
+                                <div class="summary-change" id="balance-change">
+                                    <span class="text-muted">➡️ 0.0%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="summary-card savings">
+                            <div class="summary-icon">🎯</div>
+                            <div class="summary-content">
+                                <div class="summary-label">Taxa de Poupança</div>
+                                <div class="summary-value" id="savings-rate">0.0%</div>
+                                <div class="summary-info">
+                                    <span class="text-muted">Meta: 20%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="additional-metrics">
+                        <div class="metric-item">
+                            <span class="metric-label">Total de Transações:</span>
+                            <span class="metric-value" id="transaction-count">0</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Transação Média:</span>
+                            <span class="metric-value" id="average-transaction">R$ 0,00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aba: Análise por Categoria -->
+            <div class="tab-content" id="categories-tab">
+                <div class="charts-grid">
+                    <!-- Gráfico de Categorias -->
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Distribuição por Categoria</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="chart-container">
+                                <canvas id="category-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela de Dados Detalhados -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Detalhamento por Categoria</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="table-container">
+                            <table class="data-table" id="category-details-table">
+                                <thead>
+                                    <tr>
+                                        <th>Categoria</th>
+                                        <th>Total</th>
+                                        <th>Percentual</th>
+                                        <th>Transações</th>
+                                        <th>Média</th>
+                                        <th>Tendência</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="category-details-body">
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">
+                                            Carregando dados...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aba: Tendências -->
+            <div class="tab-content" id="trends-tab">
+                <div class="charts-grid">
+                    <!-- Gráfico de Tendências -->
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Tendência Mensal</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="chart-container">
+                                <canvas id="trend-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico de Saldo -->
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Evolução do Saldo</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="chart-container">
+                                <canvas id="balance-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aba: Padrões de Gastos -->
+            <div class="tab-content" id="patterns-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Padrões de Gastos</h3>
+                    </div>
+                    <div class="card-content">
+                        <div id="spending-patterns-container">
+                            <p class="text-muted">Carregando padrões de gastos...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/reports.js"></script>
+    <script>
+        // Configurar filtros personalizados
+        document.addEventListener('DOMContentLoaded', function() {
+            const periodSelect = document.getElementById('period-select');
+            const customDatesElements = document.querySelectorAll('.custom-dates');
+            
+            if (periodSelect) {
+                periodSelect.addEventListener('change', function() {
+                    const isCustom = this.value === 'custom';
+                    customDatesElements.forEach(element => {
+                        element.style.display = isCustom ? 'block' : 'none';
+                    });
+                });
+            }
+        });
+
+        // Atualizar tabela de detalhes por categoria
+        function updateCategoryDetailsTable(data) {
+            const tbody = document.getElementById('category-details-body');
+            if (!tbody || !data || data.length === 0) {
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">
+                                Nenhum dado encontrado para o período selecionado
+                            </td>
+                        </tr>
+                    `;
+                }
+                return;
+            }
+
+            tbody.innerHTML = data.map(item => {
+                const trendIcon = item.trend === 'up' ? '📈' : item.trend === 'down' ? '📉' : '➡️';
+                const trendClass = item.trend === 'up' ? 'text-success' : item.trend === 'down' ? 'text-error' : 'text-muted';
+                
+                return `
+                    <tr>
+                        <td>
+                            <div class="category-cell">
+                                <div class="category-color" style="background-color: ${item.category_color || '#007bff'}"></div>
+                                <span>${item.category_name}</span>
+                            </div>
+                        </td>
+                        <td class="text-right">${formatCurrency(item.total_amount)}</td>
+                        <td class="text-right">${item.percentage.toFixed(1)}%</td>
+                        <td class="text-right">${item.transaction_count}</td>
+                        <td class="text-right">${formatCurrency(item.average_transaction)}</td>
+                        <td class="text-center">
+                            <span class="${trendClass}">
+                                ${trendIcon} ${Math.abs(item.amount_change).toFixed(1)}%
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Sistema de abas
+        function switchTab(tabName) {
+            // Remover classe ativa de todos os botões e conteúdos
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Adicionar classe ativa ao botão e conteúdo selecionados
+            const activeButton = document.querySelector(`[data-tab="${tabName}"]`);
+            const activeContent = document.getElementById(`${tabName}-tab`);
+            
+            if (activeButton) activeButton.classList.add('active');
+            if (activeContent) activeContent.classList.add('active');
+            
+            // Carregar dados específicos da aba se necessário
+            switch (tabName) {
+                case 'summary':
+                    // Já carregado no início
+                    break;
+                case 'categories':
+                    if (window.reportsModule) {
+                        window.reportsModule.loadCategoryBreakdown();
+                    }
+                    break;
+                case 'trends':
+                    if (window.reportsModule) {
+                        window.reportsModule.loadMonthlyTrend();
+                    }
+                    break;
+                case 'patterns':
+                    if (window.reportsModule) {
+                        window.reportsModule.loadSpendingPatterns();
+                    }
+                    break;
+            }
+        }
+
+        // Sobrescrever função de renderização de categoria para incluir tabela
+        const originalRenderCategoryChart = window.reportsModule?.renderCategoryChart;
+        if (originalRenderCategoryChart) {
+            window.reportsModule.renderCategoryChart = function() {
+                originalRenderCategoryChart.call(this);
+                updateCategoryDetailsTable(reportsState.data.categoryBreakdown);
+            };
+        }
+    </script>
+</body>
+</html>

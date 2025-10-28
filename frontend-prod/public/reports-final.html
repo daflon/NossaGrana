@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - Nossa Grana</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">NG</div>
+                <div class="logo-text">Nossa Grana</div>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <span class="nav-icon">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="transactions.html" class="nav-link">
+                            <span class="nav-icon">💰</span>
+                            Transações
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="budgets.html" class="nav-link">
+                            <span class="nav-icon">📋</span>
+                            Orçamentos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="goals.html" class="nav-link">
+                            <span class="nav-icon">🎯</span>
+                            Metas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="reports.html" class="nav-link active">
+                            <span class="nav-icon">📈</span>
+                            Relatórios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="alerts.html" class="nav-link">
+                            <span class="nav-icon">🚨</span>
+                            Alertas
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <!-- Header da Página -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Relatórios Financeiros</h1>
+                    <p class="page-subtitle">Análises detalhadas organizadas por categoria</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="refreshAllData()">
+                        <span class="btn-icon">🔄</span>
+                        Atualizar
+                    </button>
+                    <button class="btn btn-primary" onclick="exportCurrentTab()">
+                        <span class="btn-icon">📄</span>
+                        Exportar PDF
+                    </button>
+                    <div class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+                        <span class="theme-icon light">☀️</span>
+                        <div class="theme-toggle-switch"></div>
+                        <span class="theme-icon dark">🌙</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtros Globais -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Filtros de Análise</h3>
+                </div>
+                <div class="card-content">
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label for="period-select">Período:</label>
+                            <select id="period-select" class="form-select" onchange="handlePeriodChange()">
+                                <option value="current_month">Mês Atual</option>
+                                <option value="last_month">Mês Passado</option>
+                                <option value="current_quarter">Trimestre Atual</option>
+                                <option value="last_quarter">Trimestre Passado</option>
+                                <option value="current_year">Ano Atual</option>
+                                <option value="last_year">Ano Passado</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="type-select">Tipo de Transação:</label>
+                            <select id="type-select" class="form-select" onchange="handleTypeChange()">
+                                <option value="expense">Despesas</option>
+                                <option value="income">Receitas</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sistema de Abas -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="tabs-container">
+                        <div class="tabs-nav">
+                            <button class="tab-button active" data-tab="summary" onclick="switchTab('summary')">
+                                📊 Resumo Geral
+                            </button>
+                            <button class="tab-button" data-tab="categories" onclick="switchTab('categories')">
+                                🏷️ Por Categoria
+                            </button>
+                            <button class="tab-button" data-tab="trends" onclick="switchTab('trends')">
+                                📈 Tendências
+                            </button>
+                            <button class="tab-button" data-tab="patterns" onclick="switchTab('patterns')">
+                                🔍 Padrões
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aba: Resumo Geral -->
+            <div class="tab-content active" id="summary-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Resumo Financeiro</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="summary-cards">
+                            <div class="summary-card income">
+                                <div class="summary-icon">💰</div>
+                                <div class="summary-content">
+                                    <div class="summary-label">Total de Receitas</div>
+                                    <div class="summary-value" id="total-income">R$ 15.750,00</div>
+                                    <div class="summary-change">
+                                        <span class="text-success">📈 12.5%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="summary-card expense">
+                                <div class="summary-icon">💸</div>
+                                <div class="summary-content">
+                                    <div class="summary-label">Total de Despesas</div>
+                                    <div class="summary-value" id="total-expense">R$ 12.340,00</div>
+                                    <div class="summary-change">
+                                        <span class="text-error">📉 5.2%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="summary-card balance">
+                                <div class="summary-icon">📊</div>
+                                <div class="summary-content">
+                                    <div class="summary-label">Saldo Líquido</div>
+                                    <div class="summary-value" id="net-balance">R$ 3.410,00</div>
+                                    <div class="summary-change">
+                                        <span class="text-success">📈 45.8%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="summary-card savings">
+                                <div class="summary-icon">🎯</div>
+                                <div class="summary-content">
+                                    <div class="summary-label">Taxa de Poupança</div>
+                                    <div class="summary-value" id="savings-rate">21.6%</div>
+                                    <div class="summary-info">
+                                        <span class="text-success">Excelente!</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="additional-metrics">
+                            <div class="metric-item">
+                                <span class="metric-label">Total de Transações:</span>
+                                <span class="metric-value" id="transaction-count">127</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Transação Média:</span>
+                                <span class="metric-value" id="average-transaction">R$ 97,20</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aba: Análise por Categoria -->
+            <div class="tab-content" id="categories-tab">
+                <div class="charts-grid">
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Distribuição por Categoria</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="chart-container">
+                                <canvas id="category-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Detalhamento por Categoria</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Categoria</th>
+                                        <th>Total</th>
+                                        <th>Percentual</th>
+                                        <th>Transações</th>
+                                        <th>Média</th>
+                                        <th>Tendência</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="category-details-body">
+                                    <!-- Dados serão inseridos via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aba: Tendências -->
+            <div class="tab-content" id="trends-tab">
+                <div class="charts-grid">
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Tendência Mensal</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="chart-container">
+                                <canvas id="trend-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Evolução do Saldo</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="chart-container">
+                                <canvas id="balance-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aba: Padrões de Gastos -->
+            <div class="tab-content" id="patterns-tab">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Padrões de Gastos Semanais</h3>
+                    </div>
+                    <div class="card-content">
+                        <div id="spending-patterns-container">
+                            <!-- Dados serão inseridos via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script>
+        // Dados de demonstração
+        const demoData = {
+            summary: {
+                total_income: 15750.00,
+                total_expense: 12340.00,
+                net_balance: 3410.00,
+                savings_rate: 21.6,
+                transaction_count: 127,
+                average_transaction: 97.20
+            },
+            categories: [
+                { name: 'Alimentação', value: 4250, color: '#FF6B6B', count: 42, avg: 101.19, change: -8.2 },
+                { name: 'Transporte', value: 2890, color: '#4ECDC4', count: 28, avg: 103.21, change: 15.7 },
+                { name: 'Lazer', value: 1850, color: '#45B7D1', count: 18, avg: 102.78, change: 2.1 },
+                { name: 'Saúde', value: 1200, color: '#96CEB4', count: 12, avg: 100.00, change: -3.5 },
+                { name: 'Educação', value: 950, color: '#FFEAA7', count: 8, avg: 118.75, change: 22.3 },
+                { name: 'Outros', value: 1200, color: '#DDA0DD', count: 19, avg: 63.16, change: 5.8 }
+            ],
+            monthlyTrend: [
+                { month: 'Jan', income: 15000, expense: 12000 },
+                { month: 'Fev', income: 15500, expense: 11800 },
+                { month: 'Mar', income: 14800, expense: 13200 },
+                { month: 'Abr', income: 16200, expense: 12500 },
+                { month: 'Mai', income: 15750, expense: 12340 }
+            ],
+            patterns: [
+                { period: 'Semana 1', amount: 850.00, count: 25 },
+                { period: 'Semana 2', amount: 920.00, count: 28 },
+                { period: 'Semana 3', amount: 780.00, count: 22 },
+                { period: 'Semana 4', amount: 1100.00, count: 32 }
+            ]
+        };
+
+        let charts = {};
+        let currentTab = 'summary';
+
+        // Inicializar página
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Inicializando sistema de relatórios com abas...');
+            loadTabData('summary');
+            showMessage('Sistema de relatórios carregado!', 'success');
+        });
+
+        // Sistema de abas
+        function switchTab(tabName) {
+            // Atualizar estado
+            currentTab = tabName;
+            
+            // Atualizar interface
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            const activeButton = document.querySelector(`[data-tab="${tabName}"]`);
+            const activeContent = document.getElementById(`${tabName}-tab`);
+            
+            if (activeButton) activeButton.classList.add('active');
+            if (activeContent) activeContent.classList.add('active');
+            
+            // Carregar dados da aba
+            loadTabData(tabName);
+            
+            showMessage(`Aba "${getTabTitle(tabName)}" carregada!`, 'info');
+        }
+
+        // Carregar dados da aba
+        function loadTabData(tabName) {
+            switch (tabName) {
+                case 'summary':
+                    // Dados já estão no HTML
+                    break;
+                case 'categories':
+                    createCategoryChart();
+                    updateCategoryTable();
+                    break;
+                case 'trends':
+                    createTrendChart();
+                    createBalanceChart();
+                    break;
+                case 'patterns':
+                    updatePatternsDisplay();
+                    break;
+            }
+        }
+
+        // Gráfico de categorias
+        function createCategoryChart() {
+            const canvas = document.getElementById('category-chart');
+            if (!canvas) return;
+
+            if (charts.category) {
+                charts.category.destroy();
+            }
+
+            const total = demoData.categories.reduce((sum, cat) => sum + cat.value, 0);
+
+            charts.category = new Chart(canvas, {
+                type: 'doughnut',
+                data: {
+                    labels: demoData.categories.map(c => c.name),
+                    datasets: [{
+                        data: demoData.categories.map(c => c.value),
+                        backgroundColor: demoData.categories.map(c => c.color),
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Despesas por Categoria',
+                            font: { size: 16, weight: 'bold' }
+                        },
+                        legend: {
+                            position: 'bottom',
+                            labels: { padding: 20, usePointStyle: true }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = formatCurrency(context.parsed);
+                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Atualizar tabela de categorias
+        function updateCategoryTable() {
+            const tbody = document.getElementById('category-details-body');
+            if (!tbody) return;
+
+            const total = demoData.categories.reduce((sum, cat) => sum + cat.value, 0);
+
+            tbody.innerHTML = demoData.categories.map(cat => {
+                const percentage = ((cat.value / total) * 100);
+                const trendIcon = cat.change > 0 ? '📈' : cat.change < 0 ? '📉' : '➡️';
+                const trendClass = cat.change > 0 ? 'text-success' : cat.change < 0 ? 'text-error' : 'text-muted';
+                
+                return `
+                    <tr>
+                        <td>
+                            <div class="category-cell">
+                                <div class="category-color" style="background-color: ${cat.color}"></div>
+                                <span>${cat.name}</span>
+                            </div>
+                        </td>
+                        <td class="text-right">${formatCurrency(cat.value)}</td>
+                        <td class="text-right">${percentage.toFixed(1)}%</td>
+                        <td class="text-right">${cat.count}</td>
+                        <td class="text-right">${formatCurrency(cat.avg)}</td>
+                        <td class="text-center">
+                            <span class="${trendClass}">
+                                ${trendIcon} ${Math.abs(cat.change).toFixed(1)}%
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Gráfico de tendências
+        function createTrendChart() {
+            const canvas = document.getElementById('trend-chart');
+            if (!canvas) return;
+
+            if (charts.trend) {
+                charts.trend.destroy();
+            }
+
+            charts.trend = new Chart(canvas, {
+                type: 'line',
+                data: {
+                    labels: demoData.monthlyTrend.map(m => m.month),
+                    datasets: [
+                        {
+                            label: 'Receitas',
+                            data: demoData.monthlyTrend.map(m => m.income),
+                            borderColor: '#4ECDC4',
+                            backgroundColor: 'rgba(78, 205, 196, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Despesas',
+                            data: demoData.monthlyTrend.map(m => m.expense),
+                            borderColor: '#FF6B6B',
+                            backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Tendência Mensal - Receitas vs Despesas',
+                            font: { size: 16, weight: 'bold' }
+                        },
+                        legend: {
+                            position: 'top',
+                            labels: { padding: 20, usePointStyle: true }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de saldo
+        function createBalanceChart() {
+            const canvas = document.getElementById('balance-chart');
+            if (!canvas) return;
+
+            if (charts.balance) {
+                charts.balance.destroy();
+            }
+
+            const balanceData = demoData.monthlyTrend.map(m => m.income - m.expense);
+
+            charts.balance = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels: demoData.monthlyTrend.map(m => m.month),
+                    datasets: [{
+                        label: 'Saldo Mensal',
+                        data: balanceData,
+                        backgroundColor: balanceData.map(value => 
+                            value >= 0 ? 'rgba(69, 183, 209, 0.7)' : 'rgba(255, 107, 107, 0.7)'
+                        ),
+                        borderColor: balanceData.map(value => 
+                            value >= 0 ? '#45B7D1' : '#FF6B6B'
+                        ),
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Evolução do Saldo Mensal',
+                            font: { size: 16, weight: 'bold' }
+                        },
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: {
+                            grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Atualizar padrões de gastos
+        function updatePatternsDisplay() {
+            const container = document.getElementById('spending-patterns-container');
+            if (!container) return;
+
+            container.innerHTML = demoData.patterns.map(pattern => `
+                <div class="pattern-card">
+                    <div class="pattern-period">${pattern.period}</div>
+                    <div class="pattern-amount">${formatCurrency(pattern.amount)}</div>
+                    <div class="pattern-count">${pattern.count} transações</div>
+                </div>
+            `).join('');
+        }
+
+        // Funções de controle
+        function refreshAllData() {
+            showMessage('Atualizando dados...', 'info');
+            setTimeout(() => {
+                loadTabData(currentTab);
+                showMessage('Dados atualizados!', 'success');
+            }, 1000);
+        }
+
+        function exportCurrentTab() {
+            const tabTitle = getTabTitle(currentTab);
+            showMessage(`Exportando "${tabTitle}" para PDF...`, 'info');
+            setTimeout(() => {
+                showMessage('Funcionalidade de exportação será implementada em breve!', 'warning');
+            }, 1000);
+        }
+
+        function handlePeriodChange() {
+            const period = document.getElementById('period-select').value;
+            showMessage(`Período alterado para: ${period}`, 'info');
+            setTimeout(() => loadTabData(currentTab), 500);
+        }
+
+        function handleTypeChange() {
+            const type = document.getElementById('type-select').value;
+            const typeLabel = type === 'expense' ? 'Despesas' : 'Receitas';
+            showMessage(`Tipo alterado para: ${typeLabel}`, 'info');
+            if (currentTab === 'categories') {
+                setTimeout(() => loadTabData(currentTab), 500);
+            }
+        }
+
+        // Utilitários
+        function getTabTitle(tabName) {
+            const titles = {
+                summary: 'Resumo Geral',
+                categories: 'Análise por Categoria',
+                trends: 'Tendências',
+                patterns: 'Padrões de Gastos'
+            };
+            return titles[tabName] || tabName;
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(amount || 0);
+        }
+
+        function showMessage(message, type = 'info') {
+            let toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toast-container';
+                toastContainer.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 10000;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                `;
+                document.body.appendChild(toastContainer);
+            }
+
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                padding: 12px 16px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 500;
+                max-width: 300px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+
+            const colors = {
+                success: '#28a745',
+                error: '#dc3545',
+                warning: '#ffc107',
+                info: '#17a2b8'
+            };
+            toast.style.backgroundColor = colors[type] || colors.info;
+            toast.textContent = message;
+
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.transform = 'translateX(0)';
+            }, 100);
+
+            setTimeout(() => {
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

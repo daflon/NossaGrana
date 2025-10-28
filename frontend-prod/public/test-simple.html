@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Simples - APIs de Relatórios</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .btn { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .btn:hover { background: #0056b3; }
+        .result { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 15px; margin: 10px 0; }
+        .error { border-color: #dc3545; background: #f8d7da; }
+        .success { border-color: #28a745; background: #d4edda; }
+        pre { background: white; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Teste Simples - APIs de Relatórios</h1>
+        
+        <div>
+            <h3>1. Primeiro, faça login para obter o token:</h3>
+            <input type="email" id="email" placeholder="Email" value="admin@example.com" style="padding: 8px; margin: 5px;">
+            <input type="password" id="password" placeholder="Senha" value="admin123" style="padding: 8px; margin: 5px;">
+            <button class="btn" onclick="login()">Login</button>
+        </div>
+        
+        <div id="login-result"></div>
+        
+        <div>
+            <h3>2. Teste as APIs de Relatórios:</h3>
+            <button class="btn" onclick="testSummary()">Testar Summary</button>
+            <button class="btn" onclick="testCategory()">Testar Category</button>
+            <button class="btn" onclick="testTrend()">Testar Trend</button>
+            <button class="btn" onclick="testPatterns()">Testar Patterns</button>
+        </div>
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        let accessToken = null;
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('http://localhost:8000/api/auth/login/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    accessToken = data.access;
+                    showResult('login-result', 'Login realizado com sucesso!', 'success');
+                    console.log('Token:', accessToken);
+                } else {
+                    showResult('login-result', `Erro no login: ${data.detail || 'Erro desconhecido'}`, 'error');
+                }
+            } catch (error) {
+                showResult('login-result', `Erro de conexão: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAPI(endpoint, name) {
+            if (!accessToken) {
+                showResult('results', 'Faça login primeiro!', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8000/api/reports/${endpoint}`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('results', `${name} - Sucesso!`, 'success', data);
+                } else {
+                    showResult('results', `${name} - Erro: ${response.status}`, 'error', data);
+                }
+            } catch (error) {
+                showResult('results', `${name} - Erro de conexão: ${error.message}`, 'error');
+            }
+        }
+
+        function testSummary() {
+            testAPI('summary/?period=current_month', 'Summary API');
+        }
+
+        function testCategory() {
+            testAPI('category-breakdown/?period=current_month&type=expense', 'Category API');
+        }
+
+        function testTrend() {
+            testAPI('monthly-trend/?months=6', 'Trend API');
+        }
+
+        function testPatterns() {
+            testAPI('spending-patterns/?type=weekly&period=last_90_days', 'Patterns API');
+        }
+
+        function showResult(containerId, message, type, data = null) {
+            const container = document.getElementById(containerId);
+            const timestamp = new Date().toLocaleTimeString();
+            
+            let html = `<div class="result ${type}">`;
+            html += `<h4>${message} - ${timestamp}</h4>`;
+            
+            if (data) {
+                html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }
+            
+            html += `</div>`;
+            
+            if (containerId === 'results') {
+                container.innerHTML = html + container.innerHTML;
+            } else {
+                container.innerHTML = html;
+            }
+        }
+    </script>
+</body>
+</html>

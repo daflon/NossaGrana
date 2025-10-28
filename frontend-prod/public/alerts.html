@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alertas - Nossa Grana</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">NG</div>
+                <div class="logo-text">Nossa Grana</div>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="dashboard" class="nav-link">
+                            <span class="nav-icon">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="transactions" class="nav-link">
+                            <span class="nav-icon">💰</span>
+                            Transações
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="accounts" class="nav-link">
+                            <span class="nav-icon">🏦</span>
+                            Contas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="credit-cards" class="nav-link">
+                            <span class="nav-icon">💳</span>
+                            Cartões
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="budgets" class="nav-link">
+                            <span class="nav-icon">📋</span>
+                            Orçamentos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="reports" class="nav-link">
+                            <span class="nav-icon">📈</span>
+                            Relatórios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="goals" class="nav-link">
+                            <span class="nav-icon">🎯</span>
+                            Metas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="alerts" class="nav-link active">
+                            <span class="nav-icon">🚨</span>
+                            Alertas
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <span>🚪</span>
+                    Sair
+                </button>
+            </div>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Alertas de Orçamento</h1>
+                    <p class="page-subtitle">Sistema inteligente de notificações financeiras</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="loadAlerts()">
+                        <span class="btn-icon">🔄</span>
+                        Atualizar
+                    </button>
+                    <button class="btn btn-primary" onclick="generateAllAlerts()">
+                        <span class="btn-icon">🚨</span>
+                        Gerar Alertas
+                    </button>
+                    <div class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+                        <span class="theme-icon light">☀️</span>
+                        <div class="theme-toggle-switch"></div>
+                        <span class="theme-icon dark">🌙</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumo de Alertas -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value text-error" id="critical-alerts">0</div>
+                    <div class="metric-label">Críticos</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value text-error" id="high-alerts">0</div>
+                    <div class="metric-label">Altos</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value text-warning" id="medium-alerts">0</div>
+                    <div class="metric-label">Médios</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value text-info" id="low-alerts">0</div>
+                    <div class="metric-label">Baixos</div>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="card-title">Filtros</h3>
+                </div>
+                <div class="card-content">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label" for="filter-status">Status</label>
+                            <select id="filter-status" class="form-select">
+                                <option value="">Todos</option>
+                                <option value="true">Ativos</option>
+                                <option value="false">Resolvidos</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="filter-level">Nível</label>
+                            <select id="filter-level" class="form-select">
+                                <option value="">Todos</option>
+                                <option value="critical">Crítico</option>
+                                <option value="high">Alto</option>
+                                <option value="medium">Médio</option>
+                                <option value="low">Baixo</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="filter-type">Tipo</label>
+                            <select id="filter-type" class="form-select">
+                                <option value="">Todos</option>
+                                <option value="over_budget">Orçamento Excedido</option>
+                                <option value="near_limit">Próximo do Limite</option>
+                                <option value="projection_warning">Projeção de Excesso</option>
+                                <option value="trend_warning">Tendência Preocupante</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="filter-month">Mês</label>
+                            <input type="month" id="filter-month" class="form-input">
+                        </div>
+                    </div>
+                    <div class="flex gap-2 mt-3">
+                        <button class="btn btn-primary" onclick="applyFilters()">Aplicar Filtros</button>
+                        <button class="btn btn-secondary" onclick="clearFilters()">Limpar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Abas -->
+            <div class="card mb-4">
+                <div class="card-content">
+                    <div class="tabs">
+                        <button class="tab-button active" onclick="showTab('active')" id="tab-active">
+                            🚨 Alertas Ativos
+                        </button>
+                        <button class="tab-button" onclick="showTab('resolved')" id="tab-resolved">
+                            ✅ Alertas Resolvidos
+                        </button>
+                        <button class="tab-button" onclick="showTab('summary')" id="tab-summary">
+                            📊 Resumo Geral
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conteúdo das Abas -->
+            <div id="tab-content-active" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Alertas Ativos</h3>
+                    </div>
+                    <div class="card-content">
+                        <div id="active-alerts">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-content-resolved" class="tab-content" style="display: none;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Alertas Resolvidos</h3>
+                    </div>
+                    <div class="card-content">
+                        <div id="resolved-alerts">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-content-summary" class="tab-content" style="display: none;">
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Estatísticas por Nível</h3>
+                        </div>
+                        <div class="card-content">
+                            <div id="level-stats">
+                                <div class="loading">
+                                    <div class="spinner"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Estatísticas por Tipo</h3>
+                        </div>
+                        <div class="card-content">
+                            <div id="type-stats">
+                                <div class="loading">
+                                    <div class="spinner"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Alertas Mais Recentes</h3>
+                    </div>
+                    <div class="card-content">
+                        <div id="recent-alerts">
+                            <div class="loading">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mensagens -->
+            <div id="message-container"></div>
+        </main>
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/notifications.js"></script>
+    <script>
+        let currentFilters = {};
+
+        // Inicializar página
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Verificar autenticação
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                window.location.href = '';
+                return;
+            }
+
+            // Configurar mês atual
+            document.getElementById('filter-month').value = api.getCurrentMonth();
+
+            // Carregar dados
+            await loadAlerts();
+            await loadAlertsSummary();
+        });
+
+        // Carregar alertas
+        async function loadAlerts() {
+            try {
+                // Carregar alertas ativos
+                const activeResponse = await api.getBudgetAlerts({ is_active: true, ...currentFilters });
+                const activeAlerts = activeResponse.results || activeResponse;
+                updateAlertsDisplay('active-alerts', activeAlerts, true);
+
+                // Carregar alertas resolvidos
+                const resolvedResponse = await api.getBudgetAlerts({ is_active: false, ...currentFilters });
+                const resolvedAlerts = resolvedResponse.results || resolvedResponse;
+                updateAlertsDisplay('resolved-alerts', resolvedAlerts, false);
+
+            } catch (error) {
+                console.error('Erro ao carregar alertas:', error);
+                showMessage('Erro ao carregar alertas', 'error');
+            }
+        }
+
+        // Atualizar exibição de alertas
+        function updateAlertsDisplay(containerId, alerts, isActive) {
+            const container = document.getElementById(containerId);
+
+            if (!alerts || alerts.length === 0) {
+                const emptyIcon = isActive ? '✅' : '📝';
+                const emptyText = isActive ? 'Nenhum alerta ativo' : 'Nenhum alerta resolvido';
+                const emptySubtext = isActive ? 'Seus orçamentos estão sob controle!' : 'Histórico vazio';
+
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">${emptyIcon}</div>
+                        <p>${emptyText}</p>
+                        <p class="text-muted">${emptySubtext}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            alerts.forEach(alert => {
+                const levelConfig = getAlertLevelConfig(alert.alert_level);
+                const typeConfig = getAlertTypeConfig(alert.alert_type);
+
+                html += `
+                    <div class="alert-item" style="padding: 20px; margin-bottom: 16px; background: var(--bg-secondary); border-radius: var(--border-radius-lg); border-left: 4px solid ${levelConfig.color};">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                                    <span style="font-size: 1.5rem;">${levelConfig.icon}</span>
+                                    <h4 style="margin: 0; font-size: 1.1rem;">${alert.budget_category}</h4>
+                                    <span class="badge badge-${alert.alert_level}">${alert.alert_level_display}</span>
+                                    <span class="badge badge-info">${alert.alert_type_display}</span>
+                                </div>
+                                
+                                <p style="margin: 0 0 8px 0; color: var(--text-primary);">
+                                    ${alert.message}
+                                </p>
+                                
+                                <div class="text-muted" style="font-size: 0.875rem;">
+                                    <span>${alert.budget_month}</span> • 
+                                    <span>Criado em ${api.formatDateTime(alert.created_at)}</span>
+                                    ${alert.resolved_at ? ` • Resolvido em ${api.formatDateTime(alert.resolved_at)}` : ''}
+                                </div>
+                            </div>
+                            
+                            ${isActive ? `
+                            <button class="btn btn-success" onclick="resolveAlert(${alert.id})" style="padding: 8px 16px;">
+                                ✓ Resolver
+                            </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Configuração de níveis de alerta
+        function getAlertLevelConfig(level) {
+            const configs = {
+                critical: { icon: '🚨', color: 'var(--error-color)' },
+                high: { icon: '⚠️', color: 'var(--error-color)' },
+                medium: { icon: '⚠️', color: 'var(--warning-color)' },
+                low: { icon: 'ℹ️', color: 'var(--info-color)' }
+            };
+            return configs[level] || configs.low;
+        }
+
+        // Configuração de tipos de alerta
+        function getAlertTypeConfig(type) {
+            const configs = {
+                over_budget: { icon: '🚨', name: 'Orçamento Excedido' },
+                near_limit: { icon: '⚠️', name: 'Próximo do Limite' },
+                projection_warning: { icon: '📊', name: 'Projeção de Excesso' },
+                trend_warning: { icon: '📈', name: 'Tendência Preocupante' }
+            };
+            return configs[type] || { icon: 'ℹ️', name: 'Alerta' };
+        }
+
+        // Carregar resumo de alertas
+        async function loadAlertsSummary() {
+            try {
+                const summary = await api.getAlertsSummary();
+
+                // Atualizar métricas
+                document.getElementById('critical-alerts').textContent = summary.alerts_by_level.critical || 0;
+                document.getElementById('high-alerts').textContent = summary.alerts_by_level.high || 0;
+                document.getElementById('medium-alerts').textContent = summary.alerts_by_level.medium || 0;
+                document.getElementById('low-alerts').textContent = summary.alerts_by_level.low || 0;
+
+                // Atualizar estatísticas detalhadas
+                updateLevelStats(summary.alerts_by_level);
+                updateTypeStats(summary.alerts_by_type);
+                updateRecentAlerts(summary.most_recent_alerts);
+
+            } catch (error) {
+                console.error('Erro ao carregar resumo:', error);
+            }
+        }
+
+        // Atualizar estatísticas por nível
+        function updateLevelStats(levelStats) {
+            const container = document.getElementById('level-stats');
+            
+            let html = '';
+            Object.entries(levelStats).forEach(([level, count]) => {
+                const config = getAlertLevelConfig(level);
+                const percentage = count > 0 ? ((count / Object.values(levelStats).reduce((a, b) => a + b, 0)) * 100).toFixed(1) : 0;
+                
+                html += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span>${config.icon}</span>
+                            <span style="text-transform: capitalize;">${level}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-weight: 600;">${count}</span>
+                            <span class="text-muted">(${percentage}%)</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html || '<p class="text-muted">Nenhuma estatística disponível</p>';
+        }
+
+        // Atualizar estatísticas por tipo
+        function updateTypeStats(typeStats) {
+            const container = document.getElementById('type-stats');
+            
+            let html = '';
+            Object.entries(typeStats).forEach(([type, count]) => {
+                const config = getAlertTypeConfig(type);
+                const percentage = count > 0 ? ((count / Object.values(typeStats).reduce((a, b) => a + b, 0)) * 100).toFixed(1) : 0;
+                
+                html += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span>${config.icon}</span>
+                            <span>${config.name}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-weight: 600;">${count}</span>
+                            <span class="text-muted">(${percentage}%)</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html || '<p class="text-muted">Nenhuma estatística disponível</p>';
+        }
+
+        // Atualizar alertas recentes
+        function updateRecentAlerts(recentAlerts) {
+            const container = document.getElementById('recent-alerts');
+
+            if (!recentAlerts || recentAlerts.length === 0) {
+                container.innerHTML = '<p class="text-muted">Nenhum alerta recente</p>';
+                return;
+            }
+
+            let html = '';
+            recentAlerts.forEach(alert => {
+                const levelConfig = getAlertLevelConfig(alert.alert_level);
+                
+                html += `
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border-color);">
+                        <span>${levelConfig.icon}</span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600;">${alert.budget_category}</div>
+                            <div class="text-muted" style="font-size: 0.875rem;">${alert.message}</div>
+                        </div>
+                        <div class="text-muted" style="font-size: 0.875rem;">
+                            ${api.formatDateTime(alert.created_at)}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Resolver alerta
+        async function resolveAlert(alertId) {
+            if (!confirm('Tem certeza que deseja marcar este alerta como resolvido?')) {
+                return;
+            }
+
+            try {
+                await api.resolveAlert(alertId);
+                showMessage('Alerta marcado como resolvido!', 'success');
+                
+                // Recarregar dados
+                await loadAlerts();
+                await loadAlertsSummary();
+                
+            } catch (error) {
+                showMessage(`Erro ao resolver alerta: ${error.message}`, 'error');
+            }
+        }
+
+        // Gerar todos os alertas
+        async function generateAllAlerts() {
+            try {
+                showMessage('Gerando alertas automáticos...', 'info');
+                
+                const result = await api.generateBudgetAlerts();
+                
+                showMessage(`${result.total_alerts_generated} alertas gerados/atualizados`, 'success');
+                
+                // Recarregar dados
+                await loadAlerts();
+                await loadAlertsSummary();
+                
+            } catch (error) {
+                console.error('Erro ao gerar alertas:', error);
+                showMessage('Erro ao gerar alertas automáticos', 'error');
+            }
+        }
+
+        // Aplicar filtros
+        function applyFilters() {
+            currentFilters = {};
+            
+            const status = document.getElementById('filter-status').value;
+            if (status) currentFilters.is_active = status;
+            
+            const level = document.getElementById('filter-level').value;
+            if (level) currentFilters.alert_level = level;
+            
+            const type = document.getElementById('filter-type').value;
+            if (type) currentFilters.alert_type = type;
+            
+            const month = document.getElementById('filter-month').value;
+            if (month) currentFilters.month = month;
+
+            loadAlerts();
+            showMessage('Filtros aplicados!', 'success');
+        }
+
+        // Limpar filtros
+        function clearFilters() {
+            currentFilters = {};
+            
+            document.getElementById('filter-status').value = '';
+            document.getElementById('filter-level').value = '';
+            document.getElementById('filter-type').value = '';
+            document.getElementById('filter-month').value = api.getCurrentMonth();
+            
+            loadAlerts();
+            showMessage('Filtros limpos!', 'success');
+        }
+
+        // Mostrar/ocultar abas
+        function showTab(tabName) {
+            // Atualizar botões
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+
+            // Mostrar conteúdo
+            document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+            document.getElementById(`tab-content-${tabName}`).style.display = 'block';
+
+            // Carregar dados específicos se necessário
+            if (tabName === 'summary') {
+                loadAlertsSummary();
+            }
+        }
+
+        // Estilos adicionais
+        const additionalStyles = `
+            .tabs {
+                display: flex;
+                gap: 8px;
+                border-bottom: 1px solid var(--border-color);
+                margin-bottom: 0;
+            }
+            .tab-button {
+                padding: 12px 20px;
+                border: none;
+                background: none;
+                color: var(--text-secondary);
+                cursor: pointer;
+                border-bottom: 2px solid transparent;
+                transition: all 0.2s ease;
+            }
+            .tab-button:hover {
+                color: var(--primary-color);
+            }
+            .tab-button.active {
+                color: var(--primary-color);
+                border-bottom-color: var(--primary-color);
+            }
+        `;
+        
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = additionalStyles;
+        document.head.appendChild(styleSheet);
+    </script>
+</body>
+</html>

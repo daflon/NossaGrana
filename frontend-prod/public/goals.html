@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metas - Nossa Grana</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">NG</div>
+                <div class="logo-text">Nossa Grana</div>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="dashboard" class="nav-link">
+                            <span class="nav-icon">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="transactions" class="nav-link">
+                            <span class="nav-icon">💰</span>
+                            Transações
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="accounts" class="nav-link">
+                            <span class="nav-icon">🏦</span>
+                            Contas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="credit-cards" class="nav-link">
+                            <span class="nav-icon">💳</span>
+                            Cartões
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="budgets" class="nav-link">
+                            <span class="nav-icon">📋</span>
+                            Orçamentos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="reports" class="nav-link">
+                            <span class="nav-icon">📈</span>
+                            Relatórios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="goals" class="nav-link active">
+                            <span class="nav-icon">🎯</span>
+                            Metas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="alerts" class="nav-link">
+                            <span class="nav-icon">🚨</span>
+                            Alertas
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <span>🚪</span>
+                    Sair
+                </button>
+            </div>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <!-- Header da Página -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Metas de Poupança</h1>
+                    <p class="page-subtitle">Defina e acompanhe seus objetivos financeiros</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="refreshGoals()">
+                        <span class="btn-icon">🔄</span>
+                        Atualizar
+                    </button>
+                    <button class="btn btn-primary" onclick="showGoalForm()">
+                        <span class="btn-icon">➕</span>
+                        Nova Meta
+                    </button>
+                    <div class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+                        <span class="theme-icon light">☀️</span>
+                        <div class="theme-toggle-switch"></div>
+                        <span class="theme-icon dark">🌙</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumo das Metas -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Resumo Geral</h3>
+                </div>
+                <div class="card-content">
+                    <div class="summary-cards">
+                        <div class="summary-card">
+                            <div class="summary-icon">🎯</div>
+                            <div class="summary-content">
+                                <div class="summary-label">Total de Metas</div>
+                                <div class="summary-value" id="total-goals">0</div>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="summary-icon">✅</div>
+                            <div class="summary-content">
+                                <div class="summary-label">Metas Atingidas</div>
+                                <div class="summary-value" id="achieved-goals">0</div>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="summary-icon">💰</div>
+                            <div class="summary-content">
+                                <div class="summary-label">Total Poupado</div>
+                                <div class="summary-value" id="total-saved">R$ 0,00</div>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="summary-icon">📈</div>
+                            <div class="summary-content">
+                                <div class="summary-label">Progresso Médio</div>
+                                <div class="summary-value" id="average-progress">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Metas -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Suas Metas</h3>
+                    <div class="card-actions">
+                        <select id="goal-filter" class="form-select">
+                            <option value="">Todas as metas</option>
+                            <option value="active">Ativas</option>
+                            <option value="achieved">Atingidas</option>
+                            <option value="overdue">Atrasadas</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="loading" id="goals-loading" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>Carregando metas...</p>
+                    </div>
+                    
+                    <div id="goals-list">
+                        <!-- Metas serão inseridas aqui via JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de Formulário de Meta -->
+    <div class="modal" id="goal-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Nova Meta</h3>
+                <button class="modal-close" onclick="closeGoalModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="goal-form">
+                    <div class="form-group">
+                        <label for="goal-name">Nome da Meta *</label>
+                        <input type="text" id="goal-name" class="form-input" required placeholder="Ex: Viagem para Europa">
+                        <div class="error-message" id="name-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="goal-description">Descrição</label>
+                        <textarea id="goal-description" class="form-input" rows="3" placeholder="Descreva sua meta (opcional)"></textarea>
+                        <div class="error-message" id="description-error"></div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="goal-target-amount">Valor Alvo *</label>
+                            <input type="number" id="goal-target-amount" class="form-input" step="0.01" min="0.01" required>
+                            <div class="error-message" id="target-amount-error"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="goal-target-date">Data Objetivo *</label>
+                            <input type="date" id="goal-target-date" class="form-input" required>
+                            <div class="error-message" id="target-date-error"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeGoalModal()">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary" onclick="saveGoal()">
+                    <span id="save-btn-text">Salvar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Contribuição -->
+    <div class="modal" id="contribute-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Contribuir para Meta</h3>
+                <button class="modal-close" onclick="closeContributeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="goal-info" id="contribute-goal-info">
+                    <!-- Informações da meta serão inseridas aqui -->
+                </div>
+                <form id="contribute-form">
+                    <div class="form-group">
+                        <label for="contribute-amount">Valor da Contribuição *</label>
+                        <input type="number" id="contribute-amount" class="form-input" step="0.01" min="0.01" required>
+                        <div class="error-message" id="contribute-amount-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contribute-description">Descrição</label>
+                        <input type="text" id="contribute-description" class="form-input" placeholder="Ex: Economia do mês">
+                        <div class="error-message" id="contribute-description-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contribute-date">Data</label>
+                        <input type="date" id="contribute-date" class="form-input">
+                        <div class="error-message" id="contribute-date-error"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeContributeModal()">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-success" onclick="processContribution()">
+                    <span id="contribute-btn-text">Contribuir</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div class="modal" id="delete-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmar Exclusão</h3>
+                <button class="modal-close" onclick="closeDeleteModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir esta meta?</p>
+                <p><strong id="delete-goal-name"></strong></p>
+                <p class="text-warning">⚠️ Esta ação não pode ser desfeita!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+                    Excluir
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/modal-manager.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/goals.js"></script>
+</body>
+</html>

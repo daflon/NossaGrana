@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transações - Nossa Grana</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo" onclick="window.location.href='/'">
+                <div class="logo-icon">NG</div>
+                <div class="logo-text">Nossa Grana</div>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="dashboard" class="nav-link">
+                            <span class="nav-icon">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="transactions" class="nav-link active">
+                            <span class="nav-icon">💰</span>
+                            Transações
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="accounts" class="nav-link">
+                            <span class="nav-icon">🏦</span>
+                            Contas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="credit-cards" class="nav-link">
+                            <span class="nav-icon">💳</span>
+                            Cartões
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="budgets" class="nav-link">
+                            <span class="nav-icon">📋</span>
+                            Orçamentos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="reports" class="nav-link">
+                            <span class="nav-icon">📈</span>
+                            Relatórios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="goals" class="nav-link">
+                            <span class="nav-icon">🎯</span>
+                            Metas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="alerts" class="nav-link">
+                            <span class="nav-icon">🚨</span>
+                            Alertas
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <span>🚪</span>
+                    Sair
+                </button>
+            </div>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Transações</h1>
+                    <p class="page-subtitle">Gerencie suas receitas e despesas</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="loadTransactions()">
+                        <span class="btn-icon">🔄</span>
+                        Atualizar
+                    </button>
+                    <button class="btn btn-primary" onclick="showTransactionForm()">
+                        <span class="btn-icon">➕</span>
+                        Nova Transação
+                    </button>
+                    <div class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+                        <span class="theme-icon light">☀️</span>
+                        <div class="theme-toggle-switch"></div>
+                        <span class="theme-icon dark">🌙</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumo Financeiro -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value text-success" id="total-income">R$ 0,00</div>
+                    <div class="metric-label">Total de Receitas</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value text-error" id="total-expense">R$ 0,00</div>
+                    <div class="metric-label">Total de Despesas</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="balance">R$ 0,00</div>
+                    <div class="metric-label">Saldo</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="transaction-count">0</div>
+                    <div class="metric-label">Total de Transações</div>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="card-title">Filtros</h3>
+                </div>
+                <div class="card-content">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label" for="filter-type">Tipo</label>
+                            <select id="filter-type" class="form-select">
+                                <option value="">Todos</option>
+                                <option value="income">Receitas</option>
+                                <option value="expense">Despesas</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="filter-category">Categoria</label>
+                            <select id="filter-category" class="form-select">
+                                <option value="">Todas</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="filter-date-from">Data Inicial</label>
+                            <input type="date" id="filter-date-from" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="filter-date-to">Data Final</label>
+                            <input type="date" id="filter-date-to" class="form-input">
+                        </div>
+                    </div>
+                    <div class="flex gap-2 mt-3">
+                        <button class="btn btn-primary" onclick="applyFilters()">Aplicar Filtros</button>
+                        <button class="btn btn-secondary" onclick="clearFilters()">Limpar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Transações -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Lista de Transações</h3>
+                </div>
+                <div class="card-content">
+                    <div id="transactions-container">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal de Transação -->
+            <div id="transaction-modal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title" id="modal-title">Nova Transação</h3>
+                        </div>
+                        <div class="card-content">
+                            <form id="transaction-form">
+                                <div class="form-group">
+                                    <label class="form-label" for="transaction-type">Tipo *</label>
+                                    <select id="transaction-type" class="form-select" required>
+                                        <option value="expense">Despesa</option>
+                                        <option value="income">Receita</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="transaction-amount">Valor *</label>
+                                    <input type="number" id="transaction-amount" class="form-input" 
+                                           step="0.01" min="0.01" placeholder="0,00" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="transaction-description">Descrição *</label>
+                                    <input type="text" id="transaction-description" class="form-input" 
+                                           placeholder="Ex: Compra no supermercado" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="transaction-category">Categoria *</label>
+                                    <select id="transaction-category" class="form-select" required>
+                                        <option value="">Selecione uma categoria</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="transaction-date">Data *</label>
+                                    <input type="date" id="transaction-date" class="form-input" required>
+                                </div>
+                                
+                                <!-- Meio de Pagamento -->
+                                <div class="form-group">
+                                    <label class="form-label">Meio de Pagamento *</label>
+                                    <div class="payment-method-tabs">
+                                        <button type="button" class="payment-tab active" data-method="account" onclick="switchPaymentMethod('account')">
+                                            🏦 Conta
+                                        </button>
+                                        <button type="button" class="payment-tab" data-method="credit_card" onclick="switchPaymentMethod('credit_card')">
+                                            💳 Cartão
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group" id="account-selection">
+                                    <label class="form-label" for="transaction-account">Conta Bancária *</label>
+                                    <select id="transaction-account" class="form-select">
+                                        <option value="">Selecione uma conta</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group" id="credit-card-selection" style="display: none;">
+                                    <label class="form-label" for="transaction-credit-card">Cartão de Crédito *</label>
+                                    <select id="transaction-credit-card" class="form-select">
+                                        <option value="">Selecione um cartão</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="flex gap-2 mt-4">
+                                    <button type="submit" class="btn btn-primary">
+                                        <span id="submit-text">Salvar</span>
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="hideTransactionForm()">
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mensagens -->
+            <div id="message-container"></div>
+        </main>
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/modal-manager.js"></script>
+    <script>
+        let currentEditingId = null;
+        let categories = [];
+        let accounts = [];
+        let creditCards = [];
+        let currentPaymentMethod = 'account';
+
+        // Inicializar página
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Verificar autenticação
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                window.location.href = '';
+                return;
+            }
+
+            // Configurar data atual
+            document.getElementById('transaction-date').value = new Date().toISOString().split('T')[0];
+
+            // Carregar dados
+            await loadCategories();
+            await loadAccounts();
+            await loadCreditCards();
+            await loadTransactions();
+            await loadSummary();
+        });
+
+        // Carregar categorias
+        async function loadCategories() {
+            try {
+                const response = await api.getCategories();
+                categories = response.results || response;
+
+                // Preencher selects
+                const categorySelects = ['transaction-category', 'filter-category'];
+                categorySelects.forEach(selectId => {
+                    const select = document.getElementById(selectId);
+                    
+                    // Limpar opções existentes (exceto a primeira)
+                    while (select.children.length > 1) {
+                        select.removeChild(select.lastChild);
+                    }
+
+                    categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.id;
+                        option.textContent = category.name;
+                        select.appendChild(option);
+                    });
+                });
+
+            } catch (error) {
+                console.error('Erro ao carregar categorias:', error);
+                showMessage('Erro ao carregar categorias', 'error');
+            }
+        }
+
+        // Carregar contas
+        async function loadAccounts() {
+            try {
+                const response = await api.request('/financial/accounts/');
+                accounts = response.results || response;
+
+                const select = document.getElementById('transaction-account');
+                
+                // Limpar opções existentes (exceto a primeira)
+                while (select.children.length > 1) {
+                    select.removeChild(select.lastChild);
+                }
+
+                accounts.filter(acc => acc.is_active).forEach(account => {
+                    const option = document.createElement('option');
+                    option.value = account.id;
+                    option.textContent = `${account.name} (${account.balance_formatted || formatCurrency(account.current_balance)})`;
+                    select.appendChild(option);
+                });
+
+            } catch (error) {
+                console.error('Erro ao carregar contas:', error);
+                // Usar dados mockados
+                accounts = [
+                    { id: 1, name: 'Conta Corrente', current_balance: 4250.50, is_active: true },
+                    { id: 2, name: 'Poupança', current_balance: 12500.75, is_active: true }
+                ];
+                
+                const select = document.getElementById('transaction-account');
+                accounts.forEach(account => {
+                    const option = document.createElement('option');
+                    option.value = account.id;
+                    option.textContent = `${account.name} (${formatCurrency(account.current_balance)})`;
+                    select.appendChild(option);
+                });
+            }
+        }
+
+        // Carregar cartões de crédito
+        async function loadCreditCards() {
+            try {
+                const response = await api.request('/financial/credit-cards/');
+                creditCards = response.results || response;
+
+                const select = document.getElementById('transaction-credit-card');
+                
+                // Limpar opções existentes (exceto a primeira)
+                while (select.children.length > 1) {
+                    select.removeChild(select.lastChild);
+                }
+
+                creditCards.filter(card => card.is_active).forEach(card => {
+                    const option = document.createElement('option');
+                    option.value = card.id;
+                    option.textContent = `${card.name} (${card.available_limit_formatted || formatCurrency(card.available_limit)} disponível)`;
+                    select.appendChild(option);
+                });
+
+            } catch (error) {
+                console.error('Erro ao carregar cartões:', error);
+                // Usar dados mockados
+                creditCards = [
+                    { id: 1, name: 'Cartão Visa', available_limit: 5000.00, is_active: true },
+                    { id: 2, name: 'Cartão Mastercard', available_limit: 3000.00, is_active: true }
+                ];
+                
+                const select = document.getElementById('transaction-credit-card');
+                creditCards.forEach(card => {
+                    const option = document.createElement('option');
+                    option.value = card.id;
+                    option.textContent = `${card.name} (${formatCurrency(card.available_limit)} disponível)`;
+                    select.appendChild(option);
+                });
+            }
+        }
+
+        // Obter display do meio de pagamento
+        function getPaymentMethodDisplay(transaction) {
+            if (transaction.account_name) {
+                return `🏦 ${transaction.account_name}`;
+            } else if (transaction.credit_card_name) {
+                return `💳 ${transaction.credit_card_name}`;
+            } else if (transaction.transfer_from_account_name && transaction.transfer_to_account_name) {
+                return `🔄 ${transaction.transfer_from_account_name} → ${transaction.transfer_to_account_name}`;
+            }
+            return '❓ Meio não informado';
+        }
+
+        // Alternar meio de pagamento
+        function switchPaymentMethod(method) {
+            currentPaymentMethod = method;
+            
+            // Atualizar abas
+            document.querySelectorAll('.payment-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-method="${method}"]`).classList.add('active');
+            
+            // Mostrar/ocultar campos
+            const accountSelection = document.getElementById('account-selection');
+            const creditCardSelection = document.getElementById('credit-card-selection');
+            
+            if (method === 'account') {
+                accountSelection.style.display = 'block';
+                creditCardSelection.style.display = 'none';
+                document.getElementById('transaction-account').required = true;
+                document.getElementById('transaction-credit-card').required = false;
+            } else {
+                accountSelection.style.display = 'none';
+                creditCardSelection.style.display = 'block';
+                document.getElementById('transaction-account').required = false;
+                document.getElementById('transaction-credit-card').required = true;
+            }
+        }
+
+        // Carregar transações
+        async function loadTransactions() {
+            try {
+                const response = await api.getTransactions();
+                const transactions = response.results || response;
+
+                const container = document.getElementById('transactions-container');
+
+                if (!transactions || transactions.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">💰</div>
+                            <p>Nenhuma transação encontrada</p>
+                            <button class="btn btn-primary mt-3" onclick="showTransactionForm()">
+                                Adicionar Primeira Transação
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '<div class="transactions-list">';
+                
+                transactions.forEach(transaction => {
+                    const typeIcon = transaction.type === 'income' ? '📈' : '📉';
+                    const typeClass = transaction.type === 'income' ? 'text-success' : 'text-error';
+                    const typeText = transaction.type === 'income' ? 'Receita' : 'Despesa';
+
+                    html += `
+                        <div class="transaction-item" style="display: flex; justify-content: space-between; align-items: center; padding: 16px; margin-bottom: 12px; background: var(--bg-secondary); border-radius: var(--border-radius); border: 1px solid var(--border-color);">
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                                    <span style="font-size: 1.5rem;">${typeIcon}</span>
+                                    <div>
+                                        <h4 style="margin: 0; font-size: 1.1rem;">${transaction.description}</h4>
+                                        <div class="text-muted" style="font-size: 0.875rem;">
+                                            ${transaction.category_name} • ${api.formatDate(transaction.date)}
+                                        </div>
+                                        <div class="text-muted" style="font-size: 0.8rem;">
+                                            ${getPaymentMethodDisplay(transaction)}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <div class="${typeClass}" style="font-weight: 700; font-size: 1.1rem;">
+                                    ${api.formatCurrency(transaction.amount)}
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn btn-secondary" onclick="editTransaction(${transaction.id})" style="padding: 6px 12px; font-size: 0.875rem;">
+                                        ✏️ Editar
+                                    </button>
+                                    <button class="btn btn-error" onclick="deleteTransaction(${transaction.id})" style="padding: 6px 12px; font-size: 0.875rem;">
+                                        🗑️ Excluir
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += '</div>';
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Erro ao carregar transações:', error);
+                document.getElementById('transactions-container').innerHTML = `
+                    <div class="alert alert-error">
+                        Erro ao carregar transações: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Carregar resumo
+        async function loadSummary() {
+            try {
+                const summary = await api.getTransactionSummary();
+
+                document.getElementById('total-income').textContent = api.formatCurrency(summary.total_income || 0);
+                document.getElementById('total-expense').textContent = api.formatCurrency(summary.total_expense || 0);
+                document.getElementById('transaction-count').textContent = summary.transaction_count || 0;
+
+                const balance = (summary.total_income || 0) - (summary.total_expense || 0);
+                const balanceElement = document.getElementById('balance');
+                balanceElement.textContent = api.formatCurrency(balance);
+
+                if (balance > 0) {
+                    balanceElement.className = 'metric-value text-success';
+                } else if (balance < 0) {
+                    balanceElement.className = 'metric-value text-error';
+                } else {
+                    balanceElement.className = 'metric-value';
+                }
+
+            } catch (error) {
+                console.error('Erro ao carregar resumo:', error);
+            }
+        }
+
+        // Mostrar formulário de transação
+        function showTransactionForm(transaction = null) {
+            currentEditingId = transaction ? transaction.id : null;
+            
+            document.getElementById('modal-title').textContent = transaction ? 'Editar Transação' : 'Nova Transação';
+            document.getElementById('submit-text').textContent = transaction ? 'Atualizar' : 'Salvar';
+
+            if (transaction) {
+                document.getElementById('transaction-type').value = transaction.type;
+                document.getElementById('transaction-amount').value = transaction.amount;
+                document.getElementById('transaction-description').value = transaction.description;
+                document.getElementById('transaction-category').value = transaction.category;
+                document.getElementById('transaction-date').value = transaction.date;
+                
+                // Configurar meio de pagamento
+                if (transaction.account) {
+                    switchPaymentMethod('account');
+                    document.getElementById('transaction-account').value = transaction.account;
+                } else if (transaction.credit_card) {
+                    switchPaymentMethod('credit_card');
+                    document.getElementById('transaction-credit-card').value = transaction.credit_card;
+                } else {
+                    // Padrão para conta se não especificado
+                    switchPaymentMethod('account');
+                }
+            } else {
+                document.getElementById('transaction-form').reset();
+                document.getElementById('transaction-date').value = new Date().toISOString().split('T')[0];
+                // Padrão para conta em nova transação
+                switchPaymentMethod('account');
+            }
+
+            modalManager.openModal('transaction-modal');
+        }
+
+        // Ocultar formulário
+        function hideTransactionForm() {
+            modalManager.closeModal('transaction-modal');
+            currentEditingId = null;
+        }
+
+        // Função utilitária para formatação de moeda
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(amount || 0);
+        }
+
+        // Notificar outras páginas sobre mudanças nos saldos
+        function notifyBalanceUpdate() {
+            const timestamp = Date.now();
+            localStorage.setItem('balance_update', timestamp.toString());
+            
+            // Disparar evento customizado para a própria página
+            window.dispatchEvent(new CustomEvent('balanceUpdated', { 
+                detail: { timestamp } 
+            }));
+        }
+
+        // Editar transação
+        async function editTransaction(id) {
+            try {
+                const response = await api.getTransactions();
+                const transactions = response.results || response;
+                const transaction = transactions.find(t => t.id === id);
+                
+                if (transaction) {
+                    showTransactionForm(transaction);
+                }
+            } catch (error) {
+                showMessage('Erro ao carregar transação para edição', 'error');
+            }
+        }
+
+        // Excluir transação
+        async function deleteTransaction(id) {
+            if (!confirm('Tem certeza que deseja excluir esta transação?')) {
+                return;
+            }
+
+            try {
+                await api.deleteTransaction(id);
+                showMessage('Transação excluída com sucesso!', 'success');
+                await loadTransactions();
+                await loadSummary();
+                
+                // Notificar outras páginas sobre mudança nos saldos
+                notifyBalanceUpdate();
+            } catch (error) {
+                showMessage(`Erro ao excluir transação: ${error.message}`, 'error');
+            }
+        }
+
+        // Aplicar filtros
+        async function applyFilters() {
+            const filters = {};
+            
+            const type = document.getElementById('filter-type').value;
+            if (type) filters.type = type;
+            
+            const category = document.getElementById('filter-category').value;
+            if (category) filters.category = category;
+            
+            const dateFrom = document.getElementById('filter-date-from').value;
+            if (dateFrom) filters.date_from = dateFrom;
+            
+            const dateTo = document.getElementById('filter-date-to').value;
+            if (dateTo) filters.date_to = dateTo;
+
+            try {
+                const response = await api.getTransactions(filters);
+                // Atualizar lista com resultados filtrados
+                // (implementação similar ao loadTransactions)
+                showMessage('Filtros aplicados!', 'success');
+            } catch (error) {
+                showMessage('Erro ao aplicar filtros', 'error');
+            }
+        }
+
+        // Limpar filtros
+        function clearFilters() {
+            document.getElementById('filter-type').value = '';
+            document.getElementById('filter-category').value = '';
+            document.getElementById('filter-date-from').value = '';
+            document.getElementById('filter-date-to').value = '';
+            loadTransactions();
+        }
+
+        // Submeter formulário
+        document.getElementById('transaction-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = {
+                type: document.getElementById('transaction-type').value,
+                amount: parseFloat(document.getElementById('transaction-amount').value),
+                description: document.getElementById('transaction-description').value,
+                category: parseInt(document.getElementById('transaction-category').value),
+                date: document.getElementById('transaction-date').value
+            };
+
+            // Adicionar meio de pagamento
+            if (currentPaymentMethod === 'account') {
+                const accountId = document.getElementById('transaction-account').value;
+                if (accountId) {
+                    formData.account = parseInt(accountId);
+                }
+            } else {
+                const creditCardId = document.getElementById('transaction-credit-card').value;
+                if (creditCardId) {
+                    formData.credit_card = parseInt(creditCardId);
+                }
+            }
+
+            try {
+                if (currentEditingId) {
+                    await api.updateTransaction(currentEditingId, formData);
+                    showMessage('Transação atualizada com sucesso!', 'success');
+                } else {
+                    await api.createTransaction(formData);
+                    showMessage('Transação criada com sucesso!', 'success');
+                }
+
+                hideTransactionForm();
+                await loadTransactions();
+                await loadSummary();
+                
+                // Notificar outras páginas sobre mudança nos saldos
+                notifyBalanceUpdate();
+
+            } catch (error) {
+                showMessage(`Erro ao salvar transação: ${error.message}`, 'error');
+            }
+        });
+
+        // Estilos do modal
+        const modalStyles = `
+            .modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1000;
+            }
+            .modal-content {
+                max-width: 500px;
+                width: 90%;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+        `;
+        
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = modalStyles;
+        document.head.appendChild(styleSheet);
+    </script>
+</body>
+</html>

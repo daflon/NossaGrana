@@ -4,132 +4,96 @@ Sistema web completo para controle financeiro doméstico familiar, permitindo ge
 
 ## 🚀 Status do Projeto
 
-**✅ SISTEMA 100% FUNCIONAL E TESTADO**
+**✅ SISTEMA 100% FUNCIONAL E PRONTO PARA USO**
 
 - **Progresso Geral**: 100% funcional
-- **Backend**: ✅ 100% implementado e testado
-- **Frontend**: ✅ 100% implementado (Demo Interface)
-- **Interface Demo**: ✅ 100% funcional (porta 3002)
-- **Frontend React**: ✅ Estrutura completa (porta 3000)
+- **Backend Django**: ✅ APIs completas e testadas
+- **Demo Interface**: ✅ Interface completa (porta 3002)
+- **Frontend React**: ✅ Estrutura implementada (porta 3000)
 - **Testes Automatizados**: ✅ 100% aprovado (5/5 testes)
-- **Segurança**: ✅ Aprovado (0 vulnerabilidades críticas)
-- **Performance**: ✅ Aprovado (<2s carregamento)
-- **Responsividade**: ✅ Aprovado (100% mobile-friendly)
-- **Compatibilidade Windows**: ✅ Totalmente compatível
+- **Segurança**: ✅ JWT + middleware de proteção
+- **Performance**: ✅ Carregamento < 2s
+- **Responsividade**: ✅ 100% mobile-friendly
+- **Compatibilidade**: ✅ Windows/Linux/Mac
 
 ## 🛠️ Tecnologias
 
 ### Backend
 - **Python 3.9+** com Django 4.2+
-- **Django REST Framework 3.14+** para APIs
+- **Django REST Framework** para APIs RESTful
 - **JWT** para autenticação segura
 - **SQLite** (desenvolvimento) / **PostgreSQL** (produção)
-- **Middleware avançado** de segurança e performance
+- **Middleware** de segurança e performance
 
 ### Frontend
-- **Interface Demo**: HTML5/CSS3/JavaScript ES6+ (100% funcional)
-- **React.js 18+** (estrutura completa implementada)
-- **Material-UI** para componentes
-- **Chart.js** para visualizações
+- **Demo Interface**: HTML5/CSS3/JavaScript (100% funcional)
+- **React.js 18+** (estrutura completa)
+- **Chart.js** para gráficos
 - **Axios** para requisições HTTP
 
-### DevOps & Infraestrutura
+### DevOps
 - **Docker** para containerização
 - **Nginx** para proxy reverso
-- **SSL/HTTPS** configurado
-- **Scripts automatizados** de deploy e monitoramento
+- **Scripts** de deploy automatizado
 
 ## 📋 Funcionalidades Implementadas
 
-### ✅ **Sistema de Autenticação Completo**
+### ✅ **Autenticação e Segurança**
 - Registro e login com JWT
-- Middleware de segurança avançado
+- Middleware de segurança
 - Proteção de rotas e endpoints
-- Gerenciamento de sessões
-- Rate limiting e proteção contra ataques
+- Rate limiting
 
-### ✅ **Gestão Financeira Avançada**
+### ✅ **Gestão Financeira**
 
-#### **Transações Completas**
+#### **Transações**
 - CRUD completo de receitas, despesas e transferências
-- Sistema avançado de categorização
-- Tags personalizadas com contadores de uso
-- Validações rigorosas de dados
-- Histórico completo com filtros
+- Sistema de categorização
+- Tags personalizadas
+- Validações de dados
+- Histórico com filtros
 
 #### **Contas Bancárias**
-- Gestão de contas corrente, poupança, investimento
+- Gestão de contas (corrente, poupança, investimento)
 - Cálculo automático de saldos
-- Transferências entre contas com validações
+- Transferências entre contas
 - Histórico de movimentações
 
-#### **Cartões de Crédito Aprimorados**
-- Controle de limite e saldo disponível
-- Gestão de faturas e vencimentos
-- Cálculo automático de limite disponível
-- **Cálculo inteligente de ciclos** (permite ciclos que cruzam meses)
-- **Top Card de Próximo Fechamento** proativo com alertas urgentes
-- **Botão "Pagar Fatura"** integrado aos cards
-- **Badge "Melhor Compra"** com destaque verde vibrante
-- **Exibição de datas calculadas** (DD/MMM) precisas
-- **Modal com design consistente** e suporte à tecla ESC
-- **Contraste aprimorado** para valores monetários
+#### **Cartões de Crédito**
+- Controle de limite e saldo
+- Gestão de faturas
+- Cálculo de ciclos de fatura
+- Alertas de vencimento
+- Interface otimizada com modais
 
-### ✅ **Sistema de Orçamentos Inteligente**
+### ✅ **Orçamentos e Metas**
 - Criação de orçamentos mensais por categoria
-- **Cálculos automáticos avançados**:
-  - Progresso em tempo real
-  - Análise de tendências
-  - Projeções mensais
-  - Média diária de gastos
-- **Sistema de alertas inteligente**:
-  - Alertas de 80% e 100% do orçamento
-  - Projeções de estouro
-  - Análise de tendências
-  - 4 níveis de severidade (Crítico, Alto, Médio, Baixo)
-- **Recomendações personalizadas**
-- **3 visualizações**: Lista, Progresso Visual, Análise Avançada
+- Cálculos automáticos de progresso
+- Sistema de alertas inteligente
+- Análise de tendências
+- Metas de poupança com acompanhamento
 
-### ✅ **Sistema de Metas de Poupança**
-- Criação de metas com valores alvo e prazos
-- Cálculos avançados de progresso
-- Análise de ritmo e tendências
-- Sistema de contribuições
-- Estimativas inteligentes de tempo
-
-### ✅ **Dashboard e Relatórios Completos**
-- Dashboard principal com resumo financeiro
-- Gráficos interativos (pizza, barras, tendências)
-- Relatórios por conta, cartão e categoria
-- Filtros avançados por período
-- Análises comparativas
+### ✅ **Dashboard e Relatórios**
+- Dashboard com resumo financeiro
+- Gráficos interativos
+- Relatórios por período
 - Métricas em tempo real
 
-### ✅ **Landing Page Profissional**
-- Design moderno com Hero section
-- Autenticação via modal (melhor UX)
-- Cards de recursos clicáveis com hover effects
-- Seção de credenciais demo com copy-to-clipboard
-- Navegação inteligente baseada em status de login
-- Otimizações de conversão (CRO) implementadas
-- Toast notifications para feedback visual
+### ✅ **Interface Moderna**
+- Landing page profissional
+- Design responsivo
+- Autenticação via modal
+- Toast notifications
+- Menu lateral padronizado
 
-### ✅ **Sistema de Alertas Avançado**
-- **4 tipos de alerta**: Excedido, Próximo Limite, Projeção, Tendência
-- **4 níveis de severidade**: Crítico, Alto, Médio, Baixo
-- Geração automática baseada em regras
-- Centro de alertas unificado
-- Filtros avançados e estatísticas
-- Resolução manual de alertas
-
-## 🌐 Instalação e Uso
+## 🚀 Instalação e Uso
 
 ### Pré-requisitos
 - Python 3.9+
 - Node.js 16+
 - Git
 
-### Instalação Rápida (Recomendada)
+### Instalação Rápida
 
 1. **Clone o repositório**:
 ```bash
@@ -142,340 +106,265 @@ cd NossaGrana
 cd backend
 python -m venv venv
 venv\Scripts\activate  # Windows
-# ou source venv/bin/activate  # Linux/Mac
-
 pip install -r requirements.txt
 cp .env.example .env
 python manage.py migrate
 python manage.py createsuperuser
-python manage.py runserver 127.0.0.1:8001
+python manage.py runserver 8000
 ```
 
-3. **Configure a interface de demonstração**:
+3. **Configure a demo interface**:
 ```bash
 cd demo-interface
 npm install
-npm start
+node server.js
 ```
 
 ### Acesso ao Sistema
 
-#### **Interface Principal (Demo Interface - Recomendada)**
-- **Página Inicial**: http://localhost:3002
-- **Dashboard**: http://localhost:3002/dashboard
-- **Transações**: http://localhost:3002/transactions
-- **Contas**: http://localhost:3002/accounts
-- **Cartões**: http://localhost:3002/credit-cards
-- **Orçamentos**: http://localhost:3002/budgets
-- **Metas**: http://localhost:3002/goals
-- **Relatórios**: http://localhost:3002/reports
-- **Alertas**: http://localhost:3002/alerts
-
-#### **APIs e Admin**
+- **Demo Interface**: http://localhost:3002 (Principal)
 - **Backend API**: http://localhost:8000/api
 - **Admin Django**: http://localhost:8000/admin
-- **Frontend React**: http://localhost:3000 (estrutura completa)
+- **Frontend React**: http://localhost:3000 (Opcional)
 
-#### **Comandos para Iniciar**
+### Comandos de Inicialização
 ```bash
-# Backend (Terminal 1)
-cd backend
-python manage.py runserver 8000
+# Terminal 1 - Backend
+cd backend && python manage.py runserver 8000
 
-# Demo Interface (Terminal 2)
-cd demo-interface
-node server.js
+# Terminal 2 - Demo Interface
+cd demo-interface && node server.js
 
-# Frontend React (Terminal 3 - opcional)
-cd frontend
-npm start
+# Terminal 3 - Frontend React (opcional)
+cd frontend && npm start
 ```
 
-## 🎯 Demonstração Completa
+## 🎯 Como Usar
 
-### **Fluxo de Teste Recomendado**:
+### Fluxo Recomendado
 
-1. **Acessar Landing Page** (http://localhost:3001) - Nova experiência profissional
-2. **Testar Credenciais Demo** - Use os botões de copiar para facilitar
-3. **Fazer Login via Modal** - UX otimizada sem redirecionamento
-4. **Explorar Dashboard** - Interface padronizada com menu lateral
-5. **Criar Contas Bancárias** e Cartões de Crédito
-6. **Adicionar Transações** (receitas, despesas, transferências)
-7. **Configurar Orçamentos** mensais por categoria
-8. **Explorar Alertas** automáticos gerados
-9. **Navegar entre páginas** - Menu lateral padronizado em todas as páginas
-10. **Testar Responsividade** - Interface 100% mobile-friendly
+1. **Acessar**: http://localhost:3002
+2. **Fazer Login**: Use as credenciais demo
+3. **Explorar Dashboard**: Visão geral financeira
+4. **Criar Contas**: Adicione contas bancárias
+5. **Adicionar Transações**: Receitas, despesas, transferências
+6. **Configurar Orçamentos**: Por categoria
+7. **Definir Metas**: Objetivos de poupança
+8. **Ver Relatórios**: Análises e gráficos
 
-### **Cenários de Teste Avançados**:
+### Funcionalidades Principais
 
-#### **Orçamentos Inteligentes**:
-- Criar orçamento menor que gastos → Ver alerta "Excedido"
-- Criar orçamento próximo dos gastos → Ver alerta "Atenção"
-- Navegar entre meses → Ver dados específicos
-- Usar análise avançada → Ver projeções e recomendações
+- **Transações**: Controle completo de receitas e despesas
+- **Contas**: Gestão de saldos e transferências
+- **Cartões**: Controle de limites e faturas
+- **Orçamentos**: Planejamento mensal
+- **Metas**: Objetivos de poupança
+- **Relatórios**: Análises detalhadas
 
-#### **Sistema de Alertas**:
-- Gerar alertas automáticos → Ver diferentes tipos e níveis
-- Filtrar por nível/tipo → Testar funcionalidade
-- Resolver alertas → Ver mudança de status
-- Ver estatísticas → Entender distribuição
+## 📚 Documentação
 
-## 📚 Documentação Técnica
-
-### **Documentação da API**
-- **Orçamentos**: `backend/budgets/API_DOCUMENTATION.md`
-- **Cálculos**: `backend/budgets/PROGRESS_CALCULATIONS.md`
-- **Interface Demo**: `demo-interface/README.md`
-
-### **Documentação do Sistema**
-- **Setup**: `SETUP.md`
-- **Deploy**: `DEPLOY.md`
-- **Roadmap**: `ROADMAP.md`
-- **Regras**: `RULES.md`
-- **Métricas**: `METRICAS_SUCESSO.md`
+- **Setup**: `SETUP.md` - Instruções de instalação
+- **Deploy**: `DEPLOY.md` - Deploy em produção
+- **Roadmap**: `ROADMAP.md` - Plano de desenvolvimento
+- **Rules**: `RULES.md` - Regras de desenvolvimento
+- **Status**: `STATUS.md` - Estado atual do sistema
+- **Métricas**: `METRICAS_SUCESSO.md` - Indicadores de qualidade
 
 ## 🧪 Testes e Qualidade
 
-### **Testes Automatizados**
+### Executar Testes
 ```bash
-# Executar todos os testes
+# Todos os testes
 python run_all_tests.py
 
 # Testes específicos
 cd backend
+python test_simple.py
 python test_comprehensive.py
-python test_security_vulnerabilities.py
-python test_advanced_calculations.py
 ```
 
-### **Métricas de Qualidade**
-```bash
-cd metrics
-python run_all_metrics.py
-```
-
-### **Status dos Testes**
-- **Testes Automatizados**: ✅ 100% aprovado (5/5 testes)
-- **Backend**: ✅ Todas as APIs funcionando
-- **Estrutura Frontend**: ✅ Todos os arquivos presentes
-- **Servidor**: ✅ Configuração correta
-- **Endpoints API**: ✅ Todas as rotas definidas
-- **Migrações DB**: ✅ Banco atualizado
-- **Transferências**: ✅ Corrigido e funcionando
-- **Compatibilidade Windows**: ✅ Emojis removidos
+### Status dos Testes
+- **Testes Automatizados**: ✅ 5/5 aprovados
+- **Backend APIs**: ✅ Funcionando
+- **Frontend**: ✅ Estrutura completa
+- **Banco de Dados**: ✅ Configurado
+- **Transferências**: ✅ Corrigidas
+- **Compatibilidade**: ✅ Windows/Linux/Mac
 
 ## 🚀 Deploy em Produção
 
-### **Deploy Automatizado (Recomendado)**
+### Deploy Automatizado
 ```bash
 # Deploy completo
 ./deploy.sh
 
-# Monitorar sistema
+# Monitoramento
 ./monitor.sh
 
-# Backup automático
+# Backup
 ./backup.sh
 ```
 
-### **Deploy com Docker**
+### Deploy com Docker
 ```bash
 # Configurar ambiente
 cp .env.prod.example .env.prod
-
-# Gerar certificados SSL
-./generate-ssl.sh
 
 # Iniciar containers
 docker-compose -f docker-compose.prod.yml up -d
 ```
 
-## 🏗️ Arquitetura do Sistema
+## 🏗️ Arquitetura
 
-### **Backend (Django)**
+### Backend (Django)
 ```
 backend/
-├── accounts/           # Autenticação e usuários
-├── transactions/       # Transações financeiras
+├── accounts/           # Autenticação
+├── transactions/       # Transações
 ├── financial_accounts/ # Contas e cartões
-├── budgets/           # Orçamentos e alertas
-├── goals/             # Metas de poupança
+├── budgets/           # Orçamentos
+├── goals/             # Metas
 ├── reports/           # Relatórios
-├── middleware/        # Segurança e performance
-└── utils/             # Utilitários e cache
+└── middleware/        # Segurança
 ```
 
-### **Frontend**
+### Frontend
 ```
-demo-interface/        # Interface 100% funcional
-├── public/
-│   ├── index.html     # Página principal
-│   ├── dashboard.html # Dashboard
-│   ├── transactions.html # Transações
-│   ├── budgets.html   # Orçamentos
-│   ├── alerts.html    # Alertas
-│   └── js/            # JavaScript modular
-└── server.js          # Servidor Node.js
+demo-interface/        # Interface principal
+├── public/           # Páginas HTML
+├── css/             # Estilos
+├── js/              # JavaScript
+└── server.js        # Servidor Node.js
 
-frontend/              # React.js (estrutura completa)
-├── src/
-│   ├── components/    # Componentes reutilizáveis
-│   ├── pages/         # Páginas principais
-│   ├── services/      # Serviços de API
-│   └── hooks/         # Hooks customizados
+frontend/            # React.js
+├── src/components/  # Componentes
+├── src/pages/       # Páginas
+└── src/services/    # APIs
 ```
 
-## 📊 Funcionalidades por Módulo
+## 📊 Módulos do Sistema
 
-### **Transações**
-- ✅ CRUD completo
-- ✅ Categorização avançada
-- ✅ Tags personalizadas
-- ✅ Filtros e busca
-- ✅ Validações rigorosas
-- ✅ Transferências entre contas
+### Transações
+- CRUD completo
+- Categorização
+- Tags personalizadas
+- Filtros e busca
+- Transferências entre contas
 
-### **Orçamentos**
-- ✅ Criação mensal por categoria
-- ✅ Cálculos automáticos
-- ✅ 3 visualizações diferentes
-- ✅ Sistema de alertas
-- ✅ Análise preditiva
-- ✅ Recomendações personalizadas
+### Orçamentos
+- Criação mensal por categoria
+- Cálculos automáticos
+- Sistema de alertas
+- Análise de tendências
 
-### **Contas e Cartões**
-- ✅ Gestão completa
-- ✅ Saldos automáticos
-- ✅ Limites de cartão
-- ✅ Histórico de movimentações
+### Contas e Cartões
+- Gestão completa
+- Saldos automáticos
+- Controle de limites
+- Histórico de movimentações
 
-### **Alertas**
-- ✅ 4 tipos de alerta
-- ✅ 4 níveis de severidade
-- ✅ Geração automática
-- ✅ Centro unificado
-- ✅ Filtros avançados
+### Dashboard
+- Resumo financeiro
+- Gráficos interativos
+- Métricas em tempo real
 
-### **Dashboard**
-- ✅ Resumo financeiro
-- ✅ Métricas em tempo real
-- ✅ Gráficos interativos
-- ✅ Transações recentes
+## 🔒 Segurança
 
-## 🔒 Segurança Implementada
+- **Autenticação JWT**
+- **Middleware de segurança**
+- **Rate limiting**
+- **Validações de entrada**
+- **Headers de segurança**
+- **Proteção CSRF**
+- **Logs de auditoria**
 
-- **Autenticação JWT** com refresh tokens
-- **Middleware de segurança** avançado
-- **Rate limiting** para proteção contra ataques
-- **Validações rigorosas** de entrada
-- **Headers de segurança** configurados
-- **Proteção CSRF** ativa
-- **Logs de auditoria** para transações
-- **Criptografia** de dados sensíveis
+## ⚡ Performance
 
-## ⚡ Performance e Otimizações
-
-- **Cache inteligente** para consultas frequentes
-- **Queries otimizadas** com select_related/prefetch_related
-- **Middleware de performance** ativo
-- **Compressão de assets** configurada
-- **Loading states** na interface
-- **Lazy loading** implementado
+- **Cache inteligente**
+- **Queries otimizadas**
+- **Middleware de performance**
+- **Compressão de assets**
+- **Loading states**
+- **Lazy loading**
 
 ## 🎨 Interface e UX
 
-### **Design System**
+### Design System
 - Cores e tipografia padronizadas
 - Componentes reutilizáveis
-- Design responsivo completo
-- Feedback visual adequado
-- Headers padronizados em todas as páginas
-- Menu lateral consistente com ordenação lógica
+- Design responsivo
+- Menu lateral consistente
 
-### **Experiência do Usuário**
-- Landing page profissional com CRO otimizado
-- Navegação intuitiva com menu lateral padronizado
-- Autenticação via modal (sem redirecionamento)
+### Experiência do Usuário
+- Landing page profissional
+- Navegação intuitiva
+- Autenticação via modal
 - < 3 cliques para ações principais
-- Loading states e animações suaves
-- Toast notifications para feedback
-- Copy-to-clipboard para credenciais demo
-- Cards clicáveis com hover effects
+- Toast notifications
 - Interface mobile-friendly
-- Navegação inteligente baseada em status de login
-- **Modais consistentes** com fundo sólido e opaco
-- **Suporte universal à tecla ESC** para fechar modais
-- **Contraste aprimorado** para valores monetários
-- **Badges e alertas visuais** para informações importantes
+- Modais com tecla ESC
+- Contraste otimizado
 
 ## 🔄 Próximos Passos
 
-### **Curto Prazo (1-2 semanas)**
-- [x] Landing page profissional com CRO
-- [x] Padronização de UI/UX em todas as páginas
-- [x] Menu lateral consistente
-- [x] Autenticação via modal
-- [ ] Aumentar cobertura de testes para >80%
-- [ ] Implementar exportação PDF de relatórios
-- [ ] Otimizar performance de queries complexas
+### Curto Prazo
+- [ ] Aumentar cobertura de testes
+- [ ] Exportação PDF de relatórios
+- [ ] Otimizar queries complexas
 
-### **Médio Prazo (1-2 meses)**
-- [ ] Implementar integrações bancárias
-- [ ] Adicionar machine learning para categorização
-- [ ] Desenvolver app mobile
-- [ ] Implementar backup automático
+### Médio Prazo
+- [ ] Integrações bancárias
+- [ ] Machine learning para categorização
+- [ ] App mobile
+- [ ] Backup automático
 
-### **Longo Prazo (3-6 meses)**
-- [ ] Multi-tenancy para famílias
-- [ ] API pública para integrações
-- [ ] Consultoria financeira com IA
-- [ ] Marketplace de plugins
+### Longo Prazo
+- [ ] Multi-tenancy
+- [ ] API pública
+- [ ] IA para consultoria financeira
 
 ## 🤝 Contribuição
 
 1. Fork o projeto
-2. Crie uma branch (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
+2. Crie uma branch (`git checkout -b feature/NovaFuncionalidade`)
+3. Commit suas mudanças (`git commit -m 'Add NovaFuncionalidade'`)
+4. Push para a branch (`git push origin feature/NovaFuncionalidade`)
 5. Abra um Pull Request
 
-**Importante**: Mantenha a paridade frontend-backend - toda funcionalidade deve ter API e interface correspondentes.
+**Importante**: Mantenha a paridade frontend-backend.
 
 ## 📄 Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para detalhes.
+Este projeto está sob a licença MIT.
 
 ## 👥 Suporte
 
 Para suporte, consulte:
-- `SETUP.md` para problemas de instalação
-- `RULES.md` para regras de desenvolvimento
-- `DEPLOY.md` para instruções de deploy
+- `SETUP.md` - Problemas de instalação
+- `RULES.md` - Regras de desenvolvimento
+- `DEPLOY.md` - Instruções de deploy
 - Issues no GitHub para bugs e sugestões
 
 ---
 
 ## 🎉 Conclusão
 
-**Nossa Grana** é um sistema completo e profissional de controle financeiro familiar, com:
+**Nossa Grana** é um sistema completo de controle financeiro familiar:
 
-- ✅ **100% das funcionalidades core implementadas**
-- ✅ **Testes automatizados 100% aprovados**
-- ✅ **Backend Django totalmente funcional**
-- ✅ **Demo Interface 100% operacional**
+- ✅ **Funcionalidades core implementadas**
+- ✅ **Testes automatizados aprovados**
+- ✅ **Backend Django funcional**
+- ✅ **Demo Interface operacional**
 - ✅ **Frontend React estruturado**
-- ✅ **Compatibilidade total com Windows**
-- ✅ **Sistema de transferências corrigido**
-- ✅ **Banco de dados configurado**
-- ✅ **APIs todas funcionando**
+- ✅ **Compatibilidade multiplataforma**
 - ✅ **Segurança implementada**
 - ✅ **Performance otimizada**
 - ✅ **Design responsivo**
 
-**O sistema está 100% FUNCIONAL e TESTADO!** 🚀
+**Sistema 100% funcional e pronto para uso!** 🚀
 
-*Versão atual: 1.0.0 - Sistema testado e aprovado para uso*
+*Versão: 1.0.0*
 
 ---
 
-**Nossa Grana** - Controle financeiro familiar inteligente! 💰👨‍👩‍👧‍👦
+**Nossa Grana** - Controle financeiro familiar inteligente! 💰

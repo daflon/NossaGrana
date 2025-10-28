@@ -104,3 +104,86 @@ python manage.py shell --command="from django.contrib.auth.models import User; p
 - ✅ Transferências: Corrigidas e testadas
 - ✅ Compatibilidade: Windows 100%
 - ✅ Banco de dados: Configurado e atualizado
+
+## 🔍 Troubleshooting Rápido
+
+### Problemas Comuns e Soluções
+```bash
+# Erro de migração
+cd backend
+python manage.py migrate --fake-initial
+
+# Porta ocupada
+netstat -ano | findstr :8000
+taskkill /PID <PID> /F
+
+# Cache corrompido
+cd backend
+python manage.py collectstatic --clear
+
+# Sessões inválidas
+cd backend
+python manage.py clearsessions
+```
+
+### Logs de Debug
+- Backend: `logs/backend.log`
+- Segurança: `logs/security.log`
+- Transferências: `logs/transactions.log`
+- Sistema: `logs/system.log`
+
+## ⚡ Performance e Monitoramento
+
+### Comandos de Monitoramento
+```bash
+# Verificar performance do banco
+cd backend
+python manage.py dbshell --command=".timer on; .stats on;"
+
+# Monitorar uso de memória
+tasklist | findstr python
+
+# Verificar conexões ativas
+netstat -an | findstr :8000
+```
+
+### Otimizações Aplicadas
+- Cache de sessões configurado
+- Queries otimizadas com select_related
+- Middleware de compressão ativo
+- Static files servidos eficientemente
+
+## 🔄 Workflow de Desenvolvimento
+
+### Antes de Qualquer Mudança
+1. `python run_all_tests.py` - Verificar estado atual
+2. `copy backend\db.sqlite3 backup_db.sqlite3` - Backup
+3. Fazer mudanças incrementais
+4. Testar cada mudança isoladamente
+
+### Após Mudanças
+1. `python run_all_tests.py` - Validar tudo
+2. Testar manualmente as funcionalidades afetadas
+3. Verificar logs para erros
+4. Documentar mudanças significativas
+
+### Deploy Checklist
+- [ ] Todos os testes passando
+- [ ] Backup do banco realizado
+- [ ] Logs verificados
+- [ ] Performance testada
+- [ ] Funcionalidades críticas testadas
+
+## 🎯 Próximas Melhorias Sugeridas
+- Implementar cache Redis (opcional)
+- Adicionar métricas de performance
+- Configurar CI/CD pipeline
+- Implementar testes de carga
+- Adicionar monitoramento de saúde
+
+## 📝 Notas de Versão
+- **v1.0**: Sistema base funcional
+- **v1.1**: Correções de transferências
+- **v1.2**: Otimizações de performance
+- **v1.3**: Melhorias de segurança
+- **Atual**: Sistema estável e testado

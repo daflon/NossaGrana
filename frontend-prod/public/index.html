@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nossa Grana - Sistema de Controle Financeiro</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar (oculta quando deslogado) -->
+        <aside class="sidebar" id="sidebar" style="display: none;">
+            <div class="logo" onclick="window.location.href='/'">
+                <div class="logo-icon">NG</div>
+                <div class="logo-text">Nossa Grana</div>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="dashboard" class="nav-link active">
+                            <span class="nav-icon">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="transactions" class="nav-link">
+                            <span class="nav-icon">💰</span>
+                            Transações
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="accounts" class="nav-link">
+                            <span class="nav-icon">🏦</span>
+                            Contas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="credit-cards" class="nav-link">
+                            <span class="nav-icon">💳</span>
+                            Cartões
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="budgets" class="nav-link">
+                            <span class="nav-icon">📋</span>
+                            Orçamentos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="reports" class="nav-link">
+                            <span class="nav-icon">📈</span>
+                            Relatórios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="goals" class="nav-link">
+                            <span class="nav-icon">🎯</span>
+                            Metas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="alerts" class="nav-link">
+                            <span class="nav-icon">🚨</span>
+                            Alertas
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <span>🚪</span>
+                    Sair
+                </button>
+            </div>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content" id="main-content" style="margin-left: 0; width: 100%;">
+            <!-- Header Navegacional -->
+            <div class="page-header" style="background: transparent; border: none; padding: 1rem 0;">
+                <div style="display: flex; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="width: 40px; height: 40px; background: var(--primary-color); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">NG</div>
+                        <span style="font-size: 1.5rem; font-weight: 700;">Nossa Grana</span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <a href="#recursos" style="color: var(--text-primary); text-decoration: none; margin-right: 2rem;">Recursos</a>
+                    <a href="#contato" style="color: var(--text-primary); text-decoration: none; margin-right: 2rem;">Contato</a>
+                    <button class="btn btn-outline" onclick="showLoginModal()" style="padding: 0.5rem 1.5rem; margin-right: 1rem;">Fazer Login</button>
+                    <div class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+                        <span class="theme-icon light">☀️</span>
+                        <div class="theme-toggle-switch"></div>
+                        <span class="theme-icon dark">🌙</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção de Autenticação -->
+            <div id="auth-section">
+                <!-- Hero Section Refatorado -->
+                <div class="hero-section" style="text-align: center; padding: 4rem 2rem; background: linear-gradient(135deg, var(--primary-color), var(--success-color)); border-radius: 20px; margin-bottom: 4rem; color: white; position: relative; overflow: hidden;">
+                    <div style="position: relative; z-index: 2;">
+                        <h1 style="font-size: 3.5rem; font-weight: 800; margin-bottom: 1.5rem; color: white; line-height: 1.1;">Domine as Finanças da sua Família</h1>
+                        <h2 style="font-size: 1.5rem; font-weight: 400; margin-bottom: 3rem; opacity: 0.95; max-width: 600px; margin-left: auto; margin-right: auto; line-height: 1.4;">Controle financeiro simples e compartilhado para o lar. Comece grátis hoje mesmo.</h2>
+                        <button class="btn" onclick="showRegister()" style="background: white; color: var(--primary-color); padding: 1rem 2.5rem; font-size: 1.2rem; font-weight: 600; border: none; border-radius: 50px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                            Criar Conta Grátis
+                        </button>
+                    </div>
+                    <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%; z-index: 1;"></div>
+                    <div style="position: absolute; bottom: -30px; left: -30px; width: 150px; height: 150px; background: rgba(255,255,255,0.08); border-radius: 50%; z-index: 1;"></div>
+                </div>
+
+                <!-- Features Section Refatorada -->
+                <div id="recursos" style="margin-top: 5rem;">
+                    <h2 style="text-align: center; margin-bottom: 3rem; font-size: 2.5rem; font-weight: 700;">Recursos Principais</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+                        <div class="resource-card" onclick="navigateToResource('transactions')" style="text-align: center; padding: 2.5rem 2rem; border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: all 0.3s ease; background: var(--bg-secondary); cursor: pointer; position: relative; overflow: hidden;">
+                            <div style="font-size: 4rem; margin-bottom: 1.5rem; color: var(--primary-color); transition: transform 0.3s ease;">💰</div>
+                            <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-primary);">Transações</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.5;">Gestão completa de entradas e saídas</p>
+                            <span class="badge badge-success" style="font-weight: 600;">✓ Disponível</span>
+                        </div>
+                        
+                        <div class="resource-card" onclick="navigateToResource('budgets')" style="text-align: center; padding: 2.5rem 2rem; border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: all 0.3s ease; background: var(--bg-secondary); cursor: pointer; position: relative; overflow: hidden;">
+                            <div style="font-size: 4rem; margin-bottom: 1.5rem; color: var(--primary-color); transition: transform 0.3s ease;">📋</div>
+                            <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-primary);">Orçamentos</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.5;">Controle mensal inteligente por categoria</p>
+                            <span class="badge badge-success" style="font-weight: 600;">✓ Disponível</span>
+                        </div>
+                        
+                        <div class="resource-card" onclick="navigateToResource('alerts')" style="text-align: center; padding: 2.5rem 2rem; border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: all 0.3s ease; background: var(--bg-secondary); cursor: pointer; position: relative; overflow: hidden;">
+                            <div style="font-size: 4rem; margin-bottom: 1.5rem; color: var(--primary-color); transition: transform 0.3s ease;">🚨</div>
+                            <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-primary);">Alertas</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.5;">Notificações automáticas inteligentes</p>
+                            <span class="badge badge-success" style="font-weight: 600;">✓ Disponível</span>
+                        </div>
+                        
+                        <div class="resource-card" onclick="navigateToResource('notifications-demo')" style="text-align: center; padding: 2.5rem 2rem; border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: all 0.3s ease; background: var(--bg-secondary); cursor: pointer; position: relative; overflow: hidden; border: 2px solid var(--primary-color);">
+                            <div style="font-size: 4rem; margin-bottom: 1.5rem; color: var(--primary-color); transition: transform 0.3s ease;">🔔</div>
+                            <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-primary);">Demo Notificações</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.5;">Demonstração interativa do sistema</p>
+                            <span class="badge badge-info" style="font-weight: 600;">🎮 Demonstração</span>
+                        </div>
+                        
+                        <div class="resource-card" onclick="navigateToResource('accounts')" style="text-align: center; padding: 2.5rem 2rem; border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: all 0.3s ease; background: var(--bg-secondary); cursor: pointer; position: relative; overflow: hidden;">
+                            <div style="font-size: 4rem; margin-bottom: 1.5rem; color: var(--primary-color); transition: transform 0.3s ease;">🏦</div>
+                            <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-primary);">Contas & Cartões</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.5;">Centralização de todas as contas</p>
+                            <span class="badge badge-success" style="font-weight: 600;">✓ Disponível</span>
+                        </div>
+                        
+                        <div class="resource-card" onclick="navigateToResource('reports')" style="text-align: center; padding: 2.5rem 2rem; border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: all 0.3s ease; background: var(--bg-secondary); cursor: pointer; position: relative; overflow: hidden;">
+                            <div style="font-size: 4rem; margin-bottom: 1.5rem; color: var(--primary-color); transition: transform 0.3s ease;">📈</div>
+                            <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-primary);">Relatórios</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.5;">Análises detalhadas e insights</p>
+                            <span class="badge badge-success" style="font-weight: 600;">✓ Disponível</span>
+                        </div>
+                        
+                        <div class="resource-card" onclick="navigateToResource('goals')" style="text-align: center; padding: 2.5rem 2rem; border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: all 0.3s ease; background: var(--bg-secondary); cursor: pointer; position: relative; overflow: hidden; opacity: 0.7;">
+                            <div style="font-size: 4rem; margin-bottom: 1.5rem; color: var(--warning-color); transition: transform 0.3s ease;">🎯</div>
+                            <h3 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-primary);">Metas</h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.5;">Objetivos de poupança personalizados</p>
+                            <span class="badge badge-warning" style="font-weight: 600;">⚠ Em Breve</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Demo Credentials Otimizada -->
+                <div id="contato" class="card" style="margin-top: 4rem; background: linear-gradient(135deg, var(--primary-color), var(--success-color)); border-radius: 20px; position: relative; overflow: hidden;">
+                    <div class="card-content" style="text-align: center; padding: 3rem 2rem; color: white;">
+                        <h3 style="margin-bottom: 2rem; font-size: 1.8rem; font-weight: 700; color: white;">🔑 Acesso de Demonstração</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 500px; margin: 0 auto 2rem auto;">
+                            <div style="background: rgba(255,255,255,0.15); padding: 1.5rem; border-radius: 12px; backdrop-filter: blur(10px);">
+                                <div style="font-weight: 600; margin-bottom: 0.5rem; font-size: 1rem;">Email:</div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.2); padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem;">
+                                    <code id="demo-email" style="background: none; color: white; font-size: 1rem; font-weight: 600; flex: 1;">admin@test.com</code>
+                                </div>
+                                <button onclick="copyToClipboard('admin@test.com', 'Email copiado!')" style="background: white; color: var(--primary-color); border: none; padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.875rem; transition: all 0.2s ease;">
+                                    📋 Copiar Email
+                                </button>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.15); padding: 1.5rem; border-radius: 12px; backdrop-filter: blur(10px);">
+                                <div style="font-weight: 600; margin-bottom: 0.5rem; font-size: 1rem;">Senha:</div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.2); padding: 0.75rem; border-radius: 8px; margin-bottom: 1rem;">
+                                    <code id="demo-password" style="background: none; color: white; font-size: 1rem; font-weight: 600; flex: 1;">admin</code>
+                                </div>
+                                <button onclick="copyToClipboard('admin', 'Senha copiada!')" style="background: white; color: var(--primary-color); border: none; padding: 0.5rem 1rem; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.875rem; transition: all 0.2s ease;">
+                                    📋 Copiar Senha
+                                </button>
+                            </div>
+                        </div>
+                        <p style="margin: 0; opacity: 0.9; font-size: 1.1rem;">Use essas credenciais para explorar todas as funcionalidades</p>
+                        <div style="position: absolute; top: -30px; right: -30px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%;"></div>
+                        <div style="position: absolute; bottom: -20px; left: -20px; width: 80px; height: 80px; background: rgba(255,255,255,0.08); border-radius: 50%;"></div>
+                    </div>
+                </div>
+            </div>
+
+        <!-- Modal de Registro -->
+        <div id="register-modal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center; overflow-y: auto; padding: 2rem 0;">
+            <div class="modal-content" style="background: var(--bg-primary); border-radius: 20px; padding: 0; max-width: 500px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); position: relative; margin: auto;">
+                <div style="background: var(--success-color); color: white; padding: 2rem; border-radius: 20px 20px 0 0; text-align: center;">
+                    <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700;">Criar Nova Conta</h2>
+                    <button onclick="hideRegisterModal()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">&times;</button>
+                </div>
+                <div style="padding: 2rem; max-height: 60vh; overflow-y: auto;">
+                    <form id="register-form">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label class="form-label" for="reg-first-name" style="margin-bottom: 0.5rem;">Nome</label>
+                                <input type="text" id="reg-first-name" class="form-input" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary);">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="reg-last-name" style="margin-bottom: 0.5rem;">Sobrenome</label>
+                                <input type="text" id="reg-last-name" class="form-input" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary);">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="reg-username" style="margin-bottom: 0.5rem;">Nome de usuário</label>
+                            <input type="text" id="reg-username" class="form-input" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary);">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="reg-email" style="margin-bottom: 0.5rem;">Email</label>
+                            <input type="email" id="reg-email" class="form-input" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary);">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="reg-family-name" style="margin-bottom: 0.5rem;">Nome da Família</label>
+                            <input type="text" id="reg-family-name" class="form-input" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary);">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group">
+                                <label class="form-label" for="reg-password" style="margin-bottom: 0.5rem;">Senha</label>
+                                <input type="password" id="reg-password" class="form-input" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary);">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="reg-password-confirm" style="margin-bottom: 0.5rem;">Confirmar Senha</label>
+                                <input type="password" id="reg-password-confirm" class="form-input" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary);">
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
+                            <button type="button" class="btn btn-secondary" onclick="hideRegisterModal()" style="padding: 12px; border-radius: 8px;">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" style="padding: 12px; border-radius: 8px;">Criar Conta</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+            </div>
+
+            <!-- Seção do Dashboard (oculta inicialmente) -->
+            <div id="dashboard-section" style="display: none;">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value text-success" id="total-income">R$ 0,00</div>
+                        <div class="metric-label">Total de Receitas</div>
+                        <div class="metric-change metric-positive" id="income-change">+0% este mês</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value text-error" id="total-expense">R$ 0,00</div>
+                        <div class="metric-label">Total de Despesas</div>
+                        <div class="metric-change metric-negative" id="expense-change">+0% este mês</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="balance">R$ 0,00</div>
+                        <div class="metric-label">Saldo Atual</div>
+                        <div class="metric-change" id="balance-change">0% este mês</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="budget-usage">0%</div>
+                        <div class="metric-label">Uso do Orçamento</div>
+                        <div class="metric-change" id="budget-status">Dentro do limite</div>
+                    </div>
+                </div>
+
+                <div class="cards-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Transações Recentes</h3>
+                        </div>
+                        <div class="card-content">
+                            <div id="recent-transactions">
+                                <div class="loading">
+                                    <div class="spinner"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Alertas de Orçamento</h3>
+                        </div>
+                        <div class="card-content">
+                            <div id="budget-alerts">
+                                <div class="loading">
+                                    <div class="spinner"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mt-5">
+                    <div>
+                        <button class="btn btn-primary" onclick="window.location.href='/transactions'">
+                            💰 Gerenciar Transações
+                        </button>
+                        <button class="btn btn-secondary" onclick="window.location.href='/budgets'">
+                            📋 Ver Orçamentos
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mensagens -->
+            <div id="message-container"></div>
+        </main>
+        
+        <!-- Modal de Login -->
+        <div id="login-modal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; align-items: center; justify-content: center;">
+            <div class="modal-content" style="background: var(--bg-primary); border-radius: 20px; padding: 0; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); position: relative;">
+                <div style="background: var(--primary-color); color: white; padding: 2rem; border-radius: 20px 20px 0 0; text-align: center;">
+                    <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700;">Fazer Login</h2>
+                    <button onclick="hideLoginModal()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">&times;</button>
+                </div>
+                <div style="padding: 2rem;">
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label class="form-label" for="email" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                <span>📧</span> Email
+                            </label>
+                            <input type="email" id="email" class="form-input" value="admin@test.com" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary);">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="password" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                <span>🔒</span> Senha
+                            </label>
+                            <input type="password" id="password" class="form-input" value="admin" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary);">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-size: 1.1rem; margin-bottom: 1rem; border-radius: 8px;">Entrar</button>
+                        <button type="button" class="btn btn-secondary" onclick="showRegister()" style="width: 100%; padding: 12px; border-radius: 8px;">Criar Nova Conta</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer com Status da API -->
+        <footer style="background: var(--bg-secondary); border-top: 1px solid var(--border-color); padding: 1rem; text-align: center; margin-top: 2rem;">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                <span style="font-weight: 500;">Status da API:</span>
+                <div id="api-status" class="badge badge-success">Conectado</div>
+                <span class="text-muted">Backend Django rodando</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/modal-manager.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script>
+        // Inicializar aplicação
+        document.addEventListener('DOMContentLoaded', function() {
+            // Se já estiver logado, redirecionar para dashboard
+            const token = localStorage.getItem('access_token');
+            if (token) {
+                window.location.href = '/dashboard';
+                return;
+            }
+            
+            checkAuthStatus();
+            checkApiConnection();
+            updateLayoutForAuth();
+        });
+        
+        // Override da função de login para redirecionar
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await api.login(email, password);
+                
+                if (response.access) {
+                    localStorage.setItem('access_token', response.access);
+                    localStorage.setItem('refresh_token', response.refresh);
+                    
+                    // Redirecionar para dashboard
+                    window.location.href = '/dashboard';
+                } else {
+                    showMessage('Erro no login: resposta inválida', 'error');
+                }
+            } catch (error) {
+                showMessage('Erro no login: ' + (error.message || 'Erro desconhecido'), 'error');
+            }
+        });
+        
+        // Atualizar layout baseado no status de autenticação
+        function updateLayoutForAuth() {
+            const token = localStorage.getItem('access_token');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            
+            if (token) {
+                // Logado - mostrar sidebar
+                sidebar.style.display = 'flex';
+                mainContent.style.marginLeft = '280px';
+                mainContent.style.width = 'calc(100% - 280px)';
+            } else {
+                // Deslogado - ocultar sidebar
+                sidebar.style.display = 'none';
+                mainContent.style.marginLeft = '0';
+                mainContent.style.width = '100%';
+            }
+        }
+        
+        // Mostrar modal de login
+        function showLoginModal() {
+            modalManager.openModal('login-modal');
+        }
+        
+        // Ocultar modal de login
+        function hideLoginModal() {
+            modalManager.closeModal('login-modal');
+        }
+        
+        // O modal-manager já cuida dos cliques fora e tecla ESC
+        
+        // Navegação para recursos
+        function navigateToResource(resource) {
+            const token = localStorage.getItem('access_token');
+            if (token) {
+                // Se logado, vai direto para a página do recurso
+                window.location.href = `/${resource}`;
+            } else {
+                // Se não logado, abre modal de login
+                showLoginModal();
+            }
+        }
+        
+        // Função para copiar para área de transferência
+        async function copyToClipboard(text, message) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast(message);
+            } catch (err) {
+                // Fallback para navegadores mais antigos
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showToast(message);
+            }
+        }
+        
+        // Mostrar notificação toast
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--success-color);
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                font-weight: 600;
+                z-index: 10000;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                animation: slideIn 0.3s ease;
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 2000);
+        }
+        
+        // CSS para animações e hover states
+        const styles = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+            .resource-card:hover {
+                transform: translateY(-8px) !important;
+                box-shadow: 0 15px 40px rgba(0,0,0,0.25) !important;
+                background: var(--bg-primary) !important;
+            }
+            .resource-card:hover > div:first-child {
+                transform: scale(1.1) !important;
+            }
+            .resource-card:active {
+                transform: translateY(-4px) !important;
+            }
+        `;
+        
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = styles;
+        document.head.appendChild(styleSheet);
+    </script>
+</body>
+</html>

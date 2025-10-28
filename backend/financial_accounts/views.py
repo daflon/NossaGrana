@@ -1,7 +1,8 @@
 from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.db import transaction, models
+from django.db import transaction
+from django.db.models import F
 from django.shortcuts import get_object_or_404
 from .models import Account, CreditCard, CreditCardBill
 from .serializers import (
@@ -278,7 +279,7 @@ class CreditCardViewSet(viewsets.ModelViewSet):
             'total_available': total_available,
             'total_used': total_used,
             'average_usage': (total_used / total_limit * 100) if total_limit > 0 else 0,
-            'cards_near_limit': cards.filter(available_limit__lt=models.F('credit_limit') * 0.2).count()
+            'cards_near_limit': cards.filter(available_limit__lt=F('credit_limit') * 0.2).count()
         }
         
         return Response(summary_data)

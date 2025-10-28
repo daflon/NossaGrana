@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contas Bancárias - Nossa Grana</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">NG</div>
+                <div class="logo-text">Nossa Grana</div>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <span class="nav-icon">📊</span>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="transactions.html" class="nav-link">
+                            <span class="nav-icon">💰</span>
+                            Transações
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="accounts.html" class="nav-link active">
+                            <span class="nav-icon">🏦</span>
+                            Contas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="credit-cards.html" class="nav-link">
+                            <span class="nav-icon">💳</span>
+                            Cartões
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="budgets.html" class="nav-link">
+                            <span class="nav-icon">📋</span>
+                            Orçamentos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="reports.html" class="nav-link">
+                            <span class="nav-icon">📈</span>
+                            Relatórios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="goals.html" class="nav-link">
+                            <span class="nav-icon">🎯</span>
+                            Metas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="alerts.html" class="nav-link">
+                            <span class="nav-icon">🚨</span>
+                            Alertas
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <span>🚪</span>
+                    Sair
+                </button>
+            </div>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <!-- Header da Página -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Contas Bancárias</h1>
+                    <p class="page-subtitle">Gerencie suas contas e acompanhe os saldos</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="refreshAccounts()">
+                        <span class="btn-icon">🔄</span>
+                        Atualizar
+                    </button>
+                    <button class="btn btn-success" onclick="showTransferModal()">
+                        <span class="btn-icon">🔄</span>
+                        Transferir
+                    </button>
+                    <button class="btn btn-primary" onclick="showAccountForm()">
+                        <span class="btn-icon">➕</span>
+                        Nova Conta
+                    </button>
+                    <div class="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+                        <span class="theme-icon light">☀️</span>
+                        <div class="theme-toggle-switch"></div>
+                        <span class="theme-icon dark">🌙</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumo das Contas -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Hierarquia do Patrimônio</h3>
+                </div>
+                <div class="card-content">
+                    <div class="summary-cards">
+                        <div class="summary-card primary">
+                            <div class="summary-icon">💎</div>
+                            <div class="summary-content">
+                                <div class="summary-label">Patrimônio Líquido Disponível</div>
+                                <div class="summary-value positive" id="net-worth">R$ 0,00</div>
+                                <div class="summary-subtitle">Soma das contas positivas</div>
+                            </div>
+                        </div>
+
+                        <div class="summary-card danger alert" id="debt-card" style="display: none;">
+                            <div class="summary-icon">⚠️</div>
+                            <div class="summary-content">
+                                <div class="summary-label">Passivo Total (Dívidas)</div>
+                                <div class="summary-value negative" id="total-debt">R$ 0,00</div>
+                                <div class="summary-subtitle">Contas negativas/cheque especial</div>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="summary-icon">🏦</div>
+                            <div class="summary-content">
+                                <div class="summary-label">Total Contas Correntes</div>
+                                <div class="summary-value" id="checking-balance">R$ 0,00</div>
+                                <div class="summary-subtitle">Agregado por tipo</div>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="summary-icon">🏛️</div>
+                            <div class="summary-content">
+                                <div class="summary-label">Total Poupança/Investimento</div>
+                                <div class="summary-value" id="savings-investment-balance">R$ 0,00</div>
+                                <div class="summary-subtitle">Poupança + Investimentos</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Contas -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Suas Contas</h3>
+                    <div class="card-actions">
+                        <select id="account-type-filter" class="form-select">
+                            <option value="">Todos os tipos</option>
+                            <option value="checking">Conta Corrente</option>
+                            <option value="savings">Poupança</option>
+                            <option value="investment">Investimento</option>
+                            <option value="cash">Dinheiro</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <div class="loading" id="accounts-loading" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>Carregando contas...</p>
+                    </div>
+                    
+                    <div id="accounts-list" class="accounts-grid">
+                        <!-- Contas serão inseridas aqui via JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de Formulário de Conta -->
+    <div class="modal" id="account-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Nova Conta</h3>
+                <button class="modal-close" onclick="closeAccountModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="account-form">
+                    <div class="form-group">
+                        <label for="account-name">Nome da Conta *</label>
+                        <input type="text" id="account-name" class="form-input" required>
+                        <div class="error-message" id="name-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="account-type">Tipo de Conta *</label>
+                        <select id="account-type" class="form-select" required>
+                            <option value="">Selecione o tipo</option>
+                            <option value="checking">Conta Corrente</option>
+                            <option value="savings">Poupança</option>
+                            <option value="investment">Investimento</option>
+                            <option value="cash">Dinheiro</option>
+                        </select>
+                        <div class="error-message" id="type-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="account-bank">Banco</label>
+                        <input type="text" id="account-bank" class="form-input" placeholder="Ex: Banco do Brasil">
+                        <div class="error-message" id="bank-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="initial-balance">Saldo Inicial *</label>
+                        <input type="number" id="initial-balance" class="form-input" step="0.01" min="0" required>
+                        <div class="error-message" id="balance-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="is-active" checked>
+                            <span class="checkmark"></span>
+                            Conta ativa
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeAccountModal()">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary" onclick="saveAccount()">
+                    <span id="save-btn-text">Salvar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div class="modal" id="delete-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmar Exclusão</h3>
+                <button class="modal-close" onclick="closeDeleteModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir esta conta?</p>
+                <p><strong id="delete-account-name"></strong></p>
+                <p class="text-warning">⚠️ Esta ação não pode ser desfeita!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+                    Excluir
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Transferência -->
+    <div class="modal" id="transfer-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Transferir entre Contas</h3>
+                <button class="modal-close" onclick="closeTransferModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="transfer-form">
+                    <div class="form-group">
+                        <label for="transfer-from">Conta Origem *</label>
+                        <select id="transfer-from" class="form-select" required>
+                            <option value="">Selecione a conta origem</option>
+                        </select>
+                        <div class="error-message" id="from-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transfer-to">Conta Destino *</label>
+                        <select id="transfer-to" class="form-select" required>
+                            <option value="">Selecione a conta destino</option>
+                        </select>
+                        <div class="error-message" id="to-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transfer-amount">Valor *</label>
+                        <input type="number" id="transfer-amount" class="form-input" step="0.01" min="0.01" required>
+                        <div class="error-message" id="amount-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transfer-description">Descrição *</label>
+                        <input type="text" id="transfer-description" class="form-input" required placeholder="Ex: Transferência para poupança">
+                        <div class="error-message" id="description-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="transfer-date">Data *</label>
+                        <input type="date" id="transfer-date" class="form-input" required>
+                        <div class="error-message" id="date-error"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeTransferModal()">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-success" onclick="processTransfer()">
+                    <span id="transfer-btn-text">Transferir</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Nova Transação Rápida -->
+    <div class="modal" id="quick-transaction-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="quick-transaction-title">Nova Transação</h3>
+                <button class="modal-close" onclick="closeQuickTransactionModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="quick-transaction-form">
+                    <div class="form-group">
+                        <label for="quick-transaction-type">Tipo *</label>
+                        <select id="quick-transaction-type" class="form-select" required>
+                            <option value="income">Receita</option>
+                            <option value="expense">Despesa</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quick-transaction-amount">Valor *</label>
+                        <input type="number" id="quick-transaction-amount" class="form-input" step="0.01" min="0.01" required>
+                        <div class="error-message" id="quick-amount-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quick-transaction-description">Descrição *</label>
+                        <input type="text" id="quick-transaction-description" class="form-input" required placeholder="Ex: Salário, Supermercado...">
+                        <div class="error-message" id="quick-description-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quick-transaction-category">Categoria *</label>
+                        <select id="quick-transaction-category" class="form-select" required>
+                            <option value="">Carregando categorias...</option>
+                        </select>
+                        <div class="error-message" id="quick-category-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quick-transaction-account">Conta *</label>
+                        <select id="quick-transaction-account" class="form-select" required disabled>
+                            <option value="">Conta será pré-selecionada</option>
+                        </select>
+                        <div class="error-message" id="quick-account-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quick-transaction-date">Data *</label>
+                        <input type="date" id="quick-transaction-date" class="form-input" required>
+                        <div class="error-message" id="quick-date-error"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeQuickTransactionModal()">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" onclick="saveQuickTransaction()">
+                    <span id="quick-save-btn-text">Salvar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/modal-manager.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/accounts.js"></script>
+</body>
+</html>

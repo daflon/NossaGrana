@@ -23,13 +23,13 @@ class SSLCertificateGenerator:
             subprocess.run(["openssl", "version"], capture_output=True, check=True)
             return True
         except (subprocess.CalledProcessError, FileNotFoundError):
-            print("❌ OpenSSL não encontrado. Instale o OpenSSL primeiro.")
+            print("[ERRO] OpenSSL não encontrado. Instale o OpenSSL primeiro.")
             return False
     
     def generate_private_key(self, key_size=2048):
         """Gera chave privada RSA"""
         key_file = self.ssl_dir / "private.key"
-        print(f"🔑 Gerando chave privada RSA de {key_size} bits...")
+        print(f"[INFO] Gerando chave privada RSA de {key_size} bits...")
         
         cmd = [
             "openssl", "genrsa",
@@ -40,10 +40,10 @@ class SSLCertificateGenerator:
         try:
             subprocess.run(cmd, check=True, capture_output=True)
             os.chmod(key_file, 0o600)
-            print(f"✅ Chave privada gerada: {key_file}")
+            print(f"[OK] Chave privada gerada: {key_file}")
             return key_file
         except subprocess.CalledProcessError as e:
-            print(f"❌ Erro ao gerar chave privada: {e}")
+            print(f"[ERRO] Erro ao gerar chave privada: {e}")
             return None
     
     def generate_self_signed_cert(self, key_file, days=365, san_domains=None):
@@ -53,7 +53,7 @@ class SSLCertificateGenerator:
         
         self._create_openssl_config(config_file, san_domains)
         
-        print(f"📜 Gerando certificado auto-assinado válido por {days} dias...")
+        print(f"[INFO] Gerando certificado auto-assinado válido por {days} dias...")
         
         cmd = [
             "openssl", "req", "-new", "-x509",
@@ -66,10 +66,10 @@ class SSLCertificateGenerator:
         try:
             subprocess.run(cmd, check=True, capture_output=True)
             os.chmod(cert_file, 0o644)
-            print(f"✅ Certificado gerado: {cert_file}")
+            print(f"[OK] Certificado gerado: {cert_file}")
             return cert_file
         except subprocess.CalledProcessError as e:
-            print(f"❌ Erro ao gerar certificado: {e}")
+            print(f"[ERRO] Erro ao gerar certificado: {e}")
             return None
     
     def _create_openssl_config(self, config_file, san_domains=None):
@@ -106,7 +106,7 @@ subjectAltName = {san_list}
         """Gera parâmetros Diffie-Hellman"""
         dhparam_file = self.ssl_dir / "dhparam.pem"
         
-        print(f"🔐 Gerando parâmetros Diffie-Hellman de {size} bits...")
+        print(f"[INFO] Gerando parâmetros Diffie-Hellman de {size} bits...")
         
         cmd = [
             "openssl", "dhparam",
@@ -116,10 +116,10 @@ subjectAltName = {san_list}
         
         try:
             subprocess.run(cmd, check=True)
-            print(f"✅ Parâmetros DH gerados: {dhparam_file}")
+            print(f"[OK] Parâmetros DH gerados: {dhparam_file}")
             return dhparam_file
         except subprocess.CalledProcessError as e:
-            print(f"❌ Erro ao gerar parâmetros DH: {e}")
+            print(f"[ERRO] Erro ao gerar parâmetros DH: {e}")
             return None
     
     def create_nginx_ssl_config(self):
@@ -143,12 +143,12 @@ ssl_session_tickets off;
         with open(config_file, 'w') as f:
             f.write(config_content)
         
-        print(f"📝 Configuração Nginx criada: {config_file}")
+        print(f"[INFO] Configuração Nginx criada: {config_file}")
         return config_file
     
     def generate_development_certificates(self, domains=None, key_size=2048, days=365):
         """Gera certificados completos para desenvolvimento"""
-        print("🚀 Iniciando geração de certificados SSL...")
+        print("[INFO] Iniciando geração de certificados SSL...")
         
         if not self.check_openssl():
             return False
@@ -164,9 +164,9 @@ ssl_session_tickets off;
         self.generate_dhparam()
         self.create_nginx_ssl_config()
         
-        print("\n🎉 Certificados SSL gerados com sucesso!")
-        print(f"📂 Arquivos em: {self.ssl_dir}")
-        print("⚠️  Certificados auto-assinados para DESENVOLVIMENTO")
+        print("\n[SUCESSO] Certificados SSL gerados com sucesso!")
+        print(f"[INFO] Arquivos em: {self.ssl_dir}")
+        print("[AVISO] Certificados auto-assinados para DESENVOLVIMENTO")
         
         return True
 
